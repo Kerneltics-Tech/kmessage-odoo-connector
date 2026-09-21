@@ -49,6 +49,11 @@ class KMessageAutomation(models.Model):
         'kmessage.template', required=True, ondelete='restrict',
         domain="[('account_id', '=', account_id), ('usable', '=', True)]")
     param_ids = fields.One2many('kmessage.automation.param', 'automation_id')
+    starter_key = fields.Char(
+        readonly=True, copy=False, index=True,
+        help="Which of the connector's own rules this started life as. It is "
+             "what lets a deleted default be offered again without touching "
+             "anything you wrote yourself.")
     param_count = fields.Integer(related='template_id.param_count')
 
     attach_document = fields.Boolean(
@@ -123,6 +128,17 @@ class KMessageAutomation(models.Model):
         self.ensure_one()
         account = self.account_id
         if not (account.outbound_enabled and account.state == 'connected'):
+            return
+
+        # A template Meta has not approved yet cannot be sent: the platform
+        # answers 404, permanently, for every record that goes through. The
+        # rules this addon writes are switched on before their templates come
+        # back from review, so the few minutes in between must be a quiet
+        # wait rather than a column of failures somebody has to clear out.
+        if not self.template_id.usable:
+            _logger.info(
+                'K-Message: rule %s is waiting for template %s to be approved',
+                self.id, self.template_id.name)
             return
 
         candidates = records

@@ -74,9 +74,7 @@ msgstr "الكمية الدقيقة"
 msgid ""
 "Given the number in the conversation, says where that customer's recent "
 "deliveries have got to. Never anybody else's."
-msgstr ""
-"يستخدم الرقم الموجود في المحادثة ليوضّح أين وصلت آخر عمليات التوصيل "
-"لهذا العميل، ولا يعرض عمليات أي شخص آخر إطلاقاً."
+msgstr "يستخدم الرقم الموجود في المحادثة ليوضّح أين وصلت آخر عمليات التوصيل لهذا العميل، ولا يعرض عمليات أي شخص آخر إطلاقاً."
 
 #. module: kmessage_connector_stock
 #. odoo-python
@@ -126,6 +124,16 @@ msgid "K-Message Inbound API"
 msgstr "واجهة K-Message الواردة (API)"
 
 #. module: kmessage_connector_stock
+#: model:ir.model,name:kmessage_connector_stock.model_kmessage_starter_automation
+msgid "K-Message Starter Automations"
+msgstr "قواعد K-Message الجاهزة"
+
+#. module: kmessage_connector_stock
+#: model:ir.model,name:kmessage_connector_stock.model_kmessage_starter
+msgid "K-Message Starter Templates"
+msgstr "قوالب K-Message الجاهزة"
+
+#. module: kmessage_connector_stock
 #. odoo-python
 #: code:addons/kmessage_connector_stock/models/kmessage_api.py:0
 msgid "Nothing here is called “%s”."
@@ -139,12 +147,7 @@ msgid ""
 "figure tells a competitor what you buy and how fast you sell, and it is "
 "wrong the moment somebody at the counter picks the item up. Turn it on where"
 " the exact number is genuinely what a customer needs."
-msgstr ""
-"عند إيقافه يأتي جواب التوفّر على شكل وصف عام — متوفر، بقيت كمية قليلة، "
-"غير متوفر — ولا يخرج الرقم نفسه من أودو إطلاقاً. وهذا ما تختاره أغلب "
-"المحلات: الرقم يكشف للمنافس ماذا تشتري وبأي سرعة تبيع، ويصبح غير صحيح "
-"في اللحظة التي يأخذ فيها أحد العملاء الصنف من الرف. فعّله فقط حين يكون "
-"الرقم الدقيق هو ما يحتاجه العميل فعلاً."
+msgstr "عند إيقافه يأتي جواب التوفّر على شكل وصف عام — متوفر، بقيت كمية قليلة، غير متوفر — ولا يخرج الرقم نفسه من أودو إطلاقاً. وهذا ما تختاره أغلب المحلات: الرقم يكشف للمنافس ماذا تشتري وبأي سرعة تبيع، ويصبح غير صحيح في اللحظة التي يأخذ فيها أحد العملاء الصنف من الرف. فعّله فقط حين يكون الرقم الدقيق هو ما يحتاجه العميل فعلاً."
 
 #. module: kmessage_connector_stock
 #. odoo-python
@@ -168,9 +171,7 @@ msgstr "حدّد أي منتج تبحث عنه."
 msgid ""
 "Says whether a product is available, branch by branch. Quantities are given "
 "as a band unless this row says otherwise."
-msgstr ""
-"يوضّح ما إذا كان المنتج متوفراً، فرعاً فرعاً. والكميات تُذكر على شكل "
-"وصف عام ما لم يحدّد هذا السطر غير ذلك."
+msgstr "يوضّح ما إذا كان المنتج متوفراً، فرعاً فرعاً. والكميات تُذكر على شكل وصف عام ما لم يحدّد هذا السطر غير ذلك."
 
 #. module: kmessage_connector_stock
 #: model:ir.actions.act_window,name:kmessage_connector_stock.action_kmessage_send_stock_picking
@@ -188,6 +189,12 @@ msgstr "الحالة"
 #: code:addons/kmessage_connector_stock/models/kmessage_ai_tool.py:0
 msgid "Stock availability"
 msgstr "توفّر المخزون"
+
+#. module: kmessage_connector_stock
+#. odoo-python
+#: code:addons/kmessage_connector_stock/models/kmessage_starter.py:0
+msgid "Tell the customer when the delivery leaves"
+msgstr "أخبر العميل عند خروج الشحنة"
 
 #. module: kmessage_connector_stock
 #. odoo-python
@@ -238,10 +245,7 @@ msgid ""
 "returns only this customer's own deliveries, newest first. If it returns "
 "nothing, say we cannot see a delivery for them yet rather than guessing at "
 "one."
-msgstr ""
-"استخدم هذه الأداة عندما يسأل أحد عن طلبه أو أين وصل توصيله. تُرجع "
-"عمليات التوصيل الخاصة بهذا العميل وحده، من الأحدث إلى الأقدم. وإذا لم "
-"تُرجع شيئاً، قل إننا لا نرى له أي طلب توصيل حتى الآن بدلاً من التخمين."
+msgstr "استخدم هذه الأداة عندما يسأل أحد عن طلبه أو أين وصل توصيله. تُرجع عمليات التوصيل الخاصة بهذا العميل وحده، من الأحدث إلى الأقدم. وإذا لم تُرجع شيئاً، قل إننا لا نرى له أي طلب توصيل حتى الآن بدلاً من التخمين."
 
 #. module: kmessage_connector_stock
 #. odoo-python
@@ -251,11 +255,7 @@ msgid ""
 "a particular branch. It answers per branch, and it answers how many are left"
 " only where the shop has chosen to say so — when it gives a band such as "
 "“only a few left”, say the band and do not invent a number."
-msgstr ""
-"استخدم هذه الأداة عندما يسأل أحد عن توفّر منتج، أو عن توفّره في فرع "
-"معيّن. تجيب عن كل فرع على حدة، ولا تذكر عدد القطع المتبقية إلا حيث "
-"اختار المحل أن يذكرها — وعندما تعطي وصفاً عاماً مثل «بقيت كمية قليلة»، "
-"اذكر الوصف كما هو ولا تخترع رقماً."
+msgstr "استخدم هذه الأداة عندما يسأل أحد عن توفّر منتج، أو عن توفّره في فرع معيّن. تجيب عن كل فرع على حدة، ولا تذكر عدد القطع المتبقية إلا حيث اختار المحل أن يذكرها — وعندما تعطي وصفاً عاماً مثل «بقيت كمية قليلة»، اذكر الوصف كما هو ولا تخترع رقماً."
 
 #. module: kmessage_connector_stock
 #. odoo-python
@@ -321,8 +321,3 @@ msgstr "مجهّز وجاهز للإرسال"
 #: code:addons/kmessage_connector_stock/models/kmessage_api.py:0
 msgid "waiting for stock"
 msgstr "بانتظار توفّر الكمية"
-
-#. module: kmessage_connector_stock
-#: model:ir.model,name:kmessage_connector_stock.model_kmessage_starter
-msgid "K-Message Starter Templates"
-msgstr "قوالب K-Message الجاهزة"

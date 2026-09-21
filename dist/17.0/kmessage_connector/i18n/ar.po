@@ -25,6 +25,20 @@ msgstr "نُشرت %(done)s أداة، وبقيت %(left)s في الانتظار
 #. module: kmessage_connector
 #. odoo-python
 #: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
+msgid "%(made)s rules set up, %(live)s of them live."
+msgstr "تم إعداد %(made)s قواعد، %(live)s منها شغّالة."
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
+msgid ""
+"%(made)s rules set up, %(live)s of them live; %(held)s had no template to "
+"point at."
+msgstr "تم إعداد %(made)s قواعد، %(live)s منها شغّالة؛ و%(held)s ما لقينا لها قالباً تشير إليه."
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
 msgid "%s already there."
 msgstr "%s قوالب كانت موجودة من قبل."
 
@@ -39,6 +53,12 @@ msgstr "%s طلب ألا نراسله على واتساب."
 #: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
 msgid "%s need attention: %s"
 msgstr "%s قالب يحتاج انتباهك: %s"
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_account.py:0
+msgid "%s rule(s) put back."
+msgstr "تمت إعادة %s قاعدة."
 
 #. module: kmessage_connector
 #. odoo-python
@@ -328,6 +348,11 @@ msgstr "الأزرار"
 #: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_template__buttons_json
 msgid "Buttons Json"
 msgstr "الأزرار JSON"
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_automation_tree
+msgid "Came with the addon"
+msgstr "جاءت مع التطبيق"
 
 #. module: kmessage_connector
 #: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_connect__can_list_webhooks
@@ -677,6 +702,12 @@ msgid "Event"
 msgstr "الحدث"
 
 #. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_account.py:0
+msgid "Every default rule is already there."
+msgstr "كل القواعد الافتراضية موجودة أصلاً."
+
+#. module: kmessage_connector
 #: model_terms:ir.actions.act_window,help:kmessage_connector.action_kmessage_message
 msgid ""
 "Every message Odoo sends on WhatsApp is listed here, with whether it "
@@ -961,6 +992,11 @@ msgstr "رسالة K-Message"
 #: model:ir.model,name:kmessage_connector.model_kmessage_reply_rule
 msgid "K-Message Reply Rule"
 msgstr "قاعدة ردّ K-Message"
+
+#. module: kmessage_connector
+#: model:ir.model,name:kmessage_connector.model_kmessage_starter_automation
+msgid "K-Message Starter Automations"
+msgstr "قواعد K-Message الجاهزة"
 
 #. module: kmessage_connector
 #: model:ir.model,name:kmessage_connector.model_kmessage_starter
@@ -1416,6 +1452,14 @@ msgstr "لا يوجد هنا ما يجيب على هذا بعد."
 
 #. module: kmessage_connector
 #. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_account.py:0
+msgid ""
+"Nothing to put back — and %s had no template to point at. Write the "
+"templates first."
+msgstr "ما في شيء نعيده — و%s ما لقينا لها قالباً تشير إليه. اكتب القوالب أولاً."
+
+#. module: kmessage_connector
+#. odoo-python
 #: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
 msgid "Nothing to write."
 msgstr "لا شيء لكتابته."
@@ -1804,6 +1848,11 @@ msgid "Res Model"
 msgstr "نموذج السجل"
 
 #. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_account_form
+msgid "Restore the default rules"
+msgstr "أعد القواعد الافتراضية"
+
+#. module: kmessage_connector
 #: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_automation_form
 #: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_reply_rule_form
 msgid "Results"
@@ -1970,6 +2019,11 @@ msgid "Set up"
 msgstr "التجهيز"
 
 #. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_connect__create_rules
+msgid "Set up the rules too"
+msgstr "جهّز القواعد أيضاً"
+
+#. module: kmessage_connector
 #: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_account_form
 msgid "Set up the webhook"
 msgstr "جهّز الويبهوك"
@@ -2000,6 +2054,11 @@ msgstr "المصدر"
 #: model:ir.model.fields.selection,name:kmessage_connector.selection__kmessage_connect__state__start
 msgid "Start"
 msgstr "البداية"
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_automation__starter_key
+msgid "Starter Key"
+msgstr "معرّف القاعدة الجاهزة"
 
 #. module: kmessage_connector
 #: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_account__state
@@ -2309,6 +2368,12 @@ msgid ""
 "The reply rules this tap actually ran, which is how a second tap on the same"
 " message is recognised as a repeat."
 msgstr "قواعد الردّ التي نفّذتها هذه الضغطة فعلياً، وبها تُعرف الضغطة الثانية على الرسالة نفسها بأنها مكرّرة."
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
+msgid "The rules were already there."
+msgstr "القواعد كانت موجودة أصلاً."
 
 #. module: kmessage_connector
 #: model:ir.model.fields,help:kmessage_connector.field_kmessage_send__param_json
@@ -2747,6 +2812,14 @@ msgid ""
 msgstr "من أي رقم واتساب يتم الإرسال. اتركه فارغًا لاستخدام الرقم الافتراضي في الحساب."
 
 #. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_automation__starter_key
+msgid ""
+"Which of the connector's own rules this started life as. It is what lets a "
+"deleted default be offered again without touching anything you wrote "
+"yourself."
+msgstr "أي قاعدة من قواعد الرابط الجاهزة بدأت منها هذه. وهو ما يسمح بإعادة قاعدة افتراضية حذفتها دون المساس بأي شيء كتبته بنفسك."
+
+#. module: kmessage_connector
 #: model:ir.model.fields,help:kmessage_connector.field_kmessage_automation__report_name
 msgid "Which printout to attach. Empty means the document's usual one."
 msgstr "أي مطبوع يُرفق. والفراغ يعني المطبوع المعتاد للمستند."
@@ -2760,6 +2833,15 @@ msgstr "أي {{n}} في نص القالب يملؤه هذا."
 #: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_connect__create_templates
 msgid "Write the templates for me"
 msgstr "اكتب القوالب نيابةً عني"
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_connect__create_rules
+msgid ""
+"Writes the rules that use those templates, filled in. Sending the invoice "
+"arrives switched on; the rest arrive off, and you can never lose them — "
+"Restore the default rules brings back any you delete, without touching your "
+"own."
+msgstr "يكتب القواعد التي تستخدم تلك القوالب، جاهزة ومعبّأة. إرسال الفاتورة يأتي شغّالاً، والباقي يأتي مطفأً، ولا يمكن أن تضيع منك — «أعد القواعد الافتراضية» ترجّع ما حذفته دون المساس بقواعدك."
 
 #. module: kmessage_connector
 #: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_account_form

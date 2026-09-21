@@ -36,8 +36,8 @@ msgstr "حلول موعد استحقاق فاتورة"
 #. module: kmessage_connector_account
 #. odoo-python
 #: code:addons/kmessage_connector_account/models/kmessage_automation.py:0
-msgid "An invoice is posted"
-msgstr "ترحيل فاتورة"
+msgid "An invoice or credit note is posted"
+msgstr "ترحيل فاتورة أو إشعار دائن"
 
 #. module: kmessage_connector_account
 #. odoo-python
@@ -89,6 +89,16 @@ msgid "K-Message Inbound API"
 msgstr "واجهة K-Message الواردة (API)"
 
 #. module: kmessage_connector_account
+#: model:ir.model,name:kmessage_connector_account.model_kmessage_starter_automation
+msgid "K-Message Starter Automations"
+msgstr "قواعد K-Message الجاهزة"
+
+#. module: kmessage_connector_account
+#: model:ir.model,name:kmessage_connector_account.model_kmessage_starter
+msgid "K-Message Starter Templates"
+msgstr "قوالب K-Message الجاهزة"
+
+#. module: kmessage_connector_account
 #: model:ir.model.fields,help:kmessage_connector_account.field_kmessage_account__prerender_invoice_pdf
 msgid ""
 "K-Message's own assistant can send a customer their invoice through its "
@@ -96,12 +106,7 @@ msgid ""
 "reads attachments, it never prints. Switch this on and Odoo renders the PDF "
 "once, as the invoice is posted, so “send me my invoice” has something to "
 "send. It costs a second of the posting, and nothing else changes."
-msgstr ""
-"يستطيع مساعد K-Message إرسال فاتورته للعميل عبر ارتباطه المدمج مع "
-"Odoo، لكن فقط إذا كانت الفاتورة تحمل ملف PDF مسبقاً — فهو يقرأ "
-"المرفقات ولا يطبع. فعّل هذا الخيار فيُنشئ Odoo ملف PDF مرة واحدة عند "
-"ترحيل الفاتورة، ليجد طلب «أرسل لي فاتورتي» ما يرسله. يكلّف ذلك ثانية "
-"واحدة عند الترحيل، ولا يتغيّر شيء غير ذلك."
+msgstr "يستطيع مساعد K-Message إرسال فاتورته للعميل عبر ارتباطه المدمج مع Odoo، لكن فقط إذا كانت الفاتورة تحمل ملف PDF مسبقاً — فهو يقرأ المرفقات ولا يطبع. فعّل هذا الخيار فيُنشئ Odoo ملف PDF مرة واحدة عند ترحيل الفاتورة، ليجد طلب «أرسل لي فاتورتي» ما يرسله. يكلّف ذلك ثانية واحدة عند الترحيل، ولا يتغيّر شيء غير ذلك."
 
 #. module: kmessage_connector_account
 #: model:ir.actions.server,name:kmessage_connector_account.cron_invoice_due_ir_actions_server
@@ -125,9 +130,7 @@ msgid ""
 "Lists the posted invoices of the customer whose number is in the "
 "conversation, newest first, with what is left to pay on each. Never anybody "
 "else's."
-msgstr ""
-"يعرض الفواتير المُرحّلة للعميل صاحب الرقم في المحادثة، الأحدث أولاً، "
-"ومعها المتبقي على كل فاتورة. ولا يعرض فواتير أي شخص آخر أبداً."
+msgstr "يعرض الفواتير المُرحّلة للعميل صاحب الرقم في المحادثة، الأحدث أولاً، ومعها المتبقي على كل فاتورة. ولا يعرض فواتير أي شخص آخر أبداً."
 
 #. module: kmessage_connector_account
 #. odoo-python
@@ -146,9 +149,7 @@ msgid ""
 "Prints one invoice of the customer whose number is in the conversation and "
 "returns the file. An invoice number that belongs to somebody else is "
 "answered exactly as one that does not exist."
-msgstr ""
-"يطبع فاتورة واحدة للعميل صاحب الرقم في المحادثة ويُرجع الملف. ورقم "
-"فاتورة تخصّ شخصاً آخر يُردّ عليه تماماً مثل رقم فاتورة غير موجودة."
+msgstr "يطبع فاتورة واحدة للعميل صاحب الرقم في المحادثة ويُرجع الملف. ورقم فاتورة تخصّ شخصاً آخر يُردّ عليه تماماً مثل رقم فاتورة غير موجودة."
 
 #. module: kmessage_connector_account
 #. odoo-python
@@ -170,6 +171,12 @@ msgstr "إرسال عبر واتساب"
 
 #. module: kmessage_connector_account
 #. odoo-python
+#: code:addons/kmessage_connector_account/models/kmessage_starter.py:0
+msgid "Send the invoice when it is posted"
+msgstr "أرسل الفاتورة عند ترحيلها"
+
+#. module: kmessage_connector_account
+#. odoo-python
 #: code:addons/kmessage_connector_account/models/kmessage_ai_tool.py:0
 msgid "Status"
 msgstr "الحالة"
@@ -179,6 +186,12 @@ msgstr "الحالة"
 #: code:addons/kmessage_connector_account/models/kmessage_ai_tool.py:0
 msgid "Still to pay"
 msgstr "المتبقي"
+
+#. module: kmessage_connector_account
+#. odoo-python
+#: code:addons/kmessage_connector_account/models/kmessage_starter.py:0
+msgid "Thank the customer when a payment is posted"
+msgstr "اشكر العميل عند ترحيل دفعة"
 
 #. module: kmessage_connector_account
 #. odoo-python
@@ -219,37 +232,7 @@ msgid ""
 "rather than asking the customer to spell it out. If this answers that the "
 "invoice was not found, that number is not on their account: say so plainly, "
 "and do not describe an invoice you could not fetch."
-msgstr ""
-"استخدم هذه الأداة لإرسال إحدى فواتير العميل إليه كملف PDF. مرّر رقم "
-"الفاتورة كما ورد تماماً في قائمة الفواتير — ابحث عنه هناك أولاً بدل أن "
-"تطلب من العميل إملاءه عليك. وإذا جاء الجواب أن الفاتورة غير موجودة، "
-"فهذا الرقم ليس على حسابه: قل ذلك بوضوح، ولا تصف فاتورة لم تستطع جلبها."
-
-#. module: kmessage_connector_account
-#. odoo-python
-#: code:addons/kmessage_connector_account/models/kmessage_ai_tool.py:0
-msgid ""
-"Use this when the customer asks about their invoices, what they owe, "
-"whether something has been paid, or for an invoice number. It returns "
-"only the invoices of the person in this conversation, newest first. A "
-"row whose kind is “credit_note” is money in the customer's favour and "
-"shows as a negative amount: it is never something to pay. If it comes "
-"back with nothing, say that there is nothing on their account here — do "
-"not name an amount, and never say an invoice is paid unless a row says "
-"so."
-msgstr ""
-"استخدم هذه الأداة حين يسأل العميل عن فواتيره، أو عن المبلغ المستحق عليه، "
-"أو هل تم سداد شيء، أو عن رقم فاتورة. تُرجع فواتير صاحب هذه المحادثة "
-"وحده، الأحدث أولاً. والصفّ الذي نوعه «credit_note» مبلغ لصالح العميل "
-"ويظهر بإشارة سالبة: وهو ليس مبلغاً مستحقاً عليه أبداً. وإذا رجعت فارغة، "
-"قل إنه لا يوجد شيء على حسابه هنا — لا تذكر أي مبلغ، ولا تقل إن فاتورة "
-"مدفوعة ما لم يقل ذلك صفّ في النتيجة."
-
-#. module: kmessage_connector_account
-#. odoo-python
-#: code:addons/kmessage_connector_account/models/kmessage_automation.py:0
-msgid "An invoice or credit note is posted"
-msgstr "ترحيل فاتورة أو إشعار دائن"
+msgstr "استخدم هذه الأداة لإرسال إحدى فواتير العميل إليه كملف PDF. مرّر رقم الفاتورة كما ورد تماماً في قائمة الفواتير — ابحث عنه هناك أولاً بدل أن تطلب من العميل إملاءه عليك. وإذا جاء الجواب أن الفاتورة غير موجودة، فهذا الرقم ليس على حسابه: قل ذلك بوضوح، ولا تصف فاتورة لم تستطع جلبها."
 
 #. module: kmessage_connector_account
 #. odoo-python
@@ -263,8 +246,3 @@ msgid ""
 "that there is nothing on their account here — do not name an amount, and "
 "never say an invoice is paid unless a row says so."
 msgstr "استخدمها عندما يسأل العميل عن فواتيره، أو عمّا عليه، أو هل سُدِّد شيء، أو عن رقم فاتورة. تُرجع فواتير صاحب هذه المحادثة وحده، الأحدث أولاً. والسطر الذي نوعه «credit_note» هو مبلغ لصالح العميل ويظهر بإشارة سالبة، وليس مبلغاً مطلوباً منه أبداً. وإن رجعت بلا نتيجة، قل إنه لا يوجد شيء على حسابه لدينا — ولا تذكر أي مبلغ، ولا تقل إن فاتورة مسدّدة ما لم يقل ذلك سطرٌ صراحةً."
-
-#. module: kmessage_connector_account
-#: model:ir.model,name:kmessage_connector_account.model_kmessage_starter
-msgid "K-Message Starter Templates"
-msgstr "قوالب K-Message الجاهزة"

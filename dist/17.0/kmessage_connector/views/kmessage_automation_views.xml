@@ -13,6 +13,7 @@
                 <field name="sent_count" string="Sent"/>
                 <field name="last_run" optional="hide"/>
                 <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+                <field name="starter_key" string="Came with the addon" optional="hide"/>
                 <field name="active" widget="boolean_toggle"/>
             </tree>
         </field>

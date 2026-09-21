@@ -92,7 +92,27 @@ thing that is left to do.
 
 ---
 
-## 3. Turn on the first message
+## 3. The first message is already on
+
+*K-Message → Configuration → Automations*
+
+Step 2 wrote the rules as well as the templates, so there is one there called
+**Send the invoice when it is posted**, filled in and **switched on**. Post an
+invoice and the customer gets it — that is the whole of step 3 for most people.
+
+It waits politely in the meantime: a rule whose template is still with Meta
+sends nothing and fails nothing, and starts working by itself the minute
+approval lands.
+
+The others — order confirmed, quotation sent, delivery on its way — are there
+too, **switched off**. Read one, then flip its toggle.
+
+> **Deleted one by mistake?** *Restore the default rules*, on the connection.
+> It only ever puts back what is missing: a default you edited keeps your
+> edits, one you switched off stays off, and a rule you wrote yourself is
+> never touched.
+
+### Writing your own
 
 *K-Message → Configuration → Automations → New*
 

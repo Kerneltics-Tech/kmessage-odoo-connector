@@ -12,6 +12,9 @@
                             invisible="state != 'connected'"/>
                     <button name="action_setup_webhook" type="object" string="Set up the webhook"
                             invisible="state != 'connected'"/>
+                    <button name="action_restore_default_rules" type="object"
+                            string="Restore the default rules"
+                            invisible="state != 'connected'"/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,connected"/>
                 </header>
                 <sheet>

@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 """The invoice templates, written so a company need not write them."""
 
-from odoo import api, models
+from odoo import _, api, models
+
+from .kmessage_automation import TRIGGER_INVOICE_POSTED, TRIGGER_PAYMENT_RECEIVED
 
 
 class KMessageStarter(models.AbstractModel):
@@ -42,3 +44,31 @@ class KMessageStarter(models.AbstractModel):
         if not attachment or not attachment.raw:
             return super()._sample_from_odoo(account)
         return ('invoice-sample.pdf', attachment.raw, 'application/pdf')
+
+
+class KMessageStarterAutomations(models.AbstractModel):
+    _inherit = 'kmessage.starter.automation'
+
+    @api.model
+    def catalogue(self):
+        rules = super().catalogue()
+        rules.append(self._rule(
+            key='account.invoice_ready',
+            name=_("Send the invoice when it is posted"),
+            trigger=TRIGGER_INVOICE_POSTED,
+            template='odoo_invoice_ready',
+            params=['partner_id.name', 'name', 'amount_total'],
+            # The one that arrives on. It is what this addon is installed for,
+            # and a customer who has to find it and switch it on has, in
+            # practice, installed nothing.
+            active=True,
+        ))
+        rules.append(self._rule(
+            key='account.payment_received',
+            name=_("Thank the customer when a payment is posted"),
+            trigger=TRIGGER_PAYMENT_RECEIVED,
+            template='odoo_payment_received',
+            params=['partner_id.name', 'amount', 'ref'],
+            attach_document=False,
+        ))
+        return rules

@@ -222,3 +222,74 @@ class TestAutomation(KMessageCase):
         message = self.outbox(template=self.doc_template)
         self.assertEqual(len(message), 1)
         self.assertFalse(message.attachment_id)
+
+
+@tagged('post_install', '-at_install')
+class TestWaitingForApproval(KMessageCase):
+    """A live rule whose template Meta has not answered on yet.
+
+    The connector switches the invoice rule on before its template comes back
+    from review, so this window is real for every new customer. Sending into
+    it produces a 404 that will never succeed — one per invoice posted, each
+    a row somebody has to look at and clear. Waiting quietly is the only
+    behaviour that is not actively unhelpful.
+    """
+
+    def setUp(self):
+        super().setUp()
+        automations = self.env['kmessage.automation']
+        self.patch(type(automations), '_selection_trigger',
+                   lambda self: [(TRIGGER, 'A thing happened')])
+        self.patch(type(automations), '_trigger_model',
+                   lambda self, trigger: 'res.partner' if trigger == TRIGGER else False)
+        own_the_number(self.env, '0501114455')
+        self.her = self.env['res.partner'].create({
+            'name': 'Nora', 'mobile': '0501114455', 'lang': 'en_US'})
+
+    def test_a_pending_template_sends_nothing_and_fails_nothing(self):
+        template = self.env['kmessage.template'].create({
+            'account_id': self.account.id,
+            'name': 'not_back_from_meta_yet',
+            'language': 'ar',
+            'status': 'PENDING',
+            'body_content': 'مرحباً {{1}}، رسالة تجريبية وشكراً لك.',
+        })
+        self.assertFalse(template.usable)
+
+        rule = self.env['kmessage.automation'].create({
+            'name': 'Live, but waiting',
+            'trigger': 'test_thing_happened',
+            'template_id': template.id,
+            'account_id': self.account.id,
+            'active': True,
+            'attach_document': False,
+            'param_ids': [(0, 0, {'index': 1, 'source': 'field', 'field_path': 'name'})],
+        })
+
+        before = self.env['kmessage.message'].search_count([])
+        rule._run_on(self.her)
+        self.assertEqual(self.env['kmessage.message'].search_count([]), before,
+                         'nothing should be queued against a template Meta has not approved')
+
+    def test_it_starts_working_the_moment_approval_lands(self):
+        template = self.env['kmessage.template'].create({
+            'account_id': self.account.id,
+            'name': 'back_from_meta',
+            'language': 'ar',
+            'status': 'PENDING',
+            'body_content': 'مرحباً {{1}}، رسالة تجريبية وشكراً لك.',
+        })
+        rule = self.env['kmessage.automation'].create({
+            'name': 'Live, and ready',
+            'trigger': 'test_thing_happened',
+            'template_id': template.id,
+            'account_id': self.account.id,
+            'active': True,
+            'attach_document': False,
+            'param_ids': [(0, 0, {'index': 1, 'source': 'field', 'field_path': 'name'})],
+        })
+
+        template.status = 'APPROVED'
+        before = self.env['kmessage.message'].search_count([])
+        rule._run_on(self.her)
+        self.assertEqual(self.env['kmessage.message'].search_count([]), before + 1)

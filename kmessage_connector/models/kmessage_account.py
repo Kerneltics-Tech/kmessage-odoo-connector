@@ -128,6 +128,31 @@ class KMessageAccount(models.Model):
         return self.sudo().search([('company_id', '=', company.id)], limit=1)
 
     @api.model
+    def action_restore_default_rules(self):
+        """Put back any of the connector's own rules that went missing.
+
+        Deliberately additive. A rule that is still there is left exactly as
+        it is — edited, switched off, renamed, it is the customer's now — and
+        a rule they wrote themselves carries no marker, so it is never even
+        looked at. The worst this button can do is give you back something
+        you deleted.
+        """
+        self.ensure_one()
+        made, held_back = self.env['kmessage.starter.automation'].ensure(self)
+        if made:
+            message = _("%s rule(s) put back.", len(made))
+        elif held_back:
+            message = _("Nothing to put back \u2014 and %s had no template to "
+                        "point at. Write the templates first.", len(held_back))
+        else:
+            message = _("Every default rule is already there.")
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {'message': message, 'type': 'success', 'sticky': False},
+        }
+
+    @api.model
     def _service_url(self):
         """The one address K-Message is at.
 

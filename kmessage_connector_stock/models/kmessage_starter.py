@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 """The delivery template, written so a company need not write it."""
 
-from odoo import api, models
+from odoo import _, api, models
+
+from .stock_picking import TRIGGER_PICKING_DONE
 
 
 class KMessageStarter(models.AbstractModel):
@@ -17,3 +19,19 @@ class KMessageStarter(models.AbstractModel):
             samples=['عبدالله', 'WH/OUT/00031'],
         ))
         return entries
+
+
+class KMessageStarterAutomations(models.AbstractModel):
+    _inherit = 'kmessage.starter.automation'
+
+    @api.model
+    def catalogue(self):
+        rules = super().catalogue()
+        rules.append(self._rule(
+            key='stock.delivery_done',
+            name=_("Tell the customer when the delivery leaves"),
+            trigger=TRIGGER_PICKING_DONE,
+            template='odoo_delivery_on_its_way',
+            params=['partner_id.name', 'name'],
+        ))
+        return rules

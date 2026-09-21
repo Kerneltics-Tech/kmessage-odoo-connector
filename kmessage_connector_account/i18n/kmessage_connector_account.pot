@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-21 00:32+0000\n"
-"PO-Revision-Date: 2026-09-21 00:32+0000\n"
+"POT-Creation-Date: 2026-09-21 10:20+0000\n"
+"PO-Revision-Date: 2026-09-21 10:20+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -88,6 +88,11 @@ msgid "K-Message Inbound API"
 msgstr ""
 
 #. module: kmessage_connector_account
+#: model:ir.model,name:kmessage_connector_account.model_kmessage_starter_automation
+msgid "K-Message Starter Automations"
+msgstr ""
+
+#. module: kmessage_connector_account
 #: model:ir.model,name:kmessage_connector_account.model_kmessage_starter
 msgid "K-Message Starter Templates"
 msgstr ""
@@ -165,6 +170,12 @@ msgstr ""
 
 #. module: kmessage_connector_account
 #. odoo-python
+#: code:addons/kmessage_connector_account/models/kmessage_starter.py:0
+msgid "Send the invoice when it is posted"
+msgstr ""
+
+#. module: kmessage_connector_account
+#. odoo-python
 #: code:addons/kmessage_connector_account/models/kmessage_ai_tool.py:0
 msgid "Status"
 msgstr ""
@@ -173,6 +184,12 @@ msgstr ""
 #. odoo-python
 #: code:addons/kmessage_connector_account/models/kmessage_ai_tool.py:0
 msgid "Still to pay"
+msgstr ""
+
+#. module: kmessage_connector_account
+#. odoo-python
+#: code:addons/kmessage_connector_account/models/kmessage_starter.py:0
+msgid "Thank the customer when a payment is posted"
 msgstr ""
 
 #. module: kmessage_connector_account

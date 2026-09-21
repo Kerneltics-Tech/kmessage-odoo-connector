@@ -46,18 +46,14 @@ msgid ""
 "Given the number in the conversation and an order number, says where that "
 "order stands and what is on it. An order belonging to anyone else is "
 "answered as not found."
-msgstr ""
-"انطلاقاً من رقم الجوال في المحادثة ورقم الطلب، يوضّح حالة الطلب وما فيه من "
-"أصناف. أما الطلب الذي يخص عميلاً آخر فيأتي الرد عليه بأنه غير موجود."
+msgstr "انطلاقاً من رقم الجوال في المحادثة ورقم الطلب، يوضّح حالة الطلب وما فيه من أصناف. أما الطلب الذي يخص عميلاً آخر فيأتي الرد عليه بأنه غير موجود."
 
 #. module: kmessage_connector_sale
 #: model:kmessage.capability,description:kmessage_connector_sale.capability_orders
 msgid ""
 "Given the number in the conversation, lists that customer's own quotations "
 "and orders, newest first, with what each came to and how far along it is."
-msgstr ""
-"انطلاقاً من رقم الجوال في المحادثة، يعرض عروض الأسعار والطلبات الخاصة بهذا "
-"العميل وحده، الأحدث أولاً، مع إجمالي كل طلب والمرحلة التي وصل إليها."
+msgstr "انطلاقاً من رقم الجوال في المحادثة، يعرض عروض الأسعار والطلبات الخاصة بهذا العميل وحده، الأحدث أولاً، مع إجمالي كل طلب والمرحلة التي وصل إليها."
 
 #. module: kmessage_connector_sale
 #. odoo-python
@@ -92,6 +88,16 @@ msgid "K-Message Inbound API"
 msgstr "واجهة K-Message الواردة (API)"
 
 #. module: kmessage_connector_sale
+#: model:ir.model,name:kmessage_connector_sale.model_kmessage_starter_automation
+msgid "K-Message Starter Automations"
+msgstr "قواعد K-Message الجاهزة"
+
+#. module: kmessage_connector_sale
+#: model:ir.model,name:kmessage_connector_sale.model_kmessage_starter
+msgid "K-Message Starter Templates"
+msgstr "قوالب K-Message الجاهزة"
+
+#. module: kmessage_connector_sale
 #. odoo-python
 #: code:addons/kmessage_connector_sale/models/kmessage_ai_tool.py:0
 msgid "No order with that number belongs to this customer."
@@ -115,9 +121,7 @@ msgstr "اختياري. عدد الطلبات المطلوب عرضها، الأ
 msgid ""
 "Optional. One of open, quotation, confirmed, done, cancelled. 'open' means "
 "anything not yet finished or cancelled."
-msgstr ""
-"اختياري. واحدة من: open أو quotation أو confirmed أو done أو cancelled. "
-"وتعني open كل طلب لم يكتمل ولم يُلغَ بعد."
+msgstr "اختياري. واحدة من: open أو quotation أو confirmed أو done أو cancelled. وتعني open كل طلب لم يكتمل ولم يُلغَ بعد."
 
 #. module: kmessage_connector_sale
 #. odoo-python
@@ -166,6 +170,12 @@ msgstr "أرسل رقم الطلب المراد الاستعلام عنه."
 
 #. module: kmessage_connector_sale
 #. odoo-python
+#: code:addons/kmessage_connector_sale/models/kmessage_starter.py:0
+msgid "Send the quotation when it goes out"
+msgstr "أرسل عرض السعر عند إرساله"
+
+#. module: kmessage_connector_sale
+#. odoo-python
 #: code:addons/kmessage_connector_sale/models/kmessage_ai_tool.py:0
 msgid "Status"
 msgstr "الحالة"
@@ -174,6 +184,12 @@ msgstr "الحالة"
 #: model:kmessage.capability,name:kmessage_connector_sale.capability_order_status
 msgid "Status of one order"
 msgstr "حالة طلب محدد"
+
+#. module: kmessage_connector_sale
+#. odoo-python
+#: code:addons/kmessage_connector_sale/models/kmessage_starter.py:0
+msgid "Tell the customer when their order is confirmed"
+msgstr "أخبر العميل عند تأكيد طلبه"
 
 #. module: kmessage_connector_sale
 #. odoo-python
@@ -207,10 +223,7 @@ msgid ""
 "ordered, what it came to, or whether it has shipped. It answers only for the"
 " person in this conversation. If it comes back empty, say there is nothing "
 "on file for their number — do not guess at an order."
-msgstr ""
-"استخدمها عندما يسأل العميل عن طلباته أو عروض الأسعار الخاصة به: ماذا طلب، "
-"وكم بلغ الإجمالي، وهل تم توصيله. وهي تجيب عن صاحب هذه المحادثة فقط. وإذا "
-"رجعت فارغة، فقل إنه لا توجد طلبات مسجّلة على رقمه — ولا تخمّن أي طلب."
+msgstr "استخدمها عندما يسأل العميل عن طلباته أو عروض الأسعار الخاصة به: ماذا طلب، وكم بلغ الإجمالي، وهل تم توصيله. وهي تجيب عن صاحب هذه المحادثة فقط. وإذا رجعت فارغة، فقل إنه لا توجد طلبات مسجّلة على رقمه — ولا تخمّن أي طلب."
 
 #. module: kmessage_connector_sale
 #. odoo-python
@@ -220,10 +233,7 @@ msgid ""
 "Pass the number exactly as they wrote it. It answers only for orders "
 "belonging to the person in this conversation; anything else comes back as "
 "not found, which is an answer, not a reason to try another number."
-msgstr ""
-"استخدمها عندما يذكر العميل رقم طلب ويسأل عن حالته. مرّر الرقم كما كتبه "
-"تماماً. وهي تجيب عن طلبات صاحب هذه المحادثة فقط؛ وما عدا ذلك يرجع بأنه غير "
-"موجود، وهذا رد نهائي وليس سبباً لتجربة رقم آخر."
+msgstr "استخدمها عندما يذكر العميل رقم طلب ويسأل عن حالته. مرّر الرقم كما كتبه تماماً. وهي تجيب عن طلبات صاحب هذه المحادثة فقط؛ وما عدا ذلك يرجع بأنه غير موجود، وهذا رد نهائي وليس سبباً لتجربة رقم آخر."
 
 #. module: kmessage_connector_sale
 #. odoo-python
@@ -272,8 +282,3 @@ msgstr "تم التوصيل جزئياً"
 #: code:addons/kmessage_connector_sale/models/kmessage_api.py:0
 msgid "quotation"
 msgstr "عرض سعر"
-
-#. module: kmessage_connector_sale
-#: model:ir.model,name:kmessage_connector_sale.model_kmessage_starter
-msgid "K-Message Starter Templates"
-msgstr "قوالب K-Message الجاهزة"

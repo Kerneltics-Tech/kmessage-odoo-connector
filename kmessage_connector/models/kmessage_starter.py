@@ -221,3 +221,98 @@ class KMessageStarter(models.AbstractModel):
             b'trailer<</Root 1 0 R>>\n'
             b'%%EOF\n'
         )
+
+
+class KMessageStarterAutomations(models.AbstractModel):
+    """The rules a company would otherwise have to write themselves.
+
+    Writing the templates was only half of it. A template that nobody has
+    pointed a rule at sends nothing, and building that rule means knowing
+    which trigger matches which template and which Odoo field fills each
+    ``{{n}}`` — four screens of knowledge that is the same for every company
+    that installs this.
+
+    So the connector offers the rules too, filled in. They are marked with a
+    ``starter_key``, and that marker is the whole of the restore story: a
+    default somebody deleted can be offered again, a default somebody edited
+    is never overwritten, and a rule somebody wrote themselves is never
+    touched, because it carries no marker at all.
+
+    One of them arrives switched on — the invoice. It is what people install
+    this for, and a rule that has to be discovered and switched on is a rule
+    that does not run. The rest arrive off, because "we also messaged all your
+    customers about their quotations" is not a surprise anybody wants.
+    """
+
+    _name = 'kmessage.starter.automation'
+    _description = 'K-Message Starter Automations'
+
+    @api.model
+    def catalogue(self):
+        """Every rule the connector offers. Empty here; the bridges fill it."""
+        return []
+
+    @api.model
+    def _rule(self, key, name, trigger, template, params, active=False,
+              attach_document=True, cooldown_hours=24):
+        """One offered rule.
+
+        ``params`` is the field path for each placeholder, in order, so
+        ``['partner_id.name', 'name']`` fills ``{{1}}`` and ``{{2}}``.
+        """
+        return {
+            'key': key,
+            'name': name,
+            'trigger': trigger,
+            'template': template,
+            'params': params,
+            'active': active,
+            'attach_document': attach_document,
+            'cooldown_hours': cooldown_hours,
+        }
+
+    @api.model
+    def ensure(self, account, keys=None):
+        """Create whatever offered rule is missing. Returns (made, held_back).
+
+        Nothing is ever updated: a rule that exists is the customer's, whether
+        they changed it, switched it off, or left it as it came.
+        """
+        automations = self.env['kmessage.automation'].sudo()
+        existing = set(automations.with_context(active_test=False).search(
+            [('company_id', '=', account.company_id.id),
+             ('starter_key', '!=', False)]).mapped('starter_key'))
+
+        made, held_back = [], []
+        for rule in self.catalogue():
+            if keys is not None and rule['key'] not in keys:
+                continue
+            if rule['key'] in existing:
+                continue
+            template = self.env['kmessage.template'].sudo().search([
+                ('account_id', '=', account.id),
+                ('name', '=', rule['template']),
+            ], limit=1)
+            if not template:
+                # The template is not there — usually because this tenant
+                # declined to have them written. A rule pointing at nothing
+                # would be worse than no rule.
+                held_back.append(rule['key'])
+                continue
+            automations.create({
+                'name': rule['name'],
+                'starter_key': rule['key'],
+                'trigger': rule['trigger'],
+                'template_id': template.id,
+                'account_id': account.id,
+                'company_id': account.company_id.id,
+                'active': rule['active'],
+                'attach_document': rule['attach_document'] and template.takes_document,
+                'cooldown_hours': rule['cooldown_hours'],
+                'param_ids': [
+                    (0, 0, {'index': index, 'source': 'field', 'field_path': path})
+                    for index, path in enumerate(rule['params'], start=1)
+                ],
+            })
+            made.append(rule['key'])
+        return made, held_back

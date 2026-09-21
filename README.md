@@ -104,11 +104,17 @@ WhatsApp numbers the tenant has, how many approved templates there are, and
 whether this token may manage webhooks — and then tells you, before anything is
 written.
 
-**Apply** wires both directions and reports back in four lines:
+**Apply** wires both directions and reports back in a few lines:
 
 * saves the connection and syncs the approved templates, so choosing a template
   later is a dropdown rather than a name typed from memory;
 * writes the WhatsApp templates this addon sends and submits them to Meta;
+* sets up the rules that use them, filled in — trigger, template, and a field
+  for every `{{n}}`. **Sending the invoice arrives switched on**; the rest
+  arrive off, because "we also messaged everyone about their quotations" is
+  not a surprise anybody wants. None of them can be lost: *Restore the default
+  rules* on the connection puts back whatever was deleted and touches nothing
+  else — not a default you edited, and never a rule you wrote yourself;
 * issues the token K-Message will present when it asks Odoo a question;
 * posts that token, the webhook address and the assistant tools to
   `POST /api/integrations/odoo/connect`, which registers all of it in one call.

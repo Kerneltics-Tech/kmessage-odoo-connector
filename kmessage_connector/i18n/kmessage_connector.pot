@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-21 08:21+0000\n"
-"PO-Revision-Date: 2026-09-21 08:21+0000\n"
+"POT-Creation-Date: 2026-09-21 10:20+0000\n"
+"PO-Revision-Date: 2026-09-21 10:20+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -19,6 +19,20 @@ msgstr ""
 #. odoo-python
 #: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
 msgid "%(done)s tool(s) published; %(left)s still waiting: %(why)s"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
+msgid "%(made)s rules set up, %(live)s of them live."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
+msgid ""
+"%(made)s rules set up, %(live)s of them live; %(held)s had no template to "
+"point at."
 msgstr ""
 
 #. module: kmessage_connector
@@ -37,6 +51,12 @@ msgstr ""
 #. odoo-python
 #: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
 msgid "%s need attention: %s"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_account.py:0
+msgid "%s rule(s) put back."
 msgstr ""
 
 #. module: kmessage_connector
@@ -326,6 +346,11 @@ msgstr ""
 #: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_message__buttons_json
 #: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_template__buttons_json
 msgid "Buttons Json"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_automation_tree
+msgid "Came with the addon"
 msgstr ""
 
 #. module: kmessage_connector
@@ -676,6 +701,12 @@ msgid "Event"
 msgstr ""
 
 #. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_account.py:0
+msgid "Every default rule is already there."
+msgstr ""
+
+#. module: kmessage_connector
 #: model_terms:ir.actions.act_window,help:kmessage_connector.action_kmessage_message
 msgid ""
 "Every message Odoo sends on WhatsApp is listed here, with whether it "
@@ -959,6 +990,11 @@ msgstr ""
 #. module: kmessage_connector
 #: model:ir.model,name:kmessage_connector.model_kmessage_reply_rule
 msgid "K-Message Reply Rule"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model,name:kmessage_connector.model_kmessage_starter_automation
+msgid "K-Message Starter Automations"
 msgstr ""
 
 #. module: kmessage_connector
@@ -1409,6 +1445,14 @@ msgstr ""
 
 #. module: kmessage_connector
 #. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_account.py:0
+msgid ""
+"Nothing to put back — and %s had no template to point at. Write the "
+"templates first."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
 #: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
 msgid "Nothing to write."
 msgstr ""
@@ -1797,6 +1841,11 @@ msgid "Res Model"
 msgstr ""
 
 #. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_account_form
+msgid "Restore the default rules"
+msgstr ""
+
+#. module: kmessage_connector
 #: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_automation_form
 #: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_reply_rule_form
 msgid "Results"
@@ -1963,6 +2012,11 @@ msgid "Set up"
 msgstr ""
 
 #. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_connect__create_rules
+msgid "Set up the rules too"
+msgstr ""
+
+#. module: kmessage_connector
 #: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_account_form
 msgid "Set up the webhook"
 msgstr ""
@@ -1992,6 +2046,11 @@ msgstr ""
 #. module: kmessage_connector
 #: model:ir.model.fields.selection,name:kmessage_connector.selection__kmessage_connect__state__start
 msgid "Start"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_automation__starter_key
+msgid "Starter Key"
 msgstr ""
 
 #. module: kmessage_connector
@@ -2298,6 +2357,12 @@ msgstr ""
 msgid ""
 "The reply rules this tap actually ran, which is how a second tap on the same"
 " message is recognised as a repeat."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
+msgid "The rules were already there."
 msgstr ""
 
 #. module: kmessage_connector
@@ -2737,6 +2802,14 @@ msgid ""
 msgstr ""
 
 #. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_automation__starter_key
+msgid ""
+"Which of the connector's own rules this started life as. It is what lets a "
+"deleted default be offered again without touching anything you wrote "
+"yourself."
+msgstr ""
+
+#. module: kmessage_connector
 #: model:ir.model.fields,help:kmessage_connector.field_kmessage_automation__report_name
 msgid "Which printout to attach. Empty means the document's usual one."
 msgstr ""
@@ -2749,6 +2822,15 @@ msgstr ""
 #. module: kmessage_connector
 #: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_connect__create_templates
 msgid "Write the templates for me"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_connect__create_rules
+msgid ""
+"Writes the rules that use those templates, filled in. Sending the invoice "
+"arrives switched on; the rest arrive off, and you can never lose them — "
+"Restore the default rules brings back any you delete, without touching your "
+"own."
 msgstr ""
 
 #. module: kmessage_connector

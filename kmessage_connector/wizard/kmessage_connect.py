@@ -54,6 +54,12 @@ class KMessageConnect(models.TransientModel):
     issue_token = fields.Boolean(
         string='Issue a token for K-Message', default=True,
         help="Creates the token K-Message uses to ask this Odoo about a customer.")
+    create_rules = fields.Boolean(
+        string='Set up the rules too', default=True,
+        help="Writes the rules that use those templates, filled in. Sending "
+             "the invoice arrives switched on; the rest arrive off, and you "
+             "can never lose them \u2014 Restore the default rules brings back "
+             "any you delete, without touching your own.")
     create_templates = fields.Boolean(
         string='Write the templates for me', default=True,
         help="Creates the messages this addon sends — in Arabic, under names of its "
@@ -147,6 +153,9 @@ class KMessageConnect(models.TransientModel):
         elif account.can_read_templates:
             self.env['kmessage.template'].sync_from_platform(account)
 
+        if self.create_rules:
+            steps.append(self._create_rules(account))
+
         # One call hands K-Message the webhook and the tools together. Older
         # platforms have neither the endpoint nor the permission, and then the
         # pieces are set up one at a time, as before.
@@ -182,6 +191,24 @@ class KMessageConnect(models.TransientModel):
             'summary': '<ul>%s</ul>' % ''.join('<li>%s</li>' % step for step in steps),
         })
         return self._reopen()
+
+    def _create_rules(self, account):
+        """Offer the rules, and say what arrived on."""
+        made, held_back = self.env['kmessage.starter.automation'].ensure(account)
+        if not made:
+            return _("The rules were already there.")
+
+        live = self.env['kmessage.automation'].sudo().search_count([
+            ('company_id', '=', self.company_id.id),
+            ('starter_key', 'in', made),
+            ('active', '=', True),
+        ])
+        if held_back:
+            return _("%(made)s rules set up, %(live)s of them live; "
+                     "%(held)s had no template to point at.",
+                     made=len(made), live=live, held=len(held_back))
+        return _("%(made)s rules set up, %(live)s of them live.",
+                 made=len(made), live=live)
 
     def _set_up_the_long_way(self, account, note):
         """When the platform will not take the connection, do what it allows.

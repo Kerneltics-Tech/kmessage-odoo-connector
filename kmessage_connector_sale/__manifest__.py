@@ -17,11 +17,11 @@ Adds two triggers an automation can listen for — a quotation was sent, an orde
 was confirmed — and two questions K-Message may ask Odoo on a customer's behalf:
 their recent orders, and the state of one order they name.
 
-Installing this creates no automation. Which template goes out, in which
-language, with or without the PDF, is a choice only the company can make, so the
-rules list stays empty until somebody writes one and switches it on. The two
-assistant tools are drafted against the connection but published to K-Message
-only when asked.
+Installing this sends nothing. Connecting writes two rules for it — quotation
+sent, order confirmed — filled in and **switched off**, because telling every
+customer about their quotation is a decision only the company can make. Read
+one and flip its toggle. The two assistant tools are drafted against the
+connection and published to K-Message when the connection is set up.
 """,
     'author': 'Kerneltics',
     'website': 'https://k-message.kerneltics.com',

@@ -278,6 +278,16 @@ cannot read a long list, and a long list is how an accident becomes an export.
 * [docs/SECURITY.md](docs/SECURITY.md) — what is stored where, and how to revoke
   access in one step.
 
+## Branches
+
+| Branch | What it is |
+| --- | --- |
+| `main`, `18.0` | The source. Odoo 18. |
+| `17.0` | Generated from it by `dev/build.py` — `<list>` becomes `<tree>`, the manifest version changes series. Do not fix anything here; run `sh dev/publish_17.sh` on 18.0 instead. |
+
+Both install the same four modules, under the same names, at the root of the
+branch — which is where the Odoo Apps store and every community repo look.
+
 ## Licence
 
 LGPL-3, the same as Odoo's own community addons. See [LICENSE](LICENSE).

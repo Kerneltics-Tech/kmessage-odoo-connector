@@ -13,12 +13,20 @@ Two ready-made ones ship with the addon:
 | [`kmessage_connector/data/flows/invoice_status.json`](../kmessage_connector/data/flows/invoice_status.json) | "Where is my invoice" — asks Odoo for the invoices of the number in the conversation and reads them back. |
 | [`kmessage_connector/data/flows/stock_check.json`](../kmessage_connector/data/flows/stock_check.json) | "Is it in stock" — asks which product, then answers from Odoo's on-hand quantities. |
 
-Both arrive switched off (`"enabled": false`). Turn one on when its URL and its
-token are right, not before.
+**Connect imports both of them for you**, with this Odoo's address and a real
+token already in them — creating a flow is not one of the operator-only writes,
+so a tenant key is enough. They arrive switched off, every time: what a
+company's WhatsApp answers with is theirs to turn on, not this addon's to
+decide. *Import the ready-made flows* on the connect screen is the switch, and
+importing again never replaces a flow of the same name, so one you have edited
+is safe.
+
+The rest of this page is the manual route — for a graph you want to change
+before it lands, or a platform that refused the import.
 
 ---
 
-## Importing one
+## Importing one by hand
 
 A flow is created by posting it. The file is already the whole request body —
 name, description, trigger keywords, and the graph the platform stores:

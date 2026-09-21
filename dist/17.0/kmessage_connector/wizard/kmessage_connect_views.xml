@@ -36,6 +36,7 @@
                     <group string="Set up">
                         <field name="create_templates"/>
                         <field name="create_rules"/>
+                        <field name="import_flows"/>
                         <field name="setup_webhook"/>
                         <field name="issue_token"/>
                         <field name="publish_tools"/>

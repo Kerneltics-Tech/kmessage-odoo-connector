@@ -11,3 +11,4 @@ from . import kmessage_ai_tool
 from . import kmessage_reply
 from . import kmessage_event
 from . import res_partner
+from . import kmessage_flow

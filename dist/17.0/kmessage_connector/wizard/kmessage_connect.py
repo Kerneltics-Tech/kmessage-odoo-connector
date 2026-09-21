@@ -60,6 +60,11 @@ class KMessageConnect(models.TransientModel):
              "the invoice arrives switched on; the rest arrive off, and you "
              "can never lose them \u2014 Restore the default rules brings back "
              "any you delete, without touching your own.")
+    import_flows = fields.Boolean(
+        string='Import the ready-made flows', default=True,
+        help="Imports the two flow trees that answer \u201cwhere is my invoice\u201d "
+             "and \u201cis it in stock\u201d without an assistant, with this Odoo's "
+             "address and token already in them. They arrive switched off.")
     create_templates = fields.Boolean(
         string='Write the templates for me', default=True,
         help="Creates the messages this addon sends — in Arabic, under names of its "
@@ -195,6 +200,9 @@ class KMessageConnect(models.TransientModel):
                 capabilities=capabilities,
             )
 
+        if self.import_flows:
+            steps.append(self._import_flows(account, raw_token))
+
         self.write({
             'state': 'done',
             'account_id': account.id,
@@ -223,6 +231,18 @@ class KMessageConnect(models.TransientModel):
                      made=len(made), live=live, held=len(held_back))
         return _("%(made)s rules set up, %(live)s of them live.",
                  made=len(made), live=live)
+
+    def _import_flows(self, account, token):
+        """Put the ready-made trees on the platform, filled in."""
+        made, skipped, failed = self.env['kmessage.flow'].import_all(account, token)
+        if failed:
+            return _("%(made)s flows imported; %(failed)s could not be: %(why)s",
+                     made=len(made), failed=len(failed), why='; '.join(failed))
+        if made:
+            return _("%s flows imported, switched off until you want them.", len(made))
+        if skipped:
+            return _("The flows were already there.")
+        return _("No flows to import.")
 
     def _set_up_the_long_way(self, account, note):
         """When the platform will not take the connection, do what it allows.

@@ -25,6 +25,12 @@ msgstr "نُشرت %(done)s أداة، وبقيت %(left)s في الانتظار
 #. module: kmessage_connector
 #. odoo-python
 #: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
+msgid "%(made)s flows imported; %(failed)s could not be: %(why)s"
+msgstr "تم استيراد %(made)s مسار؛ و%(failed)s ما نجح استيراده: %(why)s"
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
 msgid "%(made)s rules set up, %(live)s of them live."
 msgstr "تم إعداد %(made)s قواعد، %(live)s منها شغّالة."
 
@@ -41,6 +47,12 @@ msgstr "تم إعداد %(made)s قواعد، %(live)s منها شغّالة؛ �
 #: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
 msgid "%s already there."
 msgstr "%s قوالب كانت موجودة من قبل."
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
+msgid "%s flows imported, switched off until you want them."
+msgstr "تم استيراد %s مسار، مطفأة إلى أن تحتاجها."
 
 #. module: kmessage_connector
 #. odoo-python
@@ -905,6 +917,19 @@ msgid "Image"
 msgstr "صورة"
 
 #. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_connect__import_flows
+msgid "Import the ready-made flows"
+msgstr "استورد المسارات الجاهزة"
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_connect__import_flows
+msgid ""
+"Imports the two flow trees that answer “where is my invoice” and “is it in "
+"stock” without an assistant, with this Odoo's address and token already in "
+"them. They arrive switched off."
+msgstr "يستورد مسارين جاهزين يجاوبان «وين فاتورتي؟» و«هل هو متوفّر؟» بدون مساعد ذكي، وفيهما عنوان هذا الأودو وتوكنه معبّأين. يصلان مطفأين."
+
+#. module: kmessage_connector
 #: model:ir.actions.act_window,name:kmessage_connector.action_kmessage_event
 #: model:ir.ui.menu,name:kmessage_connector.menu_kmessage_events
 #: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_event_form
@@ -977,6 +1002,11 @@ msgstr "اتصال K-Message"
 #: model:ir.model,name:kmessage_connector.model_kmessage_document
 msgid "K-Message Document Rendering"
 msgstr "توليد مستندات K-Message"
+
+#. module: kmessage_connector
+#: model:ir.model,name:kmessage_connector.model_kmessage_flow
+msgid "K-Message Flow Graphs"
+msgstr "مسارات K-Message"
 
 #. module: kmessage_connector
 #: model:ir.model,name:kmessage_connector.model_kmessage_api
@@ -1387,6 +1417,12 @@ msgstr "لا توجد أدوات مساعد لنشرها بعد — تأتي م�
 #: code:addons/kmessage_connector/models/kmessage_api.py:0
 msgid "No customer here has that number."
 msgstr "لا يوجد عميل بهذا الرقم."
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
+msgid "No flows to import."
+msgstr "ما في مسارات لاستيرادها."
 
 #. module: kmessage_connector
 #. odoo-python
@@ -2306,6 +2342,12 @@ msgid ""
 msgstr "أول حروف التوكن، لتفرّق بين توكن وآخر. والباقي لا يظهر إلا مرة واحدة."
 
 #. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
+msgid "The flows were already there."
+msgstr "المسارات كانت موجودة أصلاً."
+
+#. module: kmessage_connector
 #: model_terms:ir.actions.act_window,help:kmessage_connector.action_kmessage_token
 msgid "The keys K-Message uses to reach this Odoo"
 msgstr "المفاتيح التي يصل بها K-Message إلى أودو"
@@ -2899,6 +2941,12 @@ msgstr "approve"
 #: code:addons/kmessage_connector/models/kmessage_starter.py:0
 msgid "approved and ready to send"
 msgstr "تمت الموافقة عليه وجاهز للإرسال"
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_flow.py:0
+msgid "could not read the existing flows: %s"
+msgstr "ما قدرنا نقرأ المسارات الموجودة: %s"
 
 #. module: kmessage_connector
 #. odoo-python

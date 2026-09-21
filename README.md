@@ -117,6 +117,9 @@ What it does, and reports back in a few lines:
   rules* on the connection puts back whatever was deleted and touches nothing
   else — not a default you edited, and never a rule you wrote yourself;
 * issues the token K-Message will present when it asks Odoo a question;
+* imports the two ready-made flow trees with that token and this Odoo's
+  address already in them, switched off — the answer for a tenant whose plan
+  has no assistant at all;
 * posts that token, the webhook address and the assistant tools to
   `POST /api/integrations/odoo/connect`, which registers all of it in one call.
 

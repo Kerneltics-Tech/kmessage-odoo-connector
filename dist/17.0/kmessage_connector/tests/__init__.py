@@ -13,3 +13,4 @@ from . import test_ai_tool
 from . import test_document
 from . import test_starter
 from . import test_connect
+from . import test_flow

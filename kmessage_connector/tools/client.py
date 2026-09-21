@@ -288,6 +288,14 @@ class KMessageClient:
     def delete_ai_context(self, context_id):
         return self._request('DELETE', '/api/chatbot/ai-contexts/%s' % context_id)
 
+    def flows(self):
+        data = self._request('GET', '/api/chatbot/flows') or {}
+        return data.get('flows') or data.get('data') or []
+
+    def create_flow(self, payload):
+        """Import one flow graph. The file is already the whole request body."""
+        return self._request('POST', '/api/chatbot/flows', json=payload)
+
     def send_template(
         self,
         phone_number,

@@ -69,6 +69,7 @@ Behind *Choose what it sets up*, each part has its own switch. All five are on:
 | --- | --- |
 | **Write the templates for me** | Creates the messages this addon sends, in Arabic, and submits them to Meta. Approval usually lands within minutes. Existing templates are never touched |
 | **Set up the rules too** | Writes the automations that use them, filled in. Sending the invoice arrives on; the rest arrive off |
+| **Import the ready-made flows** | The two trees that answer without an assistant, with the address and token filled in. They arrive off |
 | **Let K-Message call this Odoo** | Subscribes this Odoo to WhatsApp events |
 | **Teach the assistant to ask Odoo** | Publishes each capability as an assistant tool |
 | **Issue a token for K-Message** | The key K-Message presents when it asks Odoo about a customer |
@@ -84,6 +85,7 @@ summary, line by line:
 • 5 rules set up, 1 of them live.
 • K-Message will call this Odoo.
 • The assistant can now answer 6 questions from Odoo.
+• 2 flows imported, switched off until you want them.
 ```
 
 *Choose what it sets up*, beside the button, stops at a review screen with a

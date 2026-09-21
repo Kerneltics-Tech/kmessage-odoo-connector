@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-21 11:31+0000\n"
-"PO-Revision-Date: 2026-09-21 11:31+0000\n"
+"POT-Creation-Date: 2026-09-21 12:14+0000\n"
+"PO-Revision-Date: 2026-09-21 12:14+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -19,6 +19,12 @@ msgstr ""
 #. odoo-python
 #: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
 msgid "%(done)s tool(s) published; %(left)s still waiting: %(why)s"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
+msgid "%(made)s flows imported; %(failed)s could not be: %(why)s"
 msgstr ""
 
 #. module: kmessage_connector
@@ -39,6 +45,12 @@ msgstr ""
 #. odoo-python
 #: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
 msgid "%s already there."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
+msgid "%s flows imported, switched off until you want them."
 msgstr ""
 
 #. module: kmessage_connector
@@ -904,6 +916,19 @@ msgid "Image"
 msgstr ""
 
 #. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_connect__import_flows
+msgid "Import the ready-made flows"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_connect__import_flows
+msgid ""
+"Imports the two flow trees that answer “where is my invoice” and “is it in "
+"stock” without an assistant, with this Odoo's address and token already in "
+"them. They arrive switched off."
+msgstr ""
+
+#. module: kmessage_connector
 #: model:ir.actions.act_window,name:kmessage_connector.action_kmessage_event
 #: model:ir.ui.menu,name:kmessage_connector.menu_kmessage_events
 #: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_event_form
@@ -975,6 +1000,11 @@ msgstr ""
 #. module: kmessage_connector
 #: model:ir.model,name:kmessage_connector.model_kmessage_document
 msgid "K-Message Document Rendering"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model,name:kmessage_connector.model_kmessage_flow
+msgid "K-Message Flow Graphs"
 msgstr ""
 
 #. module: kmessage_connector
@@ -1379,6 +1409,12 @@ msgstr ""
 #. odoo-python
 #: code:addons/kmessage_connector/models/kmessage_api.py:0
 msgid "No customer here has that number."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
+msgid "No flows to import."
 msgstr ""
 
 #. module: kmessage_connector
@@ -2296,6 +2332,12 @@ msgid ""
 msgstr ""
 
 #. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
+msgid "The flows were already there."
+msgstr ""
+
+#. module: kmessage_connector
 #: model_terms:ir.actions.act_window,help:kmessage_connector.action_kmessage_token
 msgid "The keys K-Message uses to reach this Odoo"
 msgstr ""
@@ -2888,6 +2930,12 @@ msgstr ""
 #. odoo-python
 #: code:addons/kmessage_connector/models/kmessage_starter.py:0
 msgid "approved and ready to send"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_flow.py:0
+msgid "could not read the existing flows: %s"
 msgstr ""
 
 #. module: kmessage_connector

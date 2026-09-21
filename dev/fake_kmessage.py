@@ -26,6 +26,8 @@ what it was sent so a test can assert on it:
     POST /_refuse_tools               answer 403 to tool publishing, like a managed plan
     POST /_approve                    Meta gets back to us: {"name": …} → APPROVED
 
+    GET  /api/chatbot/flows           the flow trees a company has
+    POST /api/chatbot/flows           import one
     GET  /api/chatbot/ai-contexts     the assistant tools a company has registered
     POST /api/chatbot/ai-contexts     register one
 
@@ -147,6 +149,7 @@ class State:
         self.contexts: dict[str, dict] = {}
         self.drafts: dict[str, dict] = {}
         self.uploads: list[dict] = []
+        self.flows: dict[str, dict] = {}
         self.refuse_tools = False
 
     def reset(self) -> None:
@@ -157,6 +160,7 @@ class State:
             self.contexts.clear()
             self.drafts.clear()
             self.uploads.clear()
+            self.flows.clear()
             self.fail_next = 0
             self.refuse_tools = False
 
@@ -248,6 +252,10 @@ class Handler(BaseHTTPRequestHandler):
             with STATE.lock:
                 rows = TEMPLATES + list(STATE.drafts.values())
             return self._ok({"templates": rows, "total": len(rows), "page": 1, "limit": 50})
+        if path == "/api/chatbot/flows":
+            with STATE.lock:
+                rows = list(STATE.flows.values())
+            return self._ok({"flows": rows, "total": len(rows)})
         if path == "/api/webhooks":
             with STATE.lock:
                 hooks = list(STATE.webhooks.values())
@@ -438,6 +446,16 @@ class Handler(BaseHTTPRequestHandler):
                                           "uploaded. Please upload a sample document first.")
                 record["status"] = "PENDING"
                 return self._ok(record)
+
+        if path == "/api/chatbot/flows":
+            payload = json.loads(self._body() or b"{}")
+            name = payload.get("name") or ""
+            if not name:
+                return self._err(400, "name is required")
+            record = dict(payload, id=str(uuid.uuid4()))
+            with STATE.lock:
+                STATE.flows[record["id"]] = record
+            return self._ok(record)
 
         if path == "/api/messages/template":
             return self._template_send()

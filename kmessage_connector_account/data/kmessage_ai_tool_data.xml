@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Not records: an assistant tool needs a connection, and a database
+             may be installing this addon before it has one. The rows are
+             described in models/kmessage_ai_tool.py and created here for a
+             database that is already connected; a database that connects later
+             gets them when the connection is created. -->
+        <function model="kmessage.ai.tool" name="_seed_invoice_tools"/>
+    </data>
+</odoo>

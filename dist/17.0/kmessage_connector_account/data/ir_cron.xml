@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Odoo raises no event when an invoice falls due, so the only way to
+         notice is to look. This finds nothing to do until somebody creates a
+         rule on the “An invoice falls due” trigger and switches it on. -->
+    <record id="cron_invoice_due" model="ir.cron">
+        <field name="name">K-Message: invoices that have fallen due</field>
+        <field name="model_id" ref="account.model_account_move"/>
+        <field name="state">code</field>
+        <field name="code">model._kmessage_cron_due_invoices()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active" eval="True"/>
+    </record>
+</odoo>

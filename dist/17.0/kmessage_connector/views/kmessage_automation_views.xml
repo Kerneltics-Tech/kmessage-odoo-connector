@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_kmessage_automation_tree" model="ir.ui.view">
+        <field name="name">kmessage.automation.tree</field>
+        <field name="model">kmessage.automation</field>
+        <field name="arch" type="xml">
+            <tree string="Automations">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="trigger"/>
+                <field name="template_id"/>
+                <field name="attach_document"/>
+                <field name="sent_count" string="Sent"/>
+                <field name="last_run" optional="hide"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+                <field name="active" widget="boolean_toggle"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_kmessage_automation_form" model="ir.ui.view">
+        <field name="name">kmessage.automation.form</field>
+        <field name="model">kmessage.automation</field>
+        <field name="arch" type="xml">
+            <form string="Automation">
+                <sheet>
+                    <widget name="web_ribbon" title="Off" bg_color="text-bg-secondary" invisible="active"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="e.g. Send the invoice when it is posted"/></h1>
+                    </div>
+                    <group>
+                        <group string="When">
+                            <field name="trigger"/>
+                            <field name="filter_domain" widget="domain"
+                                   options="{'model': 'model_name', 'in_dialog': True}"
+                                   invisible="not model_name"/>
+                            <field name="model_name" invisible="1"/>
+                            <field name="cooldown_hours"/>
+                        </group>
+                        <group string="Send">
+                            <field name="account_id"/>
+                            <field name="template_id"/>
+                            <field name="attach_document"/>
+                            <field name="report_name" placeholder="the usual printout"
+                                   invisible="not attach_document"/>
+                            <field name="language_mode"/>
+                            <field name="fixed_language" invisible="language_mode != 'fixed'"/>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Placeholders" name="params">
+                            <div class="alert alert-info" role="alert" invisible="param_count > 0">
+                                This template has no placeholders to fill.
+                            </div>
+                            <field name="param_count" invisible="1"/>
+                            <field name="param_ids">
+                                <tree editable="bottom">
+                                    <field name="index" string="{{n}}"/>
+                                    <field name="source"/>
+                                    <field name="field_path" invisible="source != 'field'"
+                                           placeholder="amount_total, partner_id.name"/>
+                                    <field name="fixed_value" invisible="source != 'fixed'"/>
+                                    <field name="expression" invisible="source != 'expression'"
+                                           groups="base.group_system"
+                                           placeholder="record.amount_total - record.amount_residual"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Results" name="stats">
+                            <group>
+                                <field name="sent_count" readonly="1"/>
+                                <field name="last_run" readonly="1"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_kmessage_automation" model="ir.actions.act_window">
+        <field name="name">Automations</field>
+        <field name="res_model">kmessage.automation</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'active_test': False}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Decide what Odoo says, and when</p>
+            <p>An automation is one rule: when something happens here — an invoice posted,
+               an order confirmed — send that customer a template. New rules start switched
+               off, so nothing goes out until you say so.</p>
+        </field>
+    </record>
+</odoo>

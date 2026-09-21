@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_kmessage_event_tree" model="ir.ui.view">
+        <field name="name">kmessage.event.tree</field>
+        <field name="model">kmessage.event</field>
+        <field name="arch" type="xml">
+            <list string="Incoming" create="false">
+                <field name="create_date" string="Received"/>
+                <field name="event"/>
+                <field name="contact_name" optional="show"/>
+                <field name="contact_phone"/>
+                <field name="partner_id"/>
+                <field name="outcome"/>
+                <field name="handled"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_kmessage_event_form" model="ir.ui.view">
+        <field name="name">kmessage.event.form</field>
+        <field name="model">kmessage.event</field>
+        <field name="arch" type="xml">
+            <form string="Incoming" create="false" edit="false">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="event"/>
+                            <field name="contact_name"/>
+                            <field name="contact_phone"/>
+                            <field name="partner_id"/>
+                        </group>
+                        <group>
+                            <field name="account_id"/>
+                            <field name="remote_message_id"/>
+                            <field name="reference"/>
+                            <field name="handled"/>
+                            <field name="outcome"/>
+                        </group>
+                    </group>
+                    <group string="What arrived">
+                        <field name="payload" nolabel="1" colspan="2" widget="text"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_kmessage_event" model="ir.actions.act_window">
+        <field name="name">Incoming</field>
+        <field name="res_model">kmessage.event</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Nothing has come in yet</p>
+            <p>Replies, button taps and delivery news from K-Message are recorded here the
+               moment they arrive — before anything is done with them.</p>
+        </field>
+    </record>
+</odoo>

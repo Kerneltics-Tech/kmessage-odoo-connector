@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Availability belongs to the shelf, not to a person: no phone number
+             is asked for and none is needed to answer. -->
+        <record id="capability_stock_check" model="kmessage.capability">
+            <field name="code">stock_check</field>
+            <field name="name">Is it in stock</field>
+            <field name="description">Says whether a product is available, branch by branch. Quantities are given as a band unless this row says otherwise.</field>
+            <field name="endpoint">/kmessage/api/v1/stock/check</field>
+            <field name="method">POST</field>
+            <field name="personal" eval="False"/>
+            <field name="max_rows">5</field>
+            <field name="requires_module">stock</field>
+            <field name="sequence">40</field>
+        </record>
+
+        <record id="capability_delivery_status" model="kmessage.capability">
+            <field name="code">delivery_status</field>
+            <field name="name">Where is my delivery</field>
+            <field name="description">Given the number in the conversation, says where that customer's recent deliveries have got to. Never anybody else's.</field>
+            <field name="endpoint">/kmessage/api/v1/delivery/status</field>
+            <field name="method">POST</field>
+            <field name="personal" eval="True"/>
+            <field name="max_rows">3</field>
+            <field name="requires_module">stock</field>
+            <field name="sequence">41</field>
+        </record>
+    </data>
+</odoo>

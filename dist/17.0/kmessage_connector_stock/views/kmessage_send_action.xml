@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Sending by hand, from the record itself: the wizard reads the record
+         out of the action's context, so one entry under Action covers every
+         delivery note. -->
+    <record id="action_kmessage_send_stock_picking" model="ir.actions.act_window">
+        <field name="name">Send on WhatsApp</field>
+        <field name="res_model">kmessage.send</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="binding_model_id" ref="stock.model_stock_picking"/>
+        <field name="binding_view_types">form</field>
+        <field name="groups_id" eval="[(4, ref('kmessage_connector.group_kmessage_user'))]"/>
+    </record>
+</odoo>

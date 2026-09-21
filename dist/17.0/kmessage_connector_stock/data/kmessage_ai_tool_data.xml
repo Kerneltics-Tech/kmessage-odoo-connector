@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Not records: a tool belongs to a connection, and at install time there
+         is usually no connection yet. The call drafts them for whatever exists
+         now, and creating a connection later drafts them then. It is safe to
+         repeat, which is why it is outside a noupdate block — an upgrade puts
+         back a row somebody deleted by accident. -->
+    <function model="kmessage.ai.tool" name="_kmessage_seed_stock_tools"/>
+</odoo>

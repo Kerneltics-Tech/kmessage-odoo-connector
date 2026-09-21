@@ -1,0 +1,2841 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* kmessage_connector
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-21 00:23+0000\n"
+"PO-Revision-Date: 2026-09-21 00:23+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
+msgid "%(done)s tool(s) published; %(left)s still waiting: %(why)s"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/wizard/kmessage_send.py:0
+msgid "%s has asked not to be messaged on WhatsApp."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
+msgid "%s templates are now available to choose from."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_account.py:0
+msgid "%s templates synced."
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_token_reveal_form
+msgid ""
+"<b>Copy this now.</b> Odoo keeps only a fingerprint, so it cannot be shown "
+"again."
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_connect_form
+msgid ""
+"<b>Copy this token now.</b> Odoo keeps only a fingerprint of it, so it\n"
+"                        cannot be shown again."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields.selection,name:kmessage_connector.selection__kmessage_automation_param__source__field
+msgid "A field on the record"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_automation_param__field_path
+msgid "A field, or a path through relations: amount_total, partner_id.name."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_message.py:0
+msgid "A message that has already been sent cannot be cancelled."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_reply.py:0
+msgid ""
+"A rule that neither runs an action nor answers the customer would do nothing"
+" at all."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields.selection,name:kmessage_connector.selection__kmessage_automation_param__source__expression
+msgid "A small expression"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.actions.act_window,help:kmessage_connector.action_kmessage_token
+msgid ""
+"A token is shown once, when it is issued. Odoo keeps only a fingerprint, so a\n"
+"               lost token is replaced rather than recovered."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_token.py:0
+msgid ""
+"A token that has been used is revoked, not deleted, so its history stays "
+"readable."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
+msgid ""
+"A token was issued for K-Message, covering %s capabilities. It is shown "
+"once, below."
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_send_form
+msgid "About"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_capability_tree
+msgid "About one customer"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_ai_tool__account_id
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_automation__account_id
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_connect__account_id
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_event__account_id
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_message__account_id
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_reply_rule__account_id
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_send__account_id
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_template__account_id
+msgid "Account"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_connect__account_options
+msgid "Account Options"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_account__active
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_ai_tool__active
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_automation__active
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_capability__active
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_reply_rule__active
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_token__active
+#: model:ir.model.fields.selection,name:kmessage_connector.selection__kmessage_token__state__active
+msgid "Active"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:res.groups,name:kmessage_connector.group_kmessage_manager
+msgid "Administrator"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_automation_param__expression
+msgid ""
+"Advanced: Python evaluated with `record` available, e.g. record.amount_total"
+" - record.amount_residual."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_token__expires_on
+msgid "After this date the token stops working. Leave empty for no expiry."
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_capability_tree
+msgid "Allowed"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_event.py:0
+msgid "Already a customer here."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields.selection,name:kmessage_connector.selection__kmessage_automation_param__source__fixed
+msgid "Always the same text"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields.selection,name:kmessage_connector.selection__kmessage_automation__language_mode__fixed
+msgid "Always this language"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.actions.act_window,help:kmessage_connector.action_kmessage_automation
+msgid ""
+"An automation is one rule: when something happens here — an invoice posted,\n"
+"               an order confirmed — send that customer a template. New rules start switched\n"
+"               off, so nothing goes out until you say so."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_automation__filter_domain
+msgid ""
+"An optional extra condition, in Odoo's filter syntax. Records that do not "
+"match are left alone."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_account__inbound_enabled
+msgid "Answer questions"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_reply_rule__reply_template_id
+msgid "Answer with"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_event.py:0
+msgid "Answered on WhatsApp: %s"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_capability__personal
+msgid ""
+"Answers about one identified customer. These always require a phone number "
+"and only ever return that person's own records."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:kmessage.capability,description:kmessage_connector.capability_ping
+msgid ""
+"Answers that this Odoo is reachable and says which capabilities are on. "
+"Carries no customer data."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_template__usable
+msgid "Approved templates are the only ones that can be sent."
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_ai_tool_form
+msgid "Assistant tool"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.actions.act_window,name:kmessage_connector.action_kmessage_ai_tool
+#: model:ir.ui.menu,name:kmessage_connector.menu_kmessage_ai_tool
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_ai_tool_list
+msgid "Assistant tools"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_automation__attach_document
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_send__attach_document
+msgid "Attach the PDF"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_message__attachment_id
+msgid "Attachment"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_message__attachment_name
+msgid "Attachment Name"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_message__attempts
+msgid "Attempts"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_automation_param__automation_id
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_reply_rule__automation_id
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_automation_form
+msgid "Automation"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.actions.act_window,name:kmessage_connector.action_kmessage_automation
+#: model:ir.ui.menu,name:kmessage_connector.menu_kmessage_automation
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_automation_tree
+msgid "Automations"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_capability__available
+msgid "Available"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_template_form
+msgid "Body"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_template__body_content
+msgid "Body Content"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_message__body_preview
+msgid "Body Preview"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_reply_rule__button_id
+msgid "Button"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_template__button_count
+msgid "Button Count"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_reply_rule__button_text
+msgid "Button Text"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_template_tree
+msgid "Buttons"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_message__buttons_json
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_template__buttons_json
+msgid "Buttons Json"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_connect__can_list_webhooks
+msgid "Can List Webhooks"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_account__can_read_templates
+msgid "Can Read Templates"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_account__can_send
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_connect__can_send
+msgid "Can Send"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_account__can_list_webhooks
+msgid "Can see webhooks"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:res.groups,comment:kmessage_connector.group_kmessage_user
+msgid "Can see what was sent and send a document by hand."
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_message_form
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_send_form
+msgid "Cancel"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields.selection,name:kmessage_connector.selection__kmessage_message__state__cancelled
+msgid "Cancelled"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_ai_tool__capability_id
+msgid "Capability"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_template_tree
+msgid "Carries a PDF"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_template__category
+msgid "Category"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields.selection,name:kmessage_connector.selection__kmessage_connect__state__checked
+msgid "Checked"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_connect_form
+msgid "Close"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_capability__code
+msgid "Code"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_ai_tool__fields_json
+msgid "Columns shown"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_ai_tool_form
+msgid "Columns the assistant may see"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_account__company_id
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_ai_tool__company_id
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_automation__company_id
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_connect__company_id
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_event__company_id
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_message__company_id
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_reply_rule__company_id
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_template__company_id
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_token__company_id
+msgid "Company"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.ui.menu,name:kmessage_connector.menu_kmessage_setup
+msgid "Configuration"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.ui.menu,name:kmessage_connector.menu_kmessage_connect
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_connect_form
+msgid "Connect"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.actions.act_window,help:kmessage_connector.action_kmessage_account
+msgid "Connect this Odoo to K-Message"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.actions.act_window,name:kmessage_connector.action_kmessage_connect
+#: model:ir.model,name:kmessage_connector.model_kmessage_connect
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_connect_form
+msgid "Connect to K-Message"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields.selection,name:kmessage_connector.selection__kmessage_account__state__connected
+msgid "Connected"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
+msgid "Connected as %s."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_account.py:0
+msgid "Connected to K-Message as %s."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.actions.act_window,name:kmessage_connector.action_kmessage_account
+#: model:ir.ui.menu,name:kmessage_connector.menu_kmessage_account
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_account_form
+msgid "Connection"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model,name:kmessage_connector.model_res_partner
+msgid "Contact"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_event__contact_name
+msgid "Contact Name"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_event__contact_phone
+msgid "Contact Phone"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_automation__cooldown_hours
+msgid "Cooldown Hours"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_token_reveal__raw_token
+msgid ""
+"Copy this into K-Message now. Odoo stores only a fingerprint of it, so this "
+"is the last time it can be read."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_account.py:0
+msgid "Could not read the webhooks: %s"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_message.py:0
+msgid "Could not send on WhatsApp to %(who)s: %(error)s"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_account__create_uid
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_ai_tool__create_uid
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_automation__create_uid
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_automation_param__create_uid
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_capability__create_uid
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_connect__create_uid
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_event__create_uid
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_message__create_uid
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_reply_rule__create_uid
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_send__create_uid
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_template__create_uid
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_token__create_uid
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_token_reveal__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_account__create_date
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_ai_tool__create_date
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_automation__create_date
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_automation_param__create_date
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_capability__create_date
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_connect__create_date
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_event__create_date
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_message__create_date
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_reply_rule__create_date
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_send__create_date
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_template__create_date
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_token__create_date
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_token_reveal__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_connect__issue_token
+msgid "Creates the token K-Message uses to ask this Odoo about a customer."
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_message_search
+msgid "Customer"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.actions.act_window,help:kmessage_connector.action_kmessage_automation
+msgid "Decide what Odoo says, and when"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields.selection,name:kmessage_connector.selection__kmessage_message__delivery_status__delivered
+msgid "Delivered"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_message__delivery_status
+msgid "Delivery Status"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_event.py:0
+msgid "Delivery status updated."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:kmessage.capability,name:kmessage_connector.capability_tools
+msgid "Describe this API"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_ai_tool__description
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_capability__description
+msgid "Description"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_account__display_name
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_ai_tool__display_name
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_automation__display_name
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_automation_param__display_name
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_capability__display_name
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_connect__display_name
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_event__display_name
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_message__display_name
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_reply_rule__display_name
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_send__display_name
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_template__display_name
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_token__display_name
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_token_reveal__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_automation__cooldown_hours
+msgid ""
+"Do not send this same message about the same record twice within these many "
+"hours. 0 switches the protection off."
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_reply_rule_form
+msgid "Do this"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields.selection,name:kmessage_connector.selection__kmessage_template__header_type__document
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_message_tree
+msgid "Document"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields.selection,name:kmessage_connector.selection__kmessage_connect__state__done
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_token_reveal_form
+msgid "Done"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields.selection,name:kmessage_connector.selection__kmessage_message__state__draft
+msgid "Draft"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.constraint,message:kmessage_connector.constraint_kmessage_account_company_unique
+msgid "Each company has a single K-Message connection."
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.actions.act_window,help:kmessage_connector.action_kmessage_capability
+msgid ""
+"Each line is one question K-Message may put to Odoo on a customer's behalf.\n"
+"               Untick one and it is refused from that moment, with a clear reason, for every\n"
+"               token at once."
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.actions.act_window,help:kmessage_connector.action_kmessage_ai_tool
+msgid ""
+"Each tool publishes one Odoo endpoint to the K-Message assistant. The customer's\n"
+"               number is filled in by K-Message, so a tool can only ever answer about the person\n"
+"               in the conversation."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_ai_tool__empty_message
+msgid "Empty Message"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_capability__endpoint
+msgid "Endpoint"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_message__error
+msgid "Error"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_event__event
+msgid "Event"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.actions.act_window,help:kmessage_connector.action_kmessage_message
+msgid ""
+"Every message Odoo sends on WhatsApp is listed here, with whether it "
+"arrived."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_api.py:0
+msgid ""
+"Every personal request must carry the customer's phone number, and answers "
+"only ever concern that customer."
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.actions.act_window,help:kmessage_connector.action_kmessage_capability
+msgid "Everything K-Message can ask this Odoo"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_token__capability_ids
+msgid ""
+"Exactly what this token is allowed to ask for. Anything not ticked is "
+"refused."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields.selection,name:kmessage_connector.selection__kmessage_token__state__expired
+msgid "Expired"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_token__expires_on
+msgid "Expires On"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_automation_param__expression
+msgid "Expression"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields.selection,name:kmessage_connector.selection__kmessage_message__delivery_status__failed
+#: model:ir.model.fields.selection,name:kmessage_connector.selection__kmessage_message__state__failed
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_account_form
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_message_search
+msgid "Failed"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_account__failed_count
+msgid "Failed Count"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_automation_param__field_path
+msgid "Field Path"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_account.py:0
+msgid "Fill in the K-Message URL and token first."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_automation__fixed_language
+msgid "Fixed Language"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_automation_param__fixed_value
+msgid "Fixed Value"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_template_form
+msgid "Footer"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_template__footer_content
+msgid "Footer Content"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_connect_form
+msgid "Found"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_event.py:0
+msgid "From a number we do not recognise."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields.selection,name:kmessage_connector.selection__kmessage_capability__method__get
+msgid "GET"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_connect_form
+msgid "Give these to whoever administers K-Message"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_ai_tool.py:0
+msgid "Give this tool a live token before publishing it."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:kmessage.capability,description:kmessage_connector.capability_customer_lookup
+msgid ""
+"Given the number in the conversation, says whether that person is a customer"
+" here, in which language they are served, and what they owe."
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_message_search
+msgid "Group by"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_event__handled
+msgid "Handled"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_event.py:0
+msgid "Handled."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_event.py:0
+msgid "Handler failed; see the server log."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_template__header_type
+msgid "Header Type"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:kmessage.capability,name:kmessage_connector.capability_ping
+msgid "Health check"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:res.groups,comment:kmessage_connector.group_kmessage_manager
+msgid ""
+"Holds the connection, the tokens and the switches. The token and the\n"
+"            webhook secret are readable only by this group."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_automation__param_count
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_template__param_count
+msgid "How many {{1}}-style placeholders the body has."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_account__name
+msgid "How this connection is referred to inside Odoo."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_account__id
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_ai_tool__id
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_automation__id
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_automation_param__id
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_capability__id
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_connect__id
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_event__id
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_message__id
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_reply_rule__id
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_send__id
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_template__id
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_token__id
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_token_reveal__id
+msgid "ID"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields.selection,name:kmessage_connector.selection__kmessage_template__header_type__image
+msgid "Image"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.actions.act_window,name:kmessage_connector.action_kmessage_event
+#: model:ir.ui.menu,name:kmessage_connector.menu_kmessage_events
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_event_form
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_event_tree
+msgid "Incoming"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_automation_param__index
+msgid "Index"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_connect__issue_token
+msgid "Issue a token for K-Message"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_connect__issued_token
+msgid "Issued Token"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_ai_tool__items_path
+msgid "Items Path"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_account.py:0
+#: model:ir.module.category,name:kmessage_connector.module_category_kmessage
+#: model:ir.ui.menu,name:kmessage_connector.menu_kmessage_root
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_account_form
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_account_tree
+msgid "K-Message"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
+msgid "K-Message (%s)"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model,name:kmessage_connector.model_kmessage_token
+msgid "K-Message Access Token"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model,name:kmessage_connector.model_kmessage_ai_tool
+msgid "K-Message Assistant Tool"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model,name:kmessage_connector.model_kmessage_automation
+msgid "K-Message Automation"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model,name:kmessage_connector.model_kmessage_capability
+msgid "K-Message Capability"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model,name:kmessage_connector.model_kmessage_account
+msgid "K-Message Connection"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model,name:kmessage_connector.model_kmessage_document
+msgid "K-Message Document Rendering"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model,name:kmessage_connector.model_kmessage_api
+msgid "K-Message Inbound API"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model,name:kmessage_connector.model_kmessage_event
+msgid "K-Message Inbound Event"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model,name:kmessage_connector.model_kmessage_message
+msgid "K-Message Message"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model,name:kmessage_connector.model_kmessage_reply_rule
+msgid "K-Message Reply Rule"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model,name:kmessage_connector.model_kmessage_template
+msgid "K-Message Template"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model,name:kmessage_connector.model_kmessage_automation_param
+msgid "K-Message Template Parameter"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_account__base_url
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_connect__base_url
+msgid "K-Message URL"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_ai_tool.py:0
+msgid "K-Message allows at most %(max)s columns; “%(tool)s” lists %(count)s."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_ai_tool.py:0
+msgid "K-Message assistant (%s)"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_account.py:0
+msgid ""
+"K-Message cannot call this Odoo: %(why)s.\n"
+"\n"
+"Publish Odoo on an address the internet can reach, then set that address in Settings ▸ Technical ▸ System Parameters as web.base.url — it is what this page's webhook address is built from."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
+msgid "K-Message did not accept that: %s"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_token_form
+msgid "K-Message production"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/wizard/kmessage_send.py:0
+msgid "K-Message refused it: %s"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_account.py:0
+msgid "K-Message refused the connection: %s"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_ai_tool.py:0
+msgid "K-Message refused the tool: %s"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_account.py:0
+msgid "K-Message refused the webhook: %s"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_account.py:0
+msgid "K-Message will now call this Odoo."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
+msgid "K-Message will send replies and delivery news to this Odoo."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_ai_tool.py:0
+msgid ""
+"K-Message would not let this token publish a tool: %s\n"
+"\n"
+"The token's role needs permission to change chatbot settings, and the tenant needs AI replies switched on."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_ai_tool.py:0
+msgid "K-Message would not remove the tool: %s"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.actions.server,name:kmessage_connector.cron_send_queue_ir_actions_server
+msgid "K-Message: send queued messages"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.actions.server,name:kmessage_connector.cron_clean_events_ir_actions_server
+msgid "K-Message: tidy the event log"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_message__template_name
+msgid "Kept even if the template is later removed."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_ai_tool__kind
+msgid "Kind"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_res_partner__kmessage_message_ids
+#: model:ir.model.fields,field_description:kmessage_connector.field_res_users__kmessage_message_ids
+msgid "Kmessage Message"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_res_partner__kmessage_message_count
+#: model:ir.model.fields,field_description:kmessage_connector.field_res_users__kmessage_message_count
+msgid "Kmessage Message Count"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_message__language
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_template__language
+msgid "Language"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_automation__language_mode
+msgid "Language Mode"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_account__last_check
+msgid "Last Check"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_account__last_error
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_ai_tool__last_error
+msgid "Last Error"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_ai_tool__last_published
+msgid "Last Published"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_automation__last_run
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_reply_rule__last_run
+msgid "Last Run"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_account__write_uid
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_ai_tool__write_uid
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_automation__write_uid
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_automation_param__write_uid
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_capability__write_uid
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_connect__write_uid
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_event__write_uid
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_message__write_uid
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_reply_rule__write_uid
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_send__write_uid
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_template__write_uid
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_token__write_uid
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_token_reveal__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_account__write_date
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_ai_tool__write_date
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_automation__write_date
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_automation_param__write_date
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_capability__write_date
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_connect__write_date
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_event__write_date
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_message__write_date
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_reply_rule__write_date
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_send__write_date
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_template__write_date
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_token__write_date
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_token_reveal__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_capability__last_used
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_token__last_used
+msgid "Last Used"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_connect__setup_webhook
+msgid "Let K-Message call this Odoo"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.actions.act_window,help:kmessage_connector.action_kmessage_ai_tool
+msgid "Let the assistant answer from Odoo"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:kmessage.capability,description:kmessage_connector.capability_tools
+msgid ""
+"Lists the endpoints that are switched on, for whoever is wiring K-Message "
+"up."
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.actions.act_window,help:kmessage_connector.action_kmessage_reply_rule
+msgid "Make a tap do something"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_reply_rule__button_text
+msgid ""
+"Matched when the payload is empty or does not match: the words on the "
+"button, compared without case. Leave both empty to match every tap."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_ai_tool__max_rows
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_capability__max_rows
+msgid "Max Rows"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_token__capability_ids
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_token_form
+msgid "May use"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_message.py:0
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_message_form
+msgid "Message"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_account__message_count
+msgid "Message Count"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_account.py:0
+#: model:ir.actions.act_window,name:kmessage_connector.action_kmessage_message
+#: model:ir.ui.menu,name:kmessage_connector.menu_kmessage_messages
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_account_form
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_message_search
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_message_tree
+msgid "Messages"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_capability__method
+msgid "Method"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_reply_rule__model_name
+msgid "Model"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_automation__model_name
+msgid "Model Name"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_token__rate_limit
+msgid "Most requests per minute allowed on this token. 0 means no limit."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_capability__max_rows
+msgid ""
+"Most rows returned in one answer. A conversation cannot read a long list, "
+"and a long list is how an accident becomes an export."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_account__name
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_ai_tool__name
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_automation__name
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_capability__name
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_reply_rule__name
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_template__name
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_token__name
+msgid "Name"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_event.py:0
+msgid "New contact on WhatsApp; no matching customer in Odoo."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_automation__active
+msgid ""
+"New rules start switched off. Turn this on when the template and the "
+"parameters below are right."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_message__next_attempt
+msgid "Next Attempt"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_send__opted_out
+#: model:ir.model.fields,field_description:kmessage_connector.field_res_partner__kmessage_opt_out
+#: model:ir.model.fields,field_description:kmessage_connector.field_res_users__kmessage_opt_out
+msgid "No WhatsApp"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_event.py:0
+msgid "No action needed for this event."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
+msgid ""
+"No assistant tools to publish yet — they arrive with the Invoicing, Sales "
+"and Inventory apps."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_api.py:0
+msgid "No customer here has that number."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_event.py:0
+msgid "No matching message in the outbox."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_event.py:0
+msgid "No message id to match."
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.actions.act_window,help:kmessage_connector.action_kmessage_template
+msgid "No templates yet"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields.selection,name:kmessage_connector.selection__kmessage_template__header_type__none
+msgid "None"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields.selection,name:kmessage_connector.selection__kmessage_account__state__draft
+msgid "Not connected"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields.selection,name:kmessage_connector.selection__kmessage_ai_tool__state__draft
+msgid "Not published"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields.selection,name:kmessage_connector.selection__kmessage_account__webhook_state__none
+msgid "Not set up"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_event.py:0
+msgid "Noted on %s."
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.actions.act_window,help:kmessage_connector.action_kmessage_message
+msgid "Nothing has been sent yet"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.actions.act_window,help:kmessage_connector.action_kmessage_event
+msgid "Nothing has come in yet"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_api.py:0
+msgid "Nothing here answers that yet."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/wizard/kmessage_send.py:0
+msgid "Nothing was queued — check the number and that sending is switched on."
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_connect_form
+msgid "Numbers"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_automation_form
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_reply_rule_form
+msgid "Off"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_account__inbound_enabled
+msgid ""
+"Off means K-Message gets nothing back from this Odoo, whatever the "
+"capabilities say."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_account__outbound_enabled
+msgid "Off means Odoo never sends anything, whatever the automations say."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_capability__active
+msgid ""
+"Off means every request for this is refused, with a clear reason. Nothing "
+"else about the connection changes."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_reply_rule__model_id
+msgid "On records of"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_reply_rule__model_id
+msgid "Only replies about this kind of record. Empty means any."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_reply_rule__automation_id
+msgid ""
+"Only replies to messages this automation sent. Empty means any message."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_reply_rule__once_only
+msgid "Only the first tap"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_automation__filter_domain
+msgid "Only when"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_account.py:0
+msgid ""
+"Only your K-Message provider can add a webhook on this plan. The address and"
+" secret to give them are on this page."
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_connect_form
+msgid "Open the connection"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_reply_rule__reply_template_id
+msgid ""
+"Optional: a template sent back to the customer once the action has run, so a"
+" tap is acknowledged rather than swallowed."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_event__outcome
+msgid "Outcome"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields.selection,name:kmessage_connector.selection__kmessage_capability__method__post
+msgid "POST"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_automation__param_ids
+msgid "Param"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_automation__param_count
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_template__param_count
+msgid "Param Count"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_ai_tool__params_json
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_send__param_json
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_ai_tool_form
+msgid "Parameters"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_message__params_json
+msgid "Params Json"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_event__partner_id
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_message__partner_id
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_send__partner_id
+msgid "Partner"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.actions.act_window,help:kmessage_connector.action_kmessage_account
+msgid ""
+"Paste the address of your K-Message service and the private token from it.\n"
+"               Everything else — templates, the webhook, the token K-Message uses to ask\n"
+"               about a customer — is set up from here."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_event__payload
+msgid "Payload"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields.selection,name:kmessage_connector.selection__kmessage_message__delivery_status__pending
+msgid "Pending"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_reply_rule__once_only
+msgid ""
+"People tap twice. With this on, the second tap is recorded and ignored "
+"rather than running the action again."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_message__permanent_error
+msgid "Permanent Error"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_capability__personal
+msgid "Personal"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_message__phone
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_send__phone
+msgid "Phone"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_automation_form
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_send_form
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_template_tree
+msgid "Placeholders"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_connect_form
+msgid "Plan managed by your provider"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_capability_tree
+msgid "Possible here"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_account__dry_run
+msgid "Practice mode"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_message.py:0
+msgid "Practice mode: not sent."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields.selection,name:kmessage_connector.selection__kmessage_message__state__skipped
+msgid "Practice run"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_account__dry_run
+msgid ""
+"Prepare every message and record it, but do not actually send. Useful for a "
+"first day in production."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_send__preview
+msgid "Preview"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_account__api_key
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_connect__api_key
+msgid "Private Token"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields.selection,name:kmessage_connector.selection__kmessage_account__state__error
+#: model:ir.model.fields.selection,name:kmessage_connector.selection__kmessage_ai_tool__state__error
+msgid "Problem"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_account__provider_managed
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_connect__provider_managed
+msgid "Provider Managed"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_ai_tool_form
+msgid "Publish to K-Message"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields.selection,name:kmessage_connector.selection__kmessage_ai_tool__state__published
+msgid "Published"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_connect__publish_tools
+msgid ""
+"Publishes each switched-on capability to K-Message as an assistant tool. "
+"Needs a token whose role may change chatbot settings; when it may not, the "
+"tools stay here and can be published later."
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_message_form
+msgid "Queue again"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields.selection,name:kmessage_connector.selection__kmessage_message__state__queued
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_message_tree
+msgid "Queued"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_token__rate_limit
+msgid "Rate Limit"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields.selection,name:kmessage_connector.selection__kmessage_message__delivery_status__read
+msgid "Read"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_event_tree
+msgid "Received"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:kmessage.capability,name:kmessage_connector.capability_customer_lookup
+msgid "Recognise a customer"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_send__record_name
+msgid "Record Name"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_event.py:0
+msgid "Recorded."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_event.py:0
+msgid "Recorded: %s"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_event__reference
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_message__reference
+msgid "Reference"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_account_form
+msgid "Refresh templates"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields.selection,name:kmessage_connector.selection__kmessage_account__webhook_state__registered
+msgid "Registered by Odoo"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_ai_tool__remote_id
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_template__remote_id
+msgid "Remote"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_event__remote_message_id
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_message__remote_message_id
+msgid "Remote Message"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_connect__remote_user
+msgid "Remote User"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_ai_tool_form
+msgid "Remove from K-Message"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_token_form
+msgid "Replace the secret"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.actions.act_window,help:kmessage_connector.action_kmessage_event
+msgid ""
+"Replies, button taps and delivery news from K-Message are recorded here the\n"
+"               moment they arrive — before anything is done with them."
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_reply_rule_form
+msgid "Reply rule"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.actions.act_window,name:kmessage_connector.action_kmessage_reply_rule
+#: model:ir.ui.menu,name:kmessage_connector.menu_kmessage_reply_rule
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_reply_rule_list
+msgid "Reply rules"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_automation__report_name
+msgid "Report"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_capability__requires_module
+msgid "Requires Module"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_message__res_id
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_send__res_id
+msgid "Res"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_message__res_model
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_send__res_model
+msgid "Res Model"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_automation_form
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_reply_rule_form
+msgid "Results"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields.selection,name:kmessage_connector.selection__kmessage_ai_tool__kind__document_tool
+msgid "Returns a document"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields.selection,name:kmessage_connector.selection__kmessage_ai_tool__kind__lookup_tool
+msgid "Returns rows"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_token_form
+msgid "Revoke"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields.selection,name:kmessage_connector.selection__kmessage_token__state__revoked
+msgid "Revoked"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_reply_rule__active
+msgid ""
+"Rules start switched off. Nothing runs in Odoo because of a tap until "
+"somebody turns this on."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_event__rule_ids
+msgid "Rules that ran"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_reply_rule__server_action_id
+msgid "Run"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_reply_rule__run_count
+msgid "Run Count"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_connect_form
+msgid "See the webhook list"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_automation_form
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_send_form
+msgid "Send"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_account__account_name
+msgid "Send From"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.module.category,description:kmessage_connector.module_category_kmessage
+msgid "Send documents on WhatsApp, and answer customers from Odoo."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_connect__account_name
+msgid "Send from"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_account__outbound_enabled
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_connect_form
+msgid "Send messages"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_message_form
+msgid "Send now"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model,name:kmessage_connector.model_kmessage_send
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_send_form
+msgid "Send on WhatsApp"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_api.py:0
+msgid "Send the customer's phone number."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_automation__attach_document
+msgid ""
+"Send the printed document with the message. Only possible with a template "
+"whose header is a document."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/controllers/main.py:0
+msgid "Send your token in the Authorization header."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_message.py:0
+msgid "Sending is switched off."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/wizard/kmessage_send.py:0
+#: model:ir.model.fields.selection,name:kmessage_connector.selection__kmessage_message__delivery_status__sent
+#: model:ir.model.fields.selection,name:kmessage_connector.selection__kmessage_message__state__sent
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_automation_tree
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_message_search
+msgid "Sent"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_message__sent_at
+msgid "Sent At"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_automation__sent_count
+msgid "Sent Count"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_message__reference
+msgid ""
+"Sent along with the message and echoed back when the customer taps a button."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_message.py:0
+msgid "Sent on WhatsApp to %(who)s: %(template)s"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_ai_tool__sequence
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_automation__sequence
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_capability__sequence
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_reply_rule__sequence
+msgid "Sequence"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_connect_form
+msgid "Set it up"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_connect_form
+msgid "Set up"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_account_form
+msgid "Set up the webhook"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_account__webhook_secret
+msgid "Shared secret K-Message signs its webhooks with."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/controllers/main.py:0
+msgid "Signature missing or wrong."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/controllers/main.py:0
+msgid "Something went wrong in Odoo."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_automation_param__source
+msgid "Source"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields.selection,name:kmessage_connector.selection__kmessage_connect__state__start
+msgid "Start"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_account__state
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_ai_tool__state
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_connect__state
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_message__state
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_token__state
+msgid "State"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_template__status
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_message_search
+msgid "Status"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_connect__setup_webhook
+msgid ""
+"Subscribes this Odoo to WhatsApp events so replies and delivery news come "
+"back. Needs a public address."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_connect__summary
+msgid "Summary"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_account_form
+msgid "Switches"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_token__active
+msgid "Switching this off stops K-Message using this token immediately."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_template__takes_document
+msgid "Takes Document"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_reply_rule_list
+msgid "Taps handled"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_connect__publish_tools
+msgid "Teach the assistant to ask Odoo"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_account__template_ids
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_automation__template_id
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_message__template_id
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_send__template_id
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_message_search
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_template_form
+msgid "Template"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_account__template_count
+msgid "Template Count"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_message__template_name
+msgid "Template Name"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_connect__template_total
+msgid "Template Total"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.actions.act_window,name:kmessage_connector.action_kmessage_template
+#: model:ir.ui.menu,name:kmessage_connector.menu_kmessage_template
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_account_form
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_connect_form
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_template_tree
+msgid "Templates"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.actions.act_window,help:kmessage_connector.action_kmessage_template
+msgid ""
+"Templates are written and approved in K-Message. Press <b>Refresh templates</b>\n"
+"               on the connection to mirror them here."
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_account_form
+msgid "Test the connection"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields.selection,name:kmessage_connector.selection__kmessage_template__header_type__text
+msgid "Text"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/controllers/main.py:0
+msgid "That request was too big to read."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.constraint,message:kmessage_connector.constraint_kmessage_template_account_name_lang_unique
+msgid "That template is already mirrored for this connection."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/controllers/main.py:0
+msgid "That token is not valid here."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_account__api_key
+msgid ""
+"The API key from K-Message. Only K-Message administrators in Odoo can read "
+"it."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_account__remote_user
+msgid "The K-Message user this token authenticates as."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_capability__requires_module
+msgid ""
+"The Odoo app this needs. Capabilities whose app is not installed stay "
+"unavailable."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_ai_tool__capability_id
+msgid "The Odoo endpoint this tool calls."
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_reply_rule_form
+msgid ""
+"The action runs with the record the original message was about — the invoice,\n"
+"                        the order, the delivery — so a tap can only ever change the thing it answered."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_reply_rule__server_action_id
+msgid ""
+"The action to run, with the record the message was about. Written in Odoo's "
+"own automation screen, so it can do anything a scheduled action can."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_account__base_url
+msgid "The address of your K-Message service, without a trailing slash."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_ai_tool__fields_json
+msgid ""
+"The answer's fields the assistant may see, as [{\"name\": \"number\", "
+"\"label\": \"Invoice\"}]. Anything not listed never reaches the assistant."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
+msgid "The assistant can now answer %s question(s) from Odoo."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_ai_tool.py:0
+msgid ""
+"The assistant could not call this tool: %(why)s.\n"
+"\n"
+"K-Message refuses private and loopback addresses, so Odoo has to be published on an address the internet can reach before a tool can work."
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_ai_tool_form
+msgid "The assistant will stop being able to answer this question. Continue?"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/controllers/main.py:0
+msgid "The body was not JSON."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_reply_rule__button_id
+msgid ""
+"The button's payload, as K-Message sends it back. Leave empty to match on "
+"the visible text instead."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_ai_tool.py:0
+msgid "The columns of “%s” are not valid JSON."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_token__company_id
+msgid "The company whose data this token can reach."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
+msgid "The connection could not be verified: %s"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_event.py:0
+msgid "The customer answered on WhatsApp: %s"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields.selection,name:kmessage_connector.selection__kmessage_automation__language_mode__partner
+msgid "The customer's language"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_token__token_hint
+msgid ""
+"The first characters, so you can tell two tokens apart. The rest is shown "
+"only once."
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.actions.act_window,help:kmessage_connector.action_kmessage_token
+msgid "The keys K-Message uses to reach this Odoo"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_res_partner__kmessage_phone_key
+#: model:ir.model.fields,help:kmessage_connector.field_res_users__kmessage_phone_key
+msgid ""
+"The last digits of this customer's number, used to match incoming WhatsApp "
+"messages."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/wizard/kmessage_send.py:0
+msgid "The message is on its way to %s."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_ai_tool__tool_name
+msgid ""
+"The name the assistant knows it by. Lower-case letters, digits and "
+"underscores; K-Message shows it as lookup__<name> or send_document__<name>."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_capability__code
+msgid ""
+"The name the endpoint is addressed by. Changing it breaks whatever already "
+"calls it."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_message__phone
+msgid "The number as it will be sent: international digits."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_send__phone
+msgid "The number the message goes to."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/wizard/kmessage_send.py:0
+msgid "The parameters are not valid JSON."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_ai_tool.py:0
+msgid "The parameters of “%s” are not valid JSON."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_capability__endpoint
+msgid "The path K-Message calls, relative to this Odoo."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_event__rule_ids
+msgid ""
+"The reply rules this tap actually ran, which is how a second tap on the same"
+" message is recognised as a repeat."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_send__param_json
+msgid "The template placeholders, as {\"1\": \"…\", \"2\": \"…\"}."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_automation.py:0
+msgid ""
+"The template “%s” has no document header, so no PDF can be attached to it."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields.selection,name:kmessage_connector.selection__kmessage_automation__language_mode__template
+msgid "The template's language"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_account__provider_managed
+msgid ""
+"The tenant is on a managed plan: some changes can only be made by the "
+"K-Message provider."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_ai_tool__token_id
+msgid ""
+"The token the assistant presents. Keep it separate from any other, so "
+"revoking the assistant's access revokes nothing else."
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_connect_form
+msgid "The token works. It belongs to"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
+msgid "The tools are ready in Odoo but K-Message would not take them: %s"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
+msgid "The webhook was not set up: %s"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_document.py:0
+msgid "There is no report called “%s”."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_api.py:0
+msgid "There is no such capability here."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_account.py:0
+msgid "This Odoo is already subscribed."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/controllers/main.py:0
+msgid "This Odoo is not answering questions right now."
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_send_form
+msgid "This customer has asked not to be messaged on WhatsApp."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_send__opted_out
+#: model:ir.model.fields,help:kmessage_connector.field_res_partner__kmessage_opt_out
+#: model:ir.model.fields,help:kmessage_connector.field_res_users__kmessage_opt_out
+msgid ""
+"This customer is never messaged on WhatsApp, whatever the automations say."
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_automation_form
+msgid "This template has no placeholders to fill."
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_connect_form
+msgid "This token may"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_api.py:0
+msgid "This token may not use “%s”."
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_token_form
+msgid "This token stops working immediately. Continue?"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_ai_tool.py:0
+msgid ""
+"This tool's token cannot be read back. Press “Publish to K-Message” from the"
+" connection, which issues a fresh one."
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_message_search
+msgid "Today"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_ai_tool__token_id
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_token__token_hint
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_token_reveal__raw_token
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_token_reveal__token_id
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_token_form
+msgid "Token"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_token__token_hash
+msgid "Token Hash"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_account__remote_user
+msgid "Token belongs to"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.actions.act_window,name:kmessage_connector.action_kmessage_token
+#: model:ir.ui.menu,name:kmessage_connector.menu_kmessage_token
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_token_tree
+msgid "Tokens"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/controllers/main.py:0
+msgid "Too many requests; try again shortly."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_ai_tool__tool_name
+msgid "Tool Name"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_automation__trigger
+msgid "Trigger"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_message_tree
+msgid "Try again"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.constraint,message:kmessage_connector.constraint_kmessage_capability_code_unique
+msgid "Two capabilities cannot share a code."
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_connect_form
+msgid ""
+"Two things from K-Message: the address of the service, and a private\n"
+"                        token. Nothing is changed until you press Connect."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.constraint,message:kmessage_connector.constraint_kmessage_ai_tool_tool_name_unique
+msgid "Two tools on one connection cannot share a name."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_message.py:0
+msgid "Unexpected error; see the server log."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_template__usable
+msgid "Usable"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_capability__use_count
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_token__use_count
+msgid "Use Count"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_capability_tree
+msgid "Used"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:res.groups,name:kmessage_connector.group_kmessage_user
+msgid "User"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields.selection,name:kmessage_connector.selection__kmessage_template__header_type__video
+msgid "Video"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_message_search
+msgid "Waiting"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields.selection,name:kmessage_connector.selection__kmessage_account__webhook_state__manual
+msgid "Waiting for your provider"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_account_form
+msgid "Webhook"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_account__webhook_remote_id
+msgid "Webhook Remote"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_account__webhook_secret
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_connect__webhook_secret
+msgid "Webhook Secret"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_account__webhook_state
+msgid "Webhook State"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_account__webhook_url
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_connect__webhook_url
+msgid "Webhook Url"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.actions.act_window,name:kmessage_connector.action_kmessage_capability
+#: model:ir.ui.menu,name:kmessage_connector.menu_kmessage_capability
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_capability_tree
+msgid "What K-Message may ask"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_event_form
+msgid "What arrived"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_automation__trigger
+msgid "What has to happen in Odoo for this message to go out."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_ai_tool__description
+msgid ""
+"What tells the assistant when to use this — and, just as importantly, what "
+"not to claim when it returns nothing."
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_ai_tool_form
+msgid "What the assistant is told"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_ai_tool__empty_message
+msgid "What the assistant is told when there is nothing to show."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_ai_tool__params_json
+msgid ""
+"What the assistant may pass, as [{\"name\": \"unpaid_only\", \"type\": "
+"\"boolean\", \"description\": \"…\"}]. The customer's number is added "
+"automatically and must not be listed here."
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_message_form
+msgid "What the customer reads"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_message__body_preview
+msgid "What the customer will read."
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_send_form
+msgid "What they will read"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_token__name
+msgid ""
+"What this token is for — 'K-Message production', 'test flow', and so on."
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_account_form
+msgid "What this token may do"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_ai_tool__name
+msgid "What this tool is called in the K-Message screen."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_event__outcome
+msgid "What was done about it, or why nothing was."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_event__reference
+msgid "What we sent with the original message, echoed back."
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_token_form
+msgid ""
+"Whatever uses this token now will stop working until the new one is pasted "
+"in. Continue?"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_partner_form_kmessage
+msgid "WhatsApp"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_res_partner__kmessage_phone_key
+#: model:ir.model.fields,field_description:kmessage_connector.field_res_users__kmessage_phone_key
+msgid "WhatsApp key"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_event.py:0
+msgid "WhatsApp message received: %s"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/res_partner.py:0
+msgid "WhatsApp messages"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_template__whatsapp_account
+msgid "Whatsapp Account"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_automation_form
+msgid "When"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.actions.act_window,help:kmessage_connector.action_kmessage_reply_rule
+msgid ""
+"When a customer taps a button on a message Odoo sent, a rule here can run an\n"
+"               action on the record that message was about, and answer them back. Rules start\n"
+"               switched off."
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_reply_rule_form
+msgid "When this comes back"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_message_form
+msgid "Where it came from"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_ai_tool__items_path
+msgid "Where the rows sit in the answer. Our endpoints put them under data."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_capability__available
+msgid "Whether the Odoo side of this can work at all right now."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_template__takes_document
+msgid "Whether this template carries a document, such as an invoice PDF."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_account__can_list_webhooks
+msgid ""
+"Whether this token may read the tenant's webhook list. Being able to add one"
+" is a separate permission, and most managed plans reserve it for the "
+"provider."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_connect__account_name
+msgid ""
+"Which WhatsApp number to send from. Leave empty for the tenant's default."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_account__account_name
+msgid ""
+"Which WhatsApp number to send from. Leave empty to use the tenant's default."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_automation__report_name
+msgid "Which printout to attach. Empty means the document's usual one."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_automation_param__index
+msgid "Which {{n}} in the template body this fills."
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_account_form
+msgid ""
+"Your K-Message plan is managed by your provider, so only they can add the\n"
+"                            subscription. Send them the address and the secret below and ask for the\n"
+"                            events <b>message.incoming</b>, <b>message.sent</b>, <b>button.reply</b>\n"
+"                            and <b>contact.created</b>."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_account.py:0
+msgid ""
+"Your K-Message plan is managed by your provider. Send them the webhook "
+"details shown on this page."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/wizard/kmessage_token_reveal.py:0
+#: model:ir.model,name:kmessage_connector.model_kmessage_token_reveal
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_token_reveal_form
+msgid "Your new token"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
+msgid ""
+"Your plan is managed by your provider, so the webhook has to be added by "
+"them. The address and secret are below — send them these two lines."
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_automation_form
+msgid "amount_total, partner_id.name"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_reply.py:0
+msgid "answered the customer"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_reply_rule_form
+msgid "approve"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_automation_form
+msgid "e.g. Send the invoice when it is posted"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_reply_rule_form
+msgid "e.g. “Yes, the amount arrived” marks the payment checked"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_account_form
+msgid "https://api.k-message.kerneltics.com"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_event.py:0
+msgid "noted on %s"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_reply.py:0
+msgid "ran %s"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_automation_form
+msgid "record.amount_total - record.amount_residual"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_event.py:0
+msgid "recorded on %s"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_account_form
+msgid "the tenant's default number"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_automation_form
+msgid "the usual printout"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_account.py:0
+#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
+msgid "this token"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_message.py:0
+msgid "unknown error"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_automation_form
+msgid "{{n}}"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_reply_rule_form
+msgid "نعم، وصل المبلغ"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_reply.py:0
+msgid "“%(rule)s” failed: %(error)s"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_reply.py:0
+msgid "“%(rule)s”: %(what)s."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_reply.py:0
+msgid "“%s” had already run for this message."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_api.py:0
+msgid "“%s” is switched off in Odoo."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_ai_tool.py:0
+msgid ""
+"“%s” must say which columns the assistant may see — K-Message shows nothing "
+"that is not listed."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_api.py:0
+msgid "“%s” needs an Odoo app that is not installed."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_reply.py:0
+msgid "“%s” needs the record the message was about, and it is gone."
+msgstr ""

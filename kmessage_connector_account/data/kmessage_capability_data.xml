@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Both are personal: they take the number from the conversation and
+             answer for that customer alone. Untick one here and it is refused
+             for every token at once, with a reason the caller can read. -->
+        <record id="capability_invoices" model="kmessage.capability">
+            <field name="code">invoices</field>
+            <field name="name">A customer's invoices</field>
+            <field name="description">Lists the posted invoices of the customer whose number is in the conversation, newest first, with what is left to pay on each. Never anybody else's.</field>
+            <field name="endpoint">/kmessage/api/v1/invoices</field>
+            <field name="method">POST</field>
+            <field name="personal" eval="True"/>
+            <field name="max_rows">10</field>
+            <field name="requires_module">account</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <record id="capability_invoice_pdf" model="kmessage.capability">
+            <field name="code">invoice_pdf</field>
+            <field name="name">Send an invoice PDF</field>
+            <field name="description">Prints one invoice of the customer whose number is in the conversation and returns the file. An invoice number that belongs to somebody else is answered exactly as one that does not exist.</field>
+            <field name="endpoint">/kmessage/api/v1/invoice/pdf</field>
+            <field name="method">POST</field>
+            <field name="personal" eval="True"/>
+            <field name="max_rows">1</field>
+            <field name="requires_module">account</field>
+            <field name="sequence">21</field>
+        </record>
+    </data>
+</odoo>

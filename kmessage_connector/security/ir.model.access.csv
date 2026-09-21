@@ -1,0 +1,22 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_kmessage_account_user,kmessage.account user,model_kmessage_account,group_kmessage_user,1,0,0,0
+access_kmessage_account_manager,kmessage.account manager,model_kmessage_account,group_kmessage_manager,1,1,1,1
+access_kmessage_token_manager,kmessage.token manager,model_kmessage_token,group_kmessage_manager,1,1,1,1
+access_kmessage_capability_user,kmessage.capability user,model_kmessage_capability,group_kmessage_user,1,0,0,0
+access_kmessage_capability_manager,kmessage.capability manager,model_kmessage_capability,group_kmessage_manager,1,1,1,1
+access_kmessage_template_user,kmessage.template user,model_kmessage_template,group_kmessage_user,1,0,0,0
+access_kmessage_template_manager,kmessage.template manager,model_kmessage_template,group_kmessage_manager,1,1,1,1
+access_kmessage_automation_user,kmessage.automation user,model_kmessage_automation,group_kmessage_user,1,0,0,0
+access_kmessage_automation_manager,kmessage.automation manager,model_kmessage_automation,group_kmessage_manager,1,1,1,1
+access_kmessage_automation_param_manager,kmessage.automation.param manager,model_kmessage_automation_param,group_kmessage_manager,1,1,1,1
+access_kmessage_message_user,kmessage.message user,model_kmessage_message,group_kmessage_user,1,1,1,0
+access_kmessage_message_manager,kmessage.message manager,model_kmessage_message,group_kmessage_manager,1,1,1,1
+access_kmessage_event_user,kmessage.event user,model_kmessage_event,group_kmessage_user,1,0,0,0
+access_kmessage_event_manager,kmessage.event manager,model_kmessage_event,group_kmessage_manager,1,1,1,1
+access_kmessage_ai_tool_user,kmessage.ai.tool user,model_kmessage_ai_tool,group_kmessage_user,1,0,0,0
+access_kmessage_ai_tool_manager,kmessage.ai.tool manager,model_kmessage_ai_tool,group_kmessage_manager,1,1,1,1
+access_kmessage_reply_rule_user,kmessage.reply.rule user,model_kmessage_reply_rule,group_kmessage_user,1,0,0,0
+access_kmessage_reply_rule_manager,kmessage.reply.rule manager,model_kmessage_reply_rule,group_kmessage_manager,1,1,1,1
+access_kmessage_connect_manager,kmessage.connect manager,model_kmessage_connect,group_kmessage_manager,1,1,1,1
+access_kmessage_token_reveal_manager,kmessage.token.reveal manager,model_kmessage_token_reveal,group_kmessage_manager,1,1,1,1
+access_kmessage_send_user,kmessage.send user,model_kmessage_send,group_kmessage_user,1,1,1,1

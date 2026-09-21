@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- No automation rows: which template goes out, and whether one goes
+             out at all, is the company's decision and nobody else's. What this
+             file does is draft the two assistant tools against a connection
+             that already exists; one made later is served by the hook on
+             kmessage.account. Neither reaches K-Message until it is published. -->
+        <function model="kmessage.ai.tool" name="_kmessage_seed_sale_tools"/>
+    </data>
+</odoo>

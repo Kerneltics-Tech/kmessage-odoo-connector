@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_kmessage_ai_tool_list" model="ir.ui.view">
+        <field name="name">kmessage.ai.tool.list</field>
+        <field name="model">kmessage.ai.tool</field>
+        <field name="arch" type="xml">
+            <list string="Assistant tools">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="tool_name"/>
+                <field name="kind"/>
+                <field name="capability_id"/>
+                <field name="state" widget="badge" decoration-success="state == 'published'"
+                       decoration-danger="state == 'error'"/>
+                <field name="last_published" optional="hide"/>
+                <field name="last_error" optional="hide"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_kmessage_ai_tool_form" model="ir.ui.view">
+        <field name="name">kmessage.ai.tool.form</field>
+        <field name="model">kmessage.ai.tool</field>
+        <field name="arch" type="xml">
+            <form string="Assistant tool">
+                <header>
+                    <button name="action_publish" type="object" string="Publish to K-Message"
+                            class="btn-primary"/>
+                    <button name="action_unpublish" type="object" string="Remove from K-Message"
+                            invisible="state != 'published'"
+                            confirm="The assistant will stop being able to answer this question. Continue?"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,published"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <div class="alert alert-danger" role="alert" invisible="not last_error">
+                        <field name="last_error" readonly="1" nolabel="1"/>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="tool_name"/>
+                            <field name="kind"/>
+                            <field name="capability_id"/>
+                            <field name="account_id"/>
+                        </group>
+                        <group>
+                            <field name="token_id" readonly="1"/>
+                            <field name="items_path" invisible="kind != 'lookup_tool'"/>
+                            <field name="max_rows" invisible="kind != 'lookup_tool'"/>
+                            <field name="active" widget="boolean_toggle"/>
+                            <field name="last_published" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="What the assistant is told">
+                        <field name="description" nolabel="1" colspan="2"/>
+                    </group>
+                    <notebook>
+                        <page string="Parameters" name="params">
+                            <field name="params_json" widget="text"/>
+                        </page>
+                        <page string="Columns the assistant may see" name="fields"
+                              invisible="kind != 'lookup_tool'">
+                            <field name="fields_json" widget="text"/>
+                            <field name="empty_message"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_kmessage_ai_tool" model="ir.actions.act_window">
+        <field name="name">Assistant tools</field>
+        <field name="res_model">kmessage.ai.tool</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'active_test': False}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Let the assistant answer from Odoo</p>
+            <p>Each tool publishes one Odoo endpoint to the K-Message assistant. The customer's
+               number is filled in by K-Message, so a tool can only ever answer about the person
+               in the conversation.</p>
+        </field>
+    </record>
+</odoo>

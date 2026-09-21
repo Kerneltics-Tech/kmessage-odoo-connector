@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="module_category_kmessage" model="ir.module.category">
+        <field name="name">K-Message</field>
+        <field name="description">Send documents on WhatsApp, and answer customers from Odoo.</field>
+        <field name="sequence">20</field>
+    </record>
+
+    <record id="group_kmessage_user" model="res.groups">
+        <field name="name">User</field>
+        <field name="category_id" ref="module_category_kmessage"/>
+        <field name="comment">Can see what was sent and send a document by hand.</field>
+    </record>
+
+    <record id="group_kmessage_manager" model="res.groups">
+        <field name="name">Administrator</field>
+        <field name="category_id" ref="module_category_kmessage"/>
+        <field name="implied_ids" eval="[(4, ref('group_kmessage_user'))]"/>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+        <field name="comment">Holds the connection, the tokens and the switches. The token and the
+            webhook secret are readable only by this group.</field>
+    </record>
+
+    <!-- Multi-company: one Odoo company never sees another's messages. -->
+    <record id="rule_kmessage_account_company" model="ir.rule">
+        <field name="name">K-Message connection: own company</field>
+        <field name="model_id" ref="model_kmessage_account"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+    </record>
+
+    <record id="rule_kmessage_message_company" model="ir.rule">
+        <field name="name">K-Message message: own company</field>
+        <field name="model_id" ref="model_kmessage_message"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+    </record>
+
+    <record id="rule_kmessage_token_company" model="ir.rule">
+        <field name="name">K-Message token: own company</field>
+        <field name="model_id" ref="model_kmessage_token"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+    </record>
+
+    <record id="rule_kmessage_automation_company" model="ir.rule">
+        <field name="name">K-Message automation: own company</field>
+        <field name="model_id" ref="model_kmessage_automation"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+    </record>
+
+    <record id="rule_kmessage_event_company" model="ir.rule">
+        <field name="name">K-Message event: own company</field>
+        <field name="model_id" ref="model_kmessage_event"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+    </record>
+
+    <record id="rule_kmessage_template_company" model="ir.rule">
+        <field name="name">K-Message template: own company</field>
+        <field name="model_id" ref="model_kmessage_template"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+    </record>
+
+    <record id="rule_kmessage_reply_rule_company" model="ir.rule">
+        <field name="name">K-Message reply rule: own company</field>
+        <field name="model_id" ref="model_kmessage_reply_rule"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+    </record>
+
+    <record id="rule_kmessage_ai_tool_company" model="ir.rule">
+        <field name="name">K-Message assistant tool: own company</field>
+        <field name="model_id" ref="model_kmessage_ai_tool"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+    </record>
+</odoo>

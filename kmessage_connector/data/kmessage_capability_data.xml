@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Every capability ships switched on but reaches nothing until a token
+             is issued that includes it. Switching one off here refuses it for
+             every token at once. -->
+        <record id="capability_ping" model="kmessage.capability">
+            <field name="code">ping</field>
+            <field name="name">Health check</field>
+            <field name="description">Answers that this Odoo is reachable and says which capabilities are on. Carries no customer data.</field>
+            <field name="endpoint">/kmessage/api/v1/ping</field>
+            <field name="method">GET</field>
+            <field name="personal" eval="False"/>
+            <field name="sequence">1</field>
+        </record>
+
+        <record id="capability_tools" model="kmessage.capability">
+            <field name="code">tools</field>
+            <field name="name">Describe this API</field>
+            <field name="description">Lists the endpoints that are switched on, for whoever is wiring K-Message up.</field>
+            <field name="endpoint">/kmessage/api/v1/tools.json</field>
+            <field name="method">GET</field>
+            <field name="personal" eval="False"/>
+            <field name="sequence">2</field>
+        </record>
+
+        <record id="capability_customer_lookup" model="kmessage.capability">
+            <field name="code">customer_lookup</field>
+            <field name="name">Recognise a customer</field>
+            <field name="description">Given the number in the conversation, says whether that person is a customer here, in which language they are served, and what they owe.</field>
+            <field name="endpoint">/kmessage/api/v1/customer/lookup</field>
+            <field name="method">POST</field>
+            <field name="personal" eval="True"/>
+            <field name="max_rows">1</field>
+            <field name="sequence">10</field>
+        </record>
+    </data>
+</odoo>

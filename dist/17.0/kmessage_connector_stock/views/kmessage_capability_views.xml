@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_kmessage_capability_tree_stock" model="ir.ui.view">
+        <field name="name">kmessage.capability.tree.stock</field>
+        <field name="model">kmessage.capability</field>
+        <field name="inherit_id" ref="kmessage_connector.view_kmessage_capability_tree"/>
+        <field name="arch" type="xml">
+            <field name="max_rows" position="after">
+                <field name="show_exact_quantity" widget="boolean_toggle"
+                       string="Exact quantity" optional="show"/>
+            </field>
+        </field>
+    </record>
+</odoo>

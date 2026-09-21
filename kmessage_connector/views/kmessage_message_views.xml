@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_kmessage_message_tree" model="ir.ui.view">
+        <field name="name">kmessage.message.tree</field>
+        <field name="model">kmessage.message</field>
+        <field name="arch" type="xml">
+            <list string="Messages" create="false">
+                <field name="create_date" string="Queued"/>
+                <field name="partner_id"/>
+                <field name="phone"/>
+                <field name="template_name"/>
+                <field name="attachment_name" optional="show" string="Document"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'sent'"
+                       decoration-danger="state == 'failed'"
+                       decoration-muted="state in ('cancelled', 'skipped')"/>
+                <field name="delivery_status" optional="show"/>
+                <field name="attempts" optional="hide"/>
+                <field name="error" optional="hide"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+                <button name="action_retry" type="object" string="Try again" icon="fa-refresh"
+                        invisible="state != 'failed'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_kmessage_message_form" model="ir.ui.view">
+        <field name="name">kmessage.message.form</field>
+        <field name="model">kmessage.message</field>
+        <field name="arch" type="xml">
+            <form string="Message" create="false">
+                <header>
+                    <button name="send_now" type="object" string="Send now" class="btn-primary"
+                            invisible="state not in ('draft', 'queued', 'failed')"/>
+                    <button name="action_retry" type="object" string="Queue again"
+                            invisible="state != 'failed'"/>
+                    <button name="action_cancel" type="object" string="Cancel"
+                            invisible="state not in ('draft', 'queued', 'failed')"/>
+                    <field name="state" widget="statusbar" statusbar_visible="queued,sent"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="partner_id"/>
+                            <field name="phone"/>
+                            <field name="template_name"/>
+                            <field name="language"/>
+                            <field name="attachment_id" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="account_id"/>
+                            <field name="sent_at" readonly="1"/>
+                            <field name="delivery_status" readonly="1"/>
+                            <field name="remote_message_id" readonly="1"/>
+                            <field name="attempts" readonly="1"/>
+                            <field name="next_attempt" readonly="1" invisible="not next_attempt"/>
+                        </group>
+                    </group>
+                    <div class="alert alert-danger" role="alert" invisible="not error">
+                        <field name="error" readonly="1" nolabel="1"/>
+                    </div>
+                    <group string="What the customer reads">
+                        <field name="body_preview" nolabel="1" colspan="2" readonly="1"/>
+                    </group>
+                    <group string="Where it came from" invisible="not res_model">
+                        <field name="res_model" readonly="1"/>
+                        <field name="res_id" readonly="1"/>
+                        <field name="reference" readonly="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_kmessage_message_search" model="ir.ui.view">
+        <field name="name">kmessage.message.search</field>
+        <field name="model">kmessage.message</field>
+        <field name="arch" type="xml">
+            <search string="Messages">
+                <field name="partner_id"/>
+                <field name="phone"/>
+                <field name="template_name"/>
+                <filter name="failed" string="Failed" domain="[('state', '=', 'failed')]"/>
+                <filter name="queued" string="Waiting" domain="[('state', '=', 'queued')]"/>
+                <filter name="sent" string="Sent" domain="[('state', '=', 'sent')]"/>
+                <separator/>
+                <filter name="today" string="Today"
+                        domain="[('create_date', '&gt;=', datetime.datetime.combine(context_today(), datetime.time(0,0,0)))]"/>
+                <group expand="0" string="Group by">
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_template" string="Template" context="{'group_by': 'template_name'}"/>
+                    <filter name="group_partner" string="Customer" context="{'group_by': 'partner_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_kmessage_message" model="ir.actions.act_window">
+        <field name="name">Messages</field>
+        <field name="res_model">kmessage.message</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_kmessage_message_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Nothing has been sent yet</p>
+            <p>Every message Odoo sends on WhatsApp is listed here, with whether it arrived.</p>
+        </field>
+    </record>
+</odoo>

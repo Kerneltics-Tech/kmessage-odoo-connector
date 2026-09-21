@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_kmessage_account_form_invoicing" model="ir.ui.view">
+        <field name="name">kmessage.account.form.invoicing</field>
+        <field name="model">kmessage.account</field>
+        <field name="inherit_id" ref="kmessage_connector.view_kmessage_account_form"/>
+        <field name="arch" type="xml">
+            <field name="dry_run" position="after">
+                <field name="prerender_invoice_pdf"/>
+            </field>
+        </field>
+    </record>
+</odoo>

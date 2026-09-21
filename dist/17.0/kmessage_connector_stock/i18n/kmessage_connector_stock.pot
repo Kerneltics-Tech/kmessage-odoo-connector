@@ -1,0 +1,306 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* kmessage_connector_stock
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-21 00:23+0000\n"
+"PO-Revision-Date: 2026-09-21 00:23+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: kmessage_connector_stock
+#. odoo-python
+#: code:addons/kmessage_connector_stock/models/stock_picking.py:0
+msgid "A delivery is validated"
+msgstr ""
+
+#. module: kmessage_connector_stock
+#. odoo-python
+#: code:addons/kmessage_connector_stock/models/kmessage_ai_tool.py:0
+msgid "A delivery or order number, if they quoted one."
+msgstr ""
+
+#. module: kmessage_connector_stock
+#. odoo-python
+#: code:addons/kmessage_connector_stock/models/kmessage_ai_tool.py:0
+msgid "Availability"
+msgstr ""
+
+#. module: kmessage_connector_stock
+#. odoo-python
+#: code:addons/kmessage_connector_stock/models/kmessage_ai_tool.py:0
+msgid "Branch"
+msgstr ""
+
+#. module: kmessage_connector_stock
+#. odoo-python
+#: code:addons/kmessage_connector_stock/models/kmessage_ai_tool.py:0
+msgid "Carrier"
+msgstr ""
+
+#. module: kmessage_connector_stock
+#. odoo-python
+#: code:addons/kmessage_connector_stock/models/kmessage_ai_tool.py:0
+msgid "Date"
+msgstr ""
+
+#. module: kmessage_connector_stock
+#. odoo-python
+#: code:addons/kmessage_connector_stock/models/kmessage_ai_tool.py:0
+msgid "Delivery"
+msgstr ""
+
+#. module: kmessage_connector_stock
+#. odoo-python
+#: code:addons/kmessage_connector_stock/models/kmessage_ai_tool.py:0
+msgid "Delivery status"
+msgstr ""
+
+#. module: kmessage_connector_stock
+#: model_terms:ir.ui.view,arch_db:kmessage_connector_stock.view_kmessage_capability_tree_stock
+msgid "Exact quantity"
+msgstr ""
+
+#. module: kmessage_connector_stock
+#: model:kmessage.capability,description:kmessage_connector_stock.capability_delivery_status
+msgid ""
+"Given the number in the conversation, says where that customer's recent "
+"deliveries have got to. Never anybody else's."
+msgstr ""
+
+#. module: kmessage_connector_stock
+#. odoo-python
+#: code:addons/kmessage_connector_stock/models/kmessage_ai_tool.py:0
+msgid "I cannot see a delivery for you yet."
+msgstr ""
+
+#. module: kmessage_connector_stock
+#. odoo-python
+#: code:addons/kmessage_connector_stock/models/kmessage_ai_tool.py:0
+msgid "I could not find that product in our stock."
+msgstr ""
+
+#. module: kmessage_connector_stock
+#: model:kmessage.capability,name:kmessage_connector_stock.capability_stock_check
+msgid "Is it in stock"
+msgstr ""
+
+#. module: kmessage_connector_stock
+#: model:ir.model,name:kmessage_connector_stock.model_kmessage_ai_tool
+msgid "K-Message Assistant Tool"
+msgstr ""
+
+#. module: kmessage_connector_stock
+#: model:ir.model,name:kmessage_connector_stock.model_kmessage_automation
+msgid "K-Message Automation"
+msgstr ""
+
+#. module: kmessage_connector_stock
+#: model:ir.model,name:kmessage_connector_stock.model_kmessage_capability
+msgid "K-Message Capability"
+msgstr ""
+
+#. module: kmessage_connector_stock
+#: model:ir.model,name:kmessage_connector_stock.model_kmessage_account
+msgid "K-Message Connection"
+msgstr ""
+
+#. module: kmessage_connector_stock
+#: model:ir.model,name:kmessage_connector_stock.model_kmessage_document
+msgid "K-Message Document Rendering"
+msgstr ""
+
+#. module: kmessage_connector_stock
+#: model:ir.model,name:kmessage_connector_stock.model_kmessage_api
+msgid "K-Message Inbound API"
+msgstr ""
+
+#. module: kmessage_connector_stock
+#. odoo-python
+#: code:addons/kmessage_connector_stock/models/kmessage_api.py:0
+msgid "Nothing here is called “%s”."
+msgstr ""
+
+#. module: kmessage_connector_stock
+#: model:ir.model.fields,help:kmessage_connector_stock.field_kmessage_capability__show_exact_quantity
+msgid ""
+"Off, the availability answer is a band — in stock, only a few left, out of "
+"stock — and the number itself never leaves Odoo. Most shops want this: the "
+"figure tells a competitor what you buy and how fast you sell, and it is "
+"wrong the moment somebody at the counter picks the item up. Turn it on where"
+" the exact number is genuinely what a customer needs."
+msgstr ""
+
+#. module: kmessage_connector_stock
+#. odoo-python
+#: code:addons/kmessage_connector_stock/models/kmessage_ai_tool.py:0
+msgid "Quantity"
+msgstr ""
+
+#. module: kmessage_connector_stock
+#: model:ir.model.fields,field_description:kmessage_connector_stock.field_kmessage_capability__show_exact_quantity
+msgid "Say the exact quantity"
+msgstr ""
+
+#. module: kmessage_connector_stock
+#. odoo-python
+#: code:addons/kmessage_connector_stock/models/kmessage_api.py:0
+msgid "Say which product to look for."
+msgstr ""
+
+#. module: kmessage_connector_stock
+#: model:kmessage.capability,description:kmessage_connector_stock.capability_stock_check
+msgid ""
+"Says whether a product is available, branch by branch. Quantities are given "
+"as a band unless this row says otherwise."
+msgstr ""
+
+#. module: kmessage_connector_stock
+#: model:ir.actions.act_window,name:kmessage_connector_stock.action_kmessage_send_stock_picking
+msgid "Send on WhatsApp"
+msgstr ""
+
+#. module: kmessage_connector_stock
+#. odoo-python
+#: code:addons/kmessage_connector_stock/models/kmessage_ai_tool.py:0
+msgid "Status"
+msgstr ""
+
+#. module: kmessage_connector_stock
+#. odoo-python
+#: code:addons/kmessage_connector_stock/models/kmessage_ai_tool.py:0
+msgid "Stock availability"
+msgstr ""
+
+#. module: kmessage_connector_stock
+#. odoo-python
+#: code:addons/kmessage_connector_stock/models/kmessage_ai_tool.py:0
+msgid "The branch or shop they asked about. Leave it out for every branch."
+msgstr ""
+
+#. module: kmessage_connector_stock
+#. odoo-python
+#: code:addons/kmessage_connector_stock/models/kmessage_ai_tool.py:0
+msgid "The product as the customer named it, or its code."
+msgstr ""
+
+#. module: kmessage_connector_stock
+#. odoo-python
+#: code:addons/kmessage_connector_stock/models/kmessage_api.py:0
+msgid "There is no branch here called “%s”."
+msgstr ""
+
+#. module: kmessage_connector_stock
+#. odoo-python
+#: code:addons/kmessage_connector_stock/models/kmessage_api.py:0
+msgid "There is no delivery of yours with that number."
+msgstr ""
+
+#. module: kmessage_connector_stock
+#. odoo-python
+#: code:addons/kmessage_connector_stock/models/kmessage_api.py:0
+msgid "This company does not keep stock anywhere yet."
+msgstr ""
+
+#. module: kmessage_connector_stock
+#. odoo-python
+#: code:addons/kmessage_connector_stock/models/kmessage_ai_tool.py:0
+msgid "Tracking"
+msgstr ""
+
+#. module: kmessage_connector_stock
+#: model:ir.model,name:kmessage_connector_stock.model_stock_picking
+msgid "Transfer"
+msgstr ""
+
+#. module: kmessage_connector_stock
+#. odoo-python
+#: code:addons/kmessage_connector_stock/models/kmessage_ai_tool.py:0
+msgid ""
+"Use this when somebody asks where their order or delivery has got to. It "
+"returns only this customer's own deliveries, newest first. If it returns "
+"nothing, say we cannot see a delivery for them yet rather than guessing at "
+"one."
+msgstr ""
+
+#. module: kmessage_connector_stock
+#. odoo-python
+#: code:addons/kmessage_connector_stock/models/kmessage_ai_tool.py:0
+msgid ""
+"Use this when somebody asks whether a product is available, or available at "
+"a particular branch. It answers per branch, and it answers how many are left"
+" only where the shop has chosen to say so — when it gives a band such as "
+"“only a few left”, say the band and do not invent a number."
+msgstr ""
+
+#. module: kmessage_connector_stock
+#. odoo-python
+#: code:addons/kmessage_connector_stock/models/kmessage_api.py:0
+msgid "We do not keep a stock figure for “%s”."
+msgstr ""
+
+#. module: kmessage_connector_stock
+#: model:kmessage.capability,name:kmessage_connector_stock.capability_delivery_status
+msgid "Where is my delivery"
+msgstr ""
+
+#. module: kmessage_connector_stock
+#. odoo-python
+#: code:addons/kmessage_connector_stock/models/kmessage_api.py:0
+msgid "being prepared"
+msgstr ""
+
+#. module: kmessage_connector_stock
+#. odoo-python
+#: code:addons/kmessage_connector_stock/models/kmessage_api.py:0
+msgid "cancelled"
+msgstr ""
+
+#. module: kmessage_connector_stock
+#. odoo-python
+#: code:addons/kmessage_connector_stock/models/kmessage_api.py:0
+msgid "in stock"
+msgstr ""
+
+#. module: kmessage_connector_stock
+#. odoo-python
+#: code:addons/kmessage_connector_stock/models/kmessage_api.py:0
+msgid "not started yet"
+msgstr ""
+
+#. module: kmessage_connector_stock
+#. odoo-python
+#: code:addons/kmessage_connector_stock/models/kmessage_api.py:0
+msgid "on its way"
+msgstr ""
+
+#. module: kmessage_connector_stock
+#. odoo-python
+#: code:addons/kmessage_connector_stock/models/kmessage_api.py:0
+msgid "only a few left"
+msgstr ""
+
+#. module: kmessage_connector_stock
+#. odoo-python
+#: code:addons/kmessage_connector_stock/models/kmessage_api.py:0
+msgid "out of stock"
+msgstr ""
+
+#. module: kmessage_connector_stock
+#. odoo-python
+#: code:addons/kmessage_connector_stock/models/kmessage_api.py:0
+msgid "packed and ready"
+msgstr ""
+
+#. module: kmessage_connector_stock
+#. odoo-python
+#: code:addons/kmessage_connector_stock/models/kmessage_api.py:0
+msgid "waiting for stock"
+msgstr ""

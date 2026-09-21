@@ -1,0 +1,79 @@
+{
+  "name": "Odoo — where is my invoice",
+  "description": "Answers \"what do I owe\" from Odoo, for the number in the conversation. Edit the api_call node's url and Authorization header before enabling it.",
+  "trigger_keywords": ["invoice", "invoices", "bill", "balance", "فاتورة", "فواتير", "حسابي"],
+  "enabled": false,
+  "graph": {
+    "version": 2,
+    "entry_node": "start",
+    "nodes": [
+      {
+        "id": "start",
+        "type": "start",
+        "label": "Someone asked about an invoice",
+        "position": {"x": 80, "y": 220},
+        "config": {}
+      },
+      {
+        "id": "looking",
+        "type": "message",
+        "label": "Say we are looking",
+        "position": {"x": 300, "y": 220},
+        "config": {
+          "message": "One moment — I am checking your account."
+        }
+      },
+      {
+        "id": "ask_odoo",
+        "type": "api_call",
+        "label": "Ask Odoo for this customer's invoices",
+        "position": {"x": 540, "y": 220},
+        "config": {
+          "url": "https://odoo.example.com/kmessage/api/v1/invoices",
+          "method": "POST",
+          "headers": {
+            "Authorization": "Bearer kmc_REPLACE_ME",
+            "Content-Type": "application/json"
+          },
+          "body": "{\"phone\": \"{{phone_number}}\", \"unpaid_only\": true, \"limit\": 5}",
+          "response_mapping": {
+            "invoices": "data.rows"
+          }
+        }
+      },
+      {
+        "id": "answer",
+        "type": "message",
+        "label": "Read the invoices back",
+        "position": {"x": 800, "y": 140},
+        "config": {
+          "message": "{{if invoices}}Here is what is still open on your account:\n\n{{for invoice in invoices}}• {{invoice.number}} of {{invoice.date}} — {{invoice.due}} {{invoice.currency}} left to pay\n{{endfor}}{{else}}There is nothing outstanding on your account right now.{{endif}}"
+        }
+      },
+      {
+        "id": "sorry",
+        "type": "message",
+        "label": "Could not answer",
+        "position": {"x": 800, "y": 320},
+        "config": {
+          "message": "I could not look that up just now. Either this number is not the one on your account, or our system did not answer. Please try again shortly."
+        }
+      },
+      {
+        "id": "end",
+        "type": "end",
+        "label": "Done",
+        "position": {"x": 1040, "y": 220},
+        "config": {}
+      }
+    ],
+    "edges": [
+      {"from": "start", "to": "looking", "condition": "default"},
+      {"from": "looking", "to": "ask_odoo", "condition": "default"},
+      {"from": "ask_odoo", "to": "answer", "condition": "http:2xx"},
+      {"from": "ask_odoo", "to": "sorry", "condition": "http:non2xx"},
+      {"from": "answer", "to": "end", "condition": "default"},
+      {"from": "sorry", "to": "end", "condition": "default"}
+    ]
+  }
+}

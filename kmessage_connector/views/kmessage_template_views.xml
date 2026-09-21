@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_kmessage_template_tree" model="ir.ui.view">
+        <field name="name">kmessage.template.tree</field>
+        <field name="model">kmessage.template</field>
+        <field name="arch" type="xml">
+            <list string="Templates" create="false" edit="false">
+                <field name="name"/>
+                <field name="language"/>
+                <field name="category"/>
+                <field name="status" widget="badge" decoration-success="status == 'APPROVED'"/>
+                <field name="param_count" string="Placeholders"/>
+                <field name="takes_document" string="Carries a PDF"/>
+                <field name="button_count" string="Buttons" optional="hide"/>
+                <field name="whatsapp_account" optional="hide"/>
+                <field name="usable"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_kmessage_template_form" model="ir.ui.view">
+        <field name="name">kmessage.template.form</field>
+        <field name="model">kmessage.template</field>
+        <field name="arch" type="xml">
+            <form string="Template" create="false" edit="false">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="display_name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="status"/>
+                            <field name="category"/>
+                            <field name="language"/>
+                            <field name="whatsapp_account"/>
+                        </group>
+                        <group>
+                            <field name="header_type"/>
+                            <field name="param_count"/>
+                            <field name="takes_document"/>
+                            <field name="usable"/>
+                        </group>
+                    </group>
+                    <group string="Body">
+                        <field name="body_content" nolabel="1" colspan="2"/>
+                    </group>
+                    <group string="Footer" invisible="not footer_content">
+                        <field name="footer_content" nolabel="1" colspan="2"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_kmessage_template" model="ir.actions.act_window">
+        <field name="name">Templates</field>
+        <field name="res_model">kmessage.template</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No templates yet</p>
+            <p>Templates are written and approved in K-Message. Press <b>Refresh templates</b>
+               on the connection to mirror them here.</p>
+        </field>
+    </record>
+</odoo>

@@ -9,10 +9,11 @@ no mock-ups, no slides — against the bundled stand-in service in
 showed.
 
     python3 dev/record_connect.py --odoo http://127.0.0.1:8169 \
-        --platform http://127.0.0.1:8787 --key whm_… --out /tmp/connect
+        --key whm_… --out /tmp/connect
 
-``--platform`` is only needed to point the recording at the bundled stand-in;
-a real customer never types an address, and the video shows exactly that.
+Point that Odoo at the stand-in before starting it, by setting the system
+parameter ``kmessage.base_url`` — there is no address on the screen to type,
+and the recording shows exactly that.
 
 It writes a .webm; ``ffmpeg`` turns that into the .mp4 most people can open.
 Deliberately slow: pauses are there so a viewer can read the screen, not
@@ -96,17 +97,8 @@ def open_wizard(page, odoo):
     page.wait_for_timeout(2200)
 
 
-def fill_and_connect(page, platform, key):
-    """Type the one field there is.
-
-    The address is in the addon already, so the only reason this ever touches
-    it is to aim the recording at the bundled stand-in — and it does that
-    behind the advanced switch, off-camera, exactly where a customer will
-    never go.
-    """
-    if platform:
-        point_at_the_stand_in(page, platform)
-
+def fill_and_connect(page, key):
+    """Type the one field there is."""
     caption(page, 'One field: your private token from K-Message.', 3.4)
     field = page.locator(
         'div[name="api_key"] input, input[id^="api_key"], input[name="api_key"]').first
@@ -119,25 +111,6 @@ def fill_and_connect(page, platform, key):
     caption(page, 'Connect looks first — it changes nothing yet.', 3.0)
     page.click('button:has-text("Connect")')
     page.wait_for_timeout(3500)
-
-
-def point_at_the_stand_in(page, platform):
-    """Aim the wizard at a local K-Message, without making it part of the story."""
-    try:
-        toggle = page.locator(
-            'div[name="elsewhere"] input, input[id^="elsewhere"]').first
-        toggle.wait_for(state='visible', timeout=5000)
-        toggle.check()
-        page.wait_for_timeout(500)
-        url = page.locator(
-            'div[name="base_url"] input, input[id^="base_url"]').first
-        url.wait_for(state='visible', timeout=5000)
-        url.fill(platform)
-        page.wait_for_timeout(400)
-        toggle.uncheck()
-        page.wait_for_timeout(600)
-    except PlaywrightTimeout:
-        pass
 
 
 def apply_setup(page):
@@ -156,8 +129,6 @@ def apply_setup(page):
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--odoo', default='http://127.0.0.1:8169')
-    parser.add_argument('--platform', default='http://127.0.0.1:8787',
-                        help='record against a stand-in K-Message; "" uses the built-in address')
     parser.add_argument('--key', default='whm_demo0000000000000000000000000000')
     parser.add_argument('--out', default='/tmp/kmessage-connect')
     args = parser.parse_args()
@@ -176,7 +147,7 @@ def main() -> int:
         try:
             log_in(page, args.odoo)
             open_wizard(page, args.odoo)
-            fill_and_connect(page, args.platform, args.key)
+            fill_and_connect(page, args.key)
             apply_setup(page)
         finally:
             video = page.video

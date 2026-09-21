@@ -1287,11 +1287,6 @@ msgid ""
 msgstr "أقصى عدد صفوف في الإجابة الواحدة. المحادثة لا تحتمل قائمة طويلة، والقائمة الطويلة هي ما يحوّل الخطأ البسيط إلى تسريب للبيانات."
 
 #. module: kmessage_connector
-#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_connect__elsewhere
-msgid "My K-Message is hosted elsewhere"
-msgstr "K-Message عندي مستضاف في مكان آخر"
-
-#. module: kmessage_connector
 #: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_account__name
 #: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_ai_tool__name
 #: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_automation__name
@@ -1441,11 +1436,6 @@ msgstr "الأرقام"
 #: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_reply_rule_form
 msgid "Off"
 msgstr "موقوفة"
-
-#. module: kmessage_connector
-#: model:ir.model.fields,help:kmessage_connector.field_kmessage_connect__elsewhere
-msgid "Off for everyone on the usual service, which is nearly everyone."
-msgstr "اتركه مغلقاً إن كنت على الخدمة المعتادة، وهذا حال الجميع تقريباً."
 
 #. module: kmessage_connector
 #: model:ir.model.fields,help:kmessage_connector.field_kmessage_account__inbound_enabled
@@ -2170,14 +2160,6 @@ msgid ""
 msgstr "الإجراء الذي يُنفَّذ على السجل الذي تخصّه الرسالة. يُكتب في شاشة الإجراءات في أودو، فيستطيع كل ما يستطيعه أي إجراء مجدول."
 
 #. module: kmessage_connector
-#: model:ir.model.fields,help:kmessage_connector.field_kmessage_account__base_url
-msgid ""
-"The address of your K-Message service. It is the same for every customer, so"
-" it is filled in already — change it only if your tenant is hosted somewhere"
-" else."
-msgstr "عنوان خدمة K-Message. هو نفسه لكل العملاء، لذلك جاء مُعبّأً — لا تغيّره إلا إذا كان حسابك مستضافاً في مكان آخر."
-
-#. module: kmessage_connector
 #: model:ir.model.fields,help:kmessage_connector.field_kmessage_ai_tool__fields_json
 msgid ""
 "The answer's fields the assistant may see, as [{\"name\": \"number\", "
@@ -2327,13 +2309,6 @@ msgid ""
 "The reply rules this tap actually ran, which is how a second tap on the same"
 " message is recognised as a repeat."
 msgstr "قواعد الردّ التي نفّذتها هذه الضغطة فعلياً، وبها تُعرف الضغطة الثانية على الرسالة نفسها بأنها مكرّرة."
-
-#. module: kmessage_connector
-#: model:ir.model.fields,help:kmessage_connector.field_kmessage_connect__base_url
-msgid ""
-"The same address for every customer, so it is filled in. Change it only if "
-"your K-Message is hosted somewhere else."
-msgstr "العنوان نفسه لكل العملاء، لذلك جاء مُعبّأً. غيّره فقط إذا كان K-Message عندك مستضافاً في مكان آخر."
 
 #. module: kmessage_connector
 #: model:ir.model.fields,help:kmessage_connector.field_kmessage_send__param_json
@@ -2723,6 +2698,15 @@ msgid "When this comes back"
 msgstr "عند وصول هذا"
 
 #. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_account__base_url
+msgid ""
+"Where K-Message is. There is one, so nobody is asked for it: it comes from "
+"the system parameter kmessage.base_url when that is set, and otherwise from "
+"the address built into this addon. The field is here for a developer, not "
+"for a customer."
+msgstr "أين يوجد K-Message. هو واحد، فلا يُسأل عنه أحد: يأتي من الإعداد kmessage.base_url إن ضُبط، وإلا فمن العنوان المبني داخل التطبيق. هذا الحقل للمطوّر لا للعميل."
+
+#. module: kmessage_connector
 #: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_message_form
 msgid "Where it came from"
 msgstr "مصدر الرسالة"
@@ -2864,11 +2848,6 @@ msgstr "مثال: أرسل الفاتورة عند ترحيلها"
 #: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_reply_rule_form
 msgid "e.g. “Yes, the amount arrived” marks the payment checked"
 msgstr "مثال: «نعم، وصل المبلغ» تؤكد مراجعة الدفعة"
-
-#. module: kmessage_connector
-#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_account_form
-msgid "https://api.k-message.kerneltics.com"
-msgstr "https://api.k-message.kerneltics.com"
 
 #. module: kmessage_connector
 #. odoo-python

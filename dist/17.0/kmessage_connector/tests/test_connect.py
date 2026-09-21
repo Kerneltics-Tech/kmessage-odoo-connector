@@ -13,7 +13,7 @@ from unittest.mock import patch
 from odoo.exceptions import UserError
 from odoo.tests import tagged
 
-from ..tools.client import KMessageClient, KMessageError
+from ..tools.client import DEFAULT_BASE_URL, KMessageClient, KMessageError
 from .common import KMessageCase
 
 
@@ -112,3 +112,35 @@ class TestConnectEverything(KMessageCase):
         with patch.object(KMessageClient, 'connect_odoo', blow_up):
             with self.assertRaises(UserError):
                 self.account.connect_everything()
+
+
+@tagged('post_install', '-at_install')
+class TestTheAddressIsNotAQuestion(KMessageCase):
+    """There is one K-Message, so nobody is asked where it is.
+
+    It stays overridable, because a developer running against the stand-in in
+    ``dev/fake_kmessage.py`` has to be able to say so somewhere — just not on
+    the screen a customer sees.
+    """
+
+    def test_the_wizard_opens_with_the_address_already_known(self):
+        wizard = self.env['kmessage.connect'].create({'api_key': 'whm_x'})
+        self.assertEqual(wizard.base_url, DEFAULT_BASE_URL)
+
+    def test_a_system_parameter_moves_it(self):
+        self.env['ir.config_parameter'].sudo().set_param(
+            'kmessage.base_url', 'http://127.0.0.1:9999/')
+        wizard = self.env['kmessage.connect'].create({'api_key': 'whm_x'})
+        self.assertEqual(wizard.base_url, 'http://127.0.0.1:9999',
+                         'a trailing slash would double the one in every path')
+        # A connection is one per company, so ask for the default rather than
+        # making a second one.
+        self.assertEqual(
+            self.env['kmessage.account'].default_get(['base_url'])['base_url'],
+            'http://127.0.0.1:9999')
+
+    def test_the_customer_is_never_shown_it(self):
+        """A field on a form is a question. This one is asked of nobody."""
+        form = self.env.ref('kmessage_connector.view_kmessage_connect_form')
+        self.assertNotIn('base_url', form.arch,
+                         'the connect screen must ask for the token and nothing else')

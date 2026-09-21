@@ -32,10 +32,12 @@ class KMessageAccount(models.Model):
         default=lambda self: self.env.company)
 
     base_url = fields.Char(
-        string='K-Message URL', required=True, default=DEFAULT_BASE_URL,
-        help="The address of your K-Message service. It is the same for every "
-             "customer, so it is filled in already — change it only if your "
-             "tenant is hosted somewhere else.")
+        string='K-Message URL', required=True,
+        default=lambda self: self._service_url(),
+        help="Where K-Message is. There is one, so nobody is asked for it: it "
+             "comes from the system parameter kmessage.base_url when that is "
+             "set, and otherwise from the address built into this addon. The "
+             "field is here for a developer, not for a customer.")
     api_key = fields.Char(
         string='Private Token', required=True,
         groups='kmessage_connector.group_kmessage_manager',
@@ -124,6 +126,18 @@ class KMessageAccount(models.Model):
         """The live connection for ``company``, or an empty recordset."""
         company = company or self.env.company
         return self.sudo().search([('company_id', '=', company.id)], limit=1)
+
+    @api.model
+    def _service_url(self):
+        """The one address K-Message is at.
+
+        There is a single service, so this is not a question a customer should
+        ever be asked. It stays overridable through a system parameter because
+        a developer running against a local stand-in needs somewhere to say so
+        — and that is a technical setting, not a step in setup.
+        """
+        configured = self.env['ir.config_parameter'].sudo().get_param('kmessage.base_url')
+        return (configured or DEFAULT_BASE_URL).rstrip('/')
 
     def _client(self):
         """A ready client, or a clear error explaining what is missing."""

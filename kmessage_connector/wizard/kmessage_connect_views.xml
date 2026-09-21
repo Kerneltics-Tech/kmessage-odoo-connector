@@ -16,9 +16,6 @@
                     </div>
                     <field name="api_key" password="True" placeholder="whm_…"/>
                     <field name="company_id" groups="base.group_multi_company"/>
-                    <field name="elsewhere"/>
-                    <field name="base_url" invisible="not elsewhere"
-                           required="elsewhere"/>
                 </group>
 
                 <div invisible="state != 'checked'">

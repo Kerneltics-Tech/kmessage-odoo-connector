@@ -94,9 +94,10 @@ before editing anything:
 ## Connecting
 
 *K-Message → Configuration → Connect to K-Message*. The wizard asks for one
-thing: the private token. The service address is the same for every customer,
-so it is compiled in; *My K-Message is hosted elsewhere* reveals the field for
-the rare tenant that is not on it.
+thing: the private token. There is one K-Message, so its address is never a
+question — `kmessage.account._service_url()` answers it, reading the system
+parameter `kmessage.base_url` if a developer has set one and otherwise the
+address built into the addon.
 
 **Check** looks before leaping. It asks the platform who the token is, which
 WhatsApp numbers the tenant has, how many approved templates there are, and

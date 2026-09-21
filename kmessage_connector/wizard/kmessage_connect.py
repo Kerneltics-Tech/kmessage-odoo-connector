@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
-"""Setup in one screen: a URL, a token, and a button.
+"""Setup in one screen: a token and a button.
 
-What the button does depends on what the token turns out to be allowed to do,
-because most tenants are on a managed plan where only the provider may add a
-webhook. The wizard therefore does everything it can and then says, plainly,
-what is left for a person to do — with the exact values to hand over.
+There is one K-Message, so its address is not a question — it comes from
+``kmessage.account._service_url()`` and never appears on the form. What the
+button does depends on what the token turns out to be allowed to do: it wires
+both directions in one call where the platform supports it, and where it does
+not, it says plainly what is left for a person to do.
 """
 
 import logging
@@ -12,7 +13,7 @@ import logging
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
-from ..tools.client import DEFAULT_BASE_URL, KMessageClient, KMessageError
+from ..tools.client import KMessageClient, KMessageError
 
 _logger = logging.getLogger(__name__)
 
@@ -23,13 +24,11 @@ class KMessageConnect(models.TransientModel):
 
     company_id = fields.Many2one(
         'res.company', required=True, default=lambda self: self.env.company)
+    # Not on the form: there is one K-Message. It is a field rather than a
+    # call so a developer can still aim a wizard at a stand-in.
     base_url = fields.Char(
-        string='K-Message URL', required=True, default=DEFAULT_BASE_URL,
-        help="The same address for every customer, so it is filled in. Change it "
-             "only if your K-Message is hosted somewhere else.")
-    elsewhere = fields.Boolean(
-        string='My K-Message is hosted elsewhere',
-        help="Off for everyone on the usual service, which is nearly everyone.")
+        string='K-Message URL', required=True,
+        default=lambda self: self.env['kmessage.account']._service_url())
     api_key = fields.Char(string='Private Token', required=True)
 
     state = fields.Selection(

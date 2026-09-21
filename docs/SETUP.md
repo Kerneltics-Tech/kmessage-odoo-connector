@@ -57,9 +57,7 @@ starts doing.
 *K-Message → Configuration → Connect*
 
 One field: your **private token** from K-Message (*Settings → API Keys*, it
-starts with `whm_`). The address is the same for every customer, so it is
-already filled in — *My K-Message is hosted elsewhere* is there for the rare
-tenant that is not on the usual service.
+starts with `whm_`). There is nothing else to fill in.
 
 Press **Connect**. It looks before it leaps — who the token belongs to, which
 WhatsApp numbers the tenant has, how many templates exist, and what this token

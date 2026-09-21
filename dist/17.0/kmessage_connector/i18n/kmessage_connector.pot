@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-21 07:17+0000\n"
-"PO-Revision-Date: 2026-09-21 07:17+0000\n"
+"POT-Creation-Date: 2026-09-21 08:21+0000\n"
+"PO-Revision-Date: 2026-09-21 08:21+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -1280,11 +1280,6 @@ msgid ""
 msgstr ""
 
 #. module: kmessage_connector
-#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_connect__elsewhere
-msgid "My K-Message is hosted elsewhere"
-msgstr ""
-
-#. module: kmessage_connector
 #: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_account__name
 #: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_ai_tool__name
 #: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_automation__name
@@ -1433,11 +1428,6 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_automation_form
 #: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_reply_rule_form
 msgid "Off"
-msgstr ""
-
-#. module: kmessage_connector
-#: model:ir.model.fields,help:kmessage_connector.field_kmessage_connect__elsewhere
-msgid "Off for everyone on the usual service, which is nearly everyone."
 msgstr ""
 
 #. module: kmessage_connector
@@ -2163,14 +2153,6 @@ msgid ""
 msgstr ""
 
 #. module: kmessage_connector
-#: model:ir.model.fields,help:kmessage_connector.field_kmessage_account__base_url
-msgid ""
-"The address of your K-Message service. It is the same for every customer, so"
-" it is filled in already — change it only if your tenant is hosted somewhere"
-" else."
-msgstr ""
-
-#. module: kmessage_connector
 #: model:ir.model.fields,help:kmessage_connector.field_kmessage_ai_tool__fields_json
 msgid ""
 "The answer's fields the assistant may see, as [{\"name\": \"number\", "
@@ -2316,13 +2298,6 @@ msgstr ""
 msgid ""
 "The reply rules this tap actually ran, which is how a second tap on the same"
 " message is recognised as a repeat."
-msgstr ""
-
-#. module: kmessage_connector
-#: model:ir.model.fields,help:kmessage_connector.field_kmessage_connect__base_url
-msgid ""
-"The same address for every customer, so it is filled in. Change it only if "
-"your K-Message is hosted somewhere else."
 msgstr ""
 
 #. module: kmessage_connector
@@ -2713,6 +2688,15 @@ msgid "When this comes back"
 msgstr ""
 
 #. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_account__base_url
+msgid ""
+"Where K-Message is. There is one, so nobody is asked for it: it comes from "
+"the system parameter kmessage.base_url when that is set, and otherwise from "
+"the address built into this addon. The field is here for a developer, not "
+"for a customer."
+msgstr ""
+
+#. module: kmessage_connector
 #: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_message_form
 msgid "Where it came from"
 msgstr ""
@@ -2853,11 +2837,6 @@ msgstr ""
 #. module: kmessage_connector
 #: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_reply_rule_form
 msgid "e.g. “Yes, the amount arrived” marks the payment checked"
-msgstr ""
-
-#. module: kmessage_connector
-#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_account_form
-msgid "https://api.k-message.kerneltics.com"
 msgstr ""
 
 #. module: kmessage_connector

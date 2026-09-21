@@ -34,9 +34,9 @@ ffmpeg -i /tmp/connect/*.webm -vf scale=1440:900,format=yuv420p \
     connect-walkthrough.mp4
 ```
 
-`--platform` aims the wizard at the stand-in, and it does that behind the
-*hosted elsewhere* switch — off camera, where a customer never goes. The
-recording shows the one field there is.
+Aim that Odoo at the stand-in before starting it, by setting the system
+parameter `kmessage.base_url`. There is no address on the screen, so there is
+none in the recording either — the video shows the one field there is.
 
 Two things the recording needs, or the summary fills with refusals that are
 true but unhelpful in a demo:

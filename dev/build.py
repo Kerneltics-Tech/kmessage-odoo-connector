@@ -117,6 +117,14 @@ def check_manifest(module: Path) -> list[str]:
         problems.append(
             "%s: version %r is not series.x.y.z" % (module.name, version.group(1)))
 
+    name = re.search(r"'name'\s*:\s*'([^']+)'", text)
+    if not name:
+        problems.append('%s: no name in the manifest' % module.name)
+    elif len(name.group(1)) > 25:
+        # apps.odoo.com's vendor guidelines: explicit, at most 25 characters.
+        problems.append("%s: name %r is %d characters; the store wants 25 or fewer"
+                        % (module.name, name.group(1), len(name.group(1))))
+
     for key in ("'license'", "'author'", "'website'", "'summary'", "'category'"):
         if key not in text:
             problems.append('%s: the Apps store wants %s in the manifest' % (module.name, key))

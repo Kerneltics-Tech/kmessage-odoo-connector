@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    'name': 'K-Message Connector — Inventory',
+    'name': 'K-Message Inventory',
     # The Odoo Apps store wants the series in front of the version, and Odoo
     # refuses a version carrying the wrong one — '18.0.1.0.0' on a 17 server
     # is five components where the regex wants three, and it raises. So this

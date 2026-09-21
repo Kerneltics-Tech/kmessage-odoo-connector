@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    'name': 'K-Message Connector — Sales',
+    'name': 'K-Message Sales',
     # No series prefix, for the reason core gives: Odoo stamps the running
     # series onto it, and one source tree installs on 17.0 and 18.0.
     # The Odoo Apps store wants the series in front of the version, and Odoo

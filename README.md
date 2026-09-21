@@ -246,6 +246,9 @@ cannot read a long list, and a long list is how an accident becomes an export.
 
 * [docs/SETUP.md](docs/SETUP.md) — the twenty-minute walkthrough: install,
   connect, turn on the first message, and what to hand your provider.
+* [docs/quick-start/](docs/quick-start/) — the one-page sheet to hand a
+  customer, in Arabic and English, and a 57-second video of the connect
+  screen doing its work.
 
 * [docs/DESIGN.md](docs/DESIGN.md) — why the addon is shaped like this, and what
   the platform was verified to allow.

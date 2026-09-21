@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>ربط أودو بـ K-Message — البدء السريع</title>
+<style>
+  @page { size: A4; margin: 14mm 14mm 16mm 14mm; }
+  * { box-sizing: border-box; }
+  body {
+    font-family: "Geeza Pro", "Al Bayan", "Arial", sans-serif;
+    color: #12203a; font-size: 12pt; line-height: 1.75; margin: 0;
+  }
+  h1 { font-size: 22pt; margin: 0 0 2mm; color: #09024B; }
+  .lede { color: #4a5670; margin: 0 0 7mm; font-size: 11pt; }
+  .step { border: 1px solid #dfe4ee; border-radius: 8px; padding: 5mm 6mm; margin-bottom: 4mm; }
+  .step-head { display: flex; align-items: center; gap: 4mm; margin-bottom: 2mm; }
+  .num {
+    background: #09024B; color: #fff; width: 9mm; height: 9mm; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 13pt; font-weight: bold; flex: none;
+  }
+  .title { font-size: 14pt; font-weight: bold; color: #09024B; }
+  .body { margin-right: 13mm; }
+  ul { margin: 2mm 0; padding-right: 6mm; }
+  li { margin-bottom: 1.5mm; }
+  code, .path {
+    font-family: "Menlo", monospace; font-size: 10pt; background: #f2f4f9;
+    padding: 0.5mm 1.5mm; border-radius: 3px; direction: ltr; display: inline-block;
+  }
+  .note { background: #f7f9fc; border-right: 3px solid #06C565; padding: 3mm 4mm; margin: 3mm 0; font-size: 11pt; }
+  .warn { background: #fff8f0; border-right: 3px solid #e08b2f; padding: 3mm 4mm; margin: 3mm 0; font-size: 11pt; }
+  .switches { width: 100%; border-collapse: collapse; margin: 2mm 0; font-size: 11pt; }
+  .switches td { border-bottom: 1px solid #e8ecf4; padding: 2mm 1mm; vertical-align: top; }
+  .switches td:first-child { font-weight: bold; white-space: nowrap; width: 46mm; }
+  .footer { margin-top: 6mm; padding-top: 3mm; border-top: 1px solid #dfe4ee; color: #6b7488; font-size: 10pt; }
+</style>
+</head>
+<body>
+
+<h1>ربط أودو بـ K-Message</h1>
+<p class="lede">
+  ثلاث خطوات. تثبيت، ثم لصق مفتاح، ثم تشغيل أول رسالة.
+  الباقي يحدث من نفسه — بما في ذلك كتابة قوالب واتساب ورفعها إلى Meta.
+</p>
+
+<div class="step">
+  <div class="step-head"><span class="num">١</span><span class="title">ثبّت التطبيق</span></div>
+  <div class="body">
+    من <b>التطبيقات ← تحديث قائمة التطبيقات</b>، ابحث عن
+    <b>K-Message Connector</b> واضغط <b>تفعيل</b>.
+    <div class="note">
+      تُثبّت تطبيقاً واحداً فقط. وما يخص الفوترة والمبيعات والمخزون يُضاف من نفسه
+      إن كانت تلك التطبيقات موجودة لديك.
+      <br><b>ولا تُرسل أي رسالة بعد.</b> التثبيت يوسّع ما <i>يستطيع</i> أودو فعله، لا ما يبدأ بفعله.
+    </div>
+  </div>
+</div>
+
+<div class="step">
+  <div class="step-head"><span class="num">٢</span><span class="title">اربط حسابك</span></div>
+  <div class="body">
+    افتح <span class="path">K-Message ← الإعدادات ← الاتصال</span> وألصق شيئين:
+    <ul>
+      <li><b>عنوان K-Message</b> — <code>https://api.k-message.kerneltics.com</code></li>
+      <li><b>التوكن الخاص</b> — من K-Message: <span class="path">Settings → API Keys</span>، ويبدأ بـ <code>whm_</code></li>
+    </ul>
+    اضغط <b>اتصال</b>. سيخبرك أولاً لمن هذا التوكن وما الذي يسمح به — قبل أن يُكتب أي شيء.
+    ثم اختر ما تريده أن يجهّزه لك:
+    <table class="switches">
+      <tr><td>اكتب القوالب نيابةً عني</td><td>ينشئ رسائل واتساب بالعربية ويرفعها إلى Meta للموافقة. الموافقة عادةً خلال دقائق.</td></tr>
+      <tr><td>دع K-Message يتصل بأودو</td><td>يشترك في أحداث واتساب ليصلك الردّ وحالة الإرسال.</td></tr>
+      <tr><td>علّم المساعد أن يسأل أودو</td><td>ينشر قدرات أودو كأدوات للمساعد الذكي.</td></tr>
+      <tr><td>أصدر توكن لـ K-Message</td><td>المفتاح الذي يستخدمه K-Message ليسأل أودو عن عميل.</td></tr>
+    </table>
+    اضغط <b>جهّزه</b>، وستظهر لك خلاصة سطراً سطراً بما تم.
+    <div class="warn">
+      التوكن الصادر يظهر <b>مرة واحدة فقط</b>. أودو يحفظ بصمته لا قيمته — انسخه الآن،
+      أو أصدر غيره لاحقاً من شاشة التوكنات.
+    </div>
+  </div>
+</div>
+
+<div class="step">
+  <div class="step-head"><span class="num">٣</span><span class="title">شغّل أول رسالة</span></div>
+  <div class="body">
+    افتح <span class="path">K-Message ← الإعدادات ← قواعد الأتمتة ← جديد</span>:
+    <ul>
+      <li><b>متى</b> — اختر الحدث: ترحيل فاتورة، تأكيد طلب، تأكيد أمر توصيل.</li>
+      <li><b>أرسل</b> — اختر القالب، مثل <code>odoo_invoice_ready</code>.</li>
+      <li><b>المتغيّرات</b> — سطر لكل <code>{{n}}</code> في القالب: اسم العميل، رقم الفاتورة، المبلغ.</li>
+      <li><b>فعّل القاعدة.</b> القواعد الجديدة تبدأ متوقفة.</li>
+    </ul>
+    رحّل فاتورة، وخلال دقيقتين تصل الرسالة ومعها ملف الفاتورة، ويُسجَّل ذلك في سجل الفاتورة نفسها.
+    <div class="note">
+      <b>جرّب بأمان أولاً:</b> فعّل <b>وضع التجربة</b> في شاشة الاتصال. كل رسالة تُجهَّز وتُسجَّل، ولا يخرج شيء.
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <b>تحتاجه قبل البدء:</b> أودو 17 أو 18، وبرنامج <code>wkhtmltopdf</code> مثبّت (به يطبع أودو ملف الفاتورة)،
+  وتوكن من K-Message.
+  <br>
+  <b>ولجعل المساعد يسأل أودو</b> يلزم أن يكون أودو على عنوان عام يصله الإنترنت — إرسال الفواتير لا يحتاج ذلك.
+</div>
+
+</body>
+</html>

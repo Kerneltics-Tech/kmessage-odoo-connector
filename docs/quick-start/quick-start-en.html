@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<title>Connect Odoo to K-Message — Quick start</title>
+<style>
+  @page { size: A4; margin: 14mm 14mm 16mm 14mm; }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #12203a; font-size: 12pt; line-height: 1.75; margin: 0;
+  }
+  h1 { font-size: 22pt; margin: 0 0 2mm; color: #09024B; }
+  .lede { color: #4a5670; margin: 0 0 7mm; font-size: 11pt; }
+  .step { border: 1px solid #dfe4ee; border-radius: 8px; padding: 5mm 6mm; margin-bottom: 4mm; }
+  .step-head { display: flex; align-items: center; gap: 4mm; margin-bottom: 2mm; }
+  .num {
+    background: #09024B; color: #fff; width: 9mm; height: 9mm; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 13pt; font-weight: bold; flex: none;
+  }
+  .title { font-size: 14pt; font-weight: bold; color: #09024B; }
+  .body { margin-left: 13mm; }
+  ul { margin: 2mm 0; padding-left: 6mm; }
+  li { margin-bottom: 1.5mm; }
+  code, .path {
+    font-family: "Menlo", monospace; font-size: 10pt; background: #f2f4f9;
+    padding: 0.5mm 1.5mm; border-radius: 3px; direction: ltr; display: inline-block;
+  }
+  .note { background: #f7f9fc; border-left: 3px solid #06C565; padding: 3mm 4mm; margin: 3mm 0; font-size: 11pt; }
+  .warn { background: #fff8f0; border-left: 3px solid #e08b2f; padding: 3mm 4mm; margin: 3mm 0; font-size: 11pt; }
+  .switches { width: 100%; border-collapse: collapse; margin: 2mm 0; font-size: 11pt; }
+  .switches td { border-bottom: 1px solid #e8ecf4; padding: 2mm 1mm; vertical-align: top; }
+  .switches td:first-child { font-weight: bold; white-space: nowrap; width: 46mm; }
+  .footer { margin-top: 6mm; padding-top: 3mm; border-top: 1px solid #dfe4ee; color: #6b7488; font-size: 10pt; }
+</style>
+</head>
+<body>
+
+<h1>Connect Odoo to K-Message</h1>
+<p class="lede">
+  Three steps. Install, paste a key, switch on the first message. The rest happens
+  by itself — including writing your WhatsApp templates and submitting them to Meta.
+</p>
+
+<div class="step">
+  <div class="step-head"><span class="num">1</span><span class="title">Install the app</span></div>
+  <div class="body">
+    <b>Apps → Update Apps List</b>, search for <b>K-Message Connector</b>, press <b>Activate</b>.
+    <div class="note">
+      You install one app. The parts for Invoicing, Sales and Inventory attach themselves
+      if you have those apps, and stay away if you do not.
+      <br><b>Nothing sends yet.</b> Installing changes what Odoo <i>can</i> do, not what it starts doing.
+    </div>
+  </div>
+</div>
+
+<div class="step">
+  <div class="step-head"><span class="num">2</span><span class="title">Connect your account</span></div>
+  <div class="body">
+    Open <span class="path">K-Message → Configuration → Connect</span> and paste two things:
+    <ul>
+      <li><b>K-Message URL</b> — <code>https://api.k-message.kerneltics.com</code></li>
+      <li><b>Private token</b> — in K-Message: <span class="path">Settings → API Keys</span>, starts with <code>whm_</code></li>
+    </ul>
+    Press <b>Connect</b>. It tells you who the token belongs to and what it may do — before
+    anything is written. Then choose what it should set up:
+    <table class="switches">
+      <tr><td>Write the templates for me</td><td>Creates the WhatsApp messages in Arabic and submits them to Meta. Approval usually within minutes.</td></tr>
+      <tr><td>Let K-Message call this Odoo</td><td>Subscribes to WhatsApp events, so replies and delivery news come back.</td></tr>
+      <tr><td>Teach the assistant to ask Odoo</td><td>Publishes Odoo's capabilities as tools for the assistant.</td></tr>
+      <tr><td>Issue a token for K-Message</td><td>The key K-Message uses when it asks Odoo about a customer.</td></tr>
+    </table>
+    Press <b>Set it up</b>, and you get a summary, line by line, of what happened.
+    <div class="warn">
+      The issued token is shown <b>once</b>. Odoo keeps only a fingerprint of it — copy it now,
+      or issue another later from the Tokens screen.
+    </div>
+  </div>
+</div>
+
+<div class="step">
+  <div class="step-head"><span class="num">3</span><span class="title">Switch on the first message</span></div>
+  <div class="body">
+    Open <span class="path">K-Message → Configuration → Automations → New</span>:
+    <ul>
+      <li><b>When</b> — pick the trigger: an invoice is posted, an order confirmed, a delivery validated.</li>
+      <li><b>Send</b> — pick the template, such as <code>odoo_invoice_ready</code>.</li>
+      <li><b>Placeholders</b> — one row per <code>{{n}}</code>: the customer's name, the number, the amount.</li>
+      <li><b>Switch it on.</b> New rules start off.</li>
+    </ul>
+    Post an invoice. Within two minutes the message arrives with the PDF, and the invoice's
+    own chatter says so.
+    <div class="note">
+      <b>Try it safely first:</b> tick <b>Practice mode</b> on the connection. Every message is
+      prepared and recorded, and nothing leaves.
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <b>Before you start:</b> Odoo 17 or 18, <code>wkhtmltopdf</code> installed (Odoo prints the invoice
+  PDF with it), and a K-Message token.
+  <br>
+  <b>To let the assistant ask Odoo</b>, Odoo must be on an address the internet can reach —
+  sending invoices does not need that.
+</div>
+
+</body>
+</html>

@@ -170,6 +170,17 @@ class Handler(BaseHTTPRequestHandler):
     api_key = "test-key"
     protocol_version = "HTTP/1.1"
 
+    def handle_one_request(self):
+        """One request at a time, each with its own body.
+
+        The handler instance is reused for every request on a keep-alive
+        connection, so anything remembered per request has to be forgotten
+        here — a cached body that outlives its request is served to the next
+        one, which is a stranger bug to chase than no cache at all.
+        """
+        self._read_body = None
+        super().handle_one_request()
+
     # -- plumbing ---------------------------------------------------------
     def log_message(self, fmt, *args):  # noqa: A003 - silence the default stderr spam
         pass
@@ -195,8 +206,21 @@ class Handler(BaseHTTPRequestHandler):
         return False
 
     def _body(self) -> bytes:
-        length = int(self.headers.get("Content-Length") or 0)
-        return self.rfile.read(length) if length else b""
+        """The request body, read exactly once and remembered.
+
+        Reading it once is not an optimisation, it is the difference between
+        working and not. These connections are keep-alive: a handler that
+        answers without reading the body leaves those bytes in the socket, and
+        the server then parses them as the *next* request line — which it
+        answers with an HTML `501 Unsupported method` that has nothing to do
+        with what the caller asked. Draining on every path, including the
+        refusals, is what keeps one rejected request from corrupting the one
+        after it.
+        """
+        if self._read_body is None:
+            length = int(self.headers.get("Content-Length") or 0)
+            self._read_body = self.rfile.read(length) if length else b""
+        return self._read_body
 
     # -- routes -----------------------------------------------------------
     def do_GET(self):  # noqa: N802 - BaseHTTPRequestHandler's naming
@@ -244,6 +268,7 @@ class Handler(BaseHTTPRequestHandler):
         return self._err(404, "404 page not found")
 
     def do_POST(self):  # noqa: N802
+        self._body()  # drained here so no early refusal can leave bytes behind
         path = self.path.split("?", 1)[0]
         if path == "/_reset":
             STATE.reset()
@@ -372,6 +397,7 @@ class Handler(BaseHTTPRequestHandler):
         return self._err(404, "404 page not found")
 
     def do_PUT(self):  # noqa: N802
+        self._body()  # drained here so no early refusal can leave bytes behind
         if not self._authed():
             return
         path = self.path.split("?", 1)[0]
@@ -408,6 +434,7 @@ class Handler(BaseHTTPRequestHandler):
             return self._ok(record)
 
     def do_DELETE(self):  # noqa: N802
+        self._body()  # drained here so no early refusal can leave bytes behind
         if not self._authed():
             return
         path = self.path.split("?", 1)[0]

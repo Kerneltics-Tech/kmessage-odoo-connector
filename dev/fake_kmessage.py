@@ -24,6 +24,7 @@ what it was sent so a test can assert on it:
     POST /_reset                      forget it again (test hook)
     POST /_fail                       make the next N sends fail (test hook)
     POST /_refuse_tools               answer 403 to tool publishing, like a managed plan
+    POST /_approve                    Meta gets back to us: {"name": …} → APPROVED
 
     GET  /api/chatbot/ai-contexts     the assistant tools a company has registered
     POST /api/chatbot/ai-contexts     register one
@@ -285,6 +286,21 @@ class Handler(BaseHTTPRequestHandler):
                 STATE.fail_next = int(payload.get("count", 1))
                 STATE.fail_status = int(payload.get("status", 503))
             return self._ok({"fail_next": payload.get("count", 1)})
+        if path == "/_approve":
+            # Meta getting back to us. Real approval takes minutes; a demo or a
+            # test cannot wait for it, and a template that never becomes
+            # sendable would make the stand-in lie about the interesting half.
+            payload = json.loads(self._body() or b"{}")
+            wanted = payload.get("name")
+            with STATE.lock:
+                changed = [
+                    t["name"] for t in STATE.drafts.values()
+                    if wanted in (None, t["name"])
+                ]
+                for record in STATE.drafts.values():
+                    if wanted in (None, record["name"]):
+                        record["status"] = "APPROVED"
+            return self._ok({"approved": changed})
         if not self._authed():
             return
 
@@ -510,7 +526,14 @@ class Handler(BaseHTTPRequestHandler):
                 return self._err(STATE.fail_status, "Upstream unavailable")
 
         name = fields.get("template_name")
-        if not any(t["name"] == name for t in TEMPLATES):
+        with STATE.lock:
+            approved_draft = any(
+                t["name"] == name and (t.get("status") or "").upper() == "APPROVED"
+                for t in STATE.drafts.values()
+            )
+        # A template the connector wrote is sendable once Meta has approved it,
+        # exactly like one that was always there. Anything still pending is not.
+        if not any(t["name"] == name for t in TEMPLATES) and not approved_draft:
             return self._err(404, "Template not found")
         if not (fields.get("phone_number") or "").strip():
             return self._err(400, "phone_number is required")

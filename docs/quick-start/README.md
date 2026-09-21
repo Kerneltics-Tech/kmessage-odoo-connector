@@ -8,6 +8,7 @@ so it can be regenerated when the screens change.
 | `quick-start-ar.pdf` | One page, Arabic. Install → connect → first message |
 | `quick-start-en.pdf` | The same, English |
 | `connect-walkthrough.mp4` | 57 seconds: the real Odoo web client, one field, connected |
+| `first-message-walkthrough.mp4` | 2¼ minutes: writing the rule, posting an invoice, watching the message go |
 
 ## Regenerating the PDFs
 
@@ -20,7 +21,7 @@ collides the step badges:
     --print-to-pdf="$PWD/quick-start-ar.pdf" "file://$PWD/quick-start-ar.html"
 ```
 
-## Regenerating the video
+## Regenerating the videos
 
 It drives the real web client with Playwright — no slides, no mock-ups — against
 the stand-in service in `dev/fake_kmessage.py`, so a recording never touches a
@@ -37,6 +38,23 @@ ffmpeg -i /tmp/connect/*.webm -vf scale=1440:900,format=yuv420p \
 Aim that Odoo at the stand-in before starting it, by setting the system
 parameter `kmessage.base_url`. There is no address on the screen, so there is
 none in the recording either — the video shows the one field there is.
+
+The second video picks up where the first ends, so its Odoo must already be
+connected, and it needs three more things:
+
+```bash
+python3 dev/record_automation.py --invoice <a draft invoice id> --out /tmp/first
+```
+
+* **A cron thread** — `--max-cron-threads=1`. The last twenty seconds are the
+  point: nobody presses send. Shorten `cron_send_queue` to a minute first, or
+  the recording waits out its full two.
+* **`wkhtmltopdf` on `PATH`** of the server process, or the message goes
+  without the invoice PDF — which the addon allows, and which would make the
+  closing caption a lie.
+* **An approved template.** The stand-in leaves what the connector submits
+  `PENDING`, as Meta does; `POST /_approve {"name": …}` is Meta getting back to
+  you, and then a re-sync makes it usable.
 
 Two things the recording needs, or the summary fills with refusals that are
 true but unhelpful in a demo:

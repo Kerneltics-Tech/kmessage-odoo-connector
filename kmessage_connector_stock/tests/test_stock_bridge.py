@@ -20,6 +20,7 @@ import json
 from odoo.tests import TransactionCase, tagged
 
 from odoo.addons.kmessage_connector.models.kmessage_api import KMessageApiError
+from odoo.addons.kmessage_connector.tools.phone import match_key
 
 
 @tagged('post_install', '-at_install')
@@ -400,9 +401,16 @@ class TestStockBridge(TransactionCase):
             self.env['kmessage.api'].dispatch('delivery_status', {}, self.token)
         self.assertEqual(caught.exception.code, 'phone_required')
 
+        # A number nobody has: proven, not assumed. A neat literal is exactly
+        # the sort of number a demo record turns out to be using.
+        stranger = '+96650%s' % '9' * 7
+        self.assertFalse(
+            self.env['res.partner'].search(
+                [('kmessage_phone_key', '=', match_key(stranger))], limit=1),
+            'this test needs a number no partner has')
         with self.assertRaises(KMessageApiError) as caught:
             self.env['kmessage.api'].dispatch(
-                'delivery_status', {'phone': '+966500000000'}, self.token)
+                'delivery_status', {'phone': stranger}, self.token)
         self.assertEqual(caught.exception.code, 'customer_not_found')
 
     # -- the PDF that goes with it ----------------------------------------

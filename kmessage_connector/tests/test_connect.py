@@ -124,6 +124,9 @@ class TestTheAddressIsNotAQuestion(KMessageCase):
     """
 
     def test_the_wizard_opens_with_the_address_already_known(self):
+        # The built-in address is what a database with nothing configured
+        # gets, so say so rather than inheriting whatever this one has.
+        self.env['ir.config_parameter'].sudo().set_param('kmessage.base_url', '')
         wizard = self.env['kmessage.connect'].create({'api_key': 'whm_x'})
         self.assertEqual(wizard.base_url, DEFAULT_BASE_URL)
 

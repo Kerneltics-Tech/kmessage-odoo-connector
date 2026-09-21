@@ -17,7 +17,8 @@ and the recording shows exactly that.
 
 It writes a .webm; ``ffmpeg`` turns that into the .mp4 most people can open.
 Deliberately slow: pauses are there so a viewer can read the screen, not
-because anything is waiting.
+because anything is waiting. The parts both recordings share live in
+``dev/recording.py``.
 """
 
 from __future__ import annotations
@@ -26,75 +27,14 @@ import argparse
 import pathlib
 import sys
 
-from playwright.sync_api import TimeoutError as PlaywrightTimeout
 from playwright.sync_api import sync_playwright
-
-#: How long a caption stays up, and how long a filled field is left to be read.
-BEAT = 2200
-
-
-def caption(page, text, seconds=3.0):
-    """Put a line of explanation over the page, the way a narrator would."""
-    page.evaluate(
-        """([text, seconds]) => {
-            const id = 'kmessage-caption';
-            document.getElementById(id)?.remove();
-            const el = document.createElement('div');
-            el.id = id;
-            el.textContent = text;
-            Object.assign(el.style, {
-                position: 'fixed', left: '0', right: '0', bottom: '0',
-                padding: '18px 28px', background: 'rgba(9,2,75,.94)', color: '#fff',
-                font: '500 19px/1.5 -apple-system, Segoe UI, Roboto, sans-serif',
-                zIndex: '2147483647', textAlign: 'center', letterSpacing: '.2px',
-            });
-            document.body.appendChild(el);
-            setTimeout(() => el.remove(), seconds * 1000);
-        }""",
-        [text, seconds],
-    )
-    page.wait_for_timeout(seconds * 1000)
-
-
-def log_in(page, odoo):
-    page.goto('%s/web/login' % odoo, wait_until='domcontentloaded')
-    page.wait_for_timeout(800)
-    caption(page, 'Odoo, with the K-Message Connector installed.', 2.6)
-    page.fill('input[name="login"]', 'admin')
-    page.fill('input[name="password"]', 'admin')
-    page.wait_for_timeout(600)
-    page.click('button[type="submit"]')
-    # Never networkidle here: Odoo's bus long-polls, so the page is never idle
-    # and the wait would simply time out on a page that loaded perfectly.
-    page.wait_for_selector('.o_main_navbar', timeout=30000)
-    page.wait_for_timeout(1500)
+from recording import VIEWPORT, caption, log_in, open_menu
 
 
 def open_wizard(page, odoo):
-    """Open the wizard, showing where it lives when the menus allow it.
-
-    The apps menu is the part most likely to move between Odoo versions, so
-    every step has a fallback and the action URL is the last one — a video
-    that fails to record teaches nobody anything.
-    """
     caption(page, 'K-Message → Configuration → Connect', 3.0)
-    try:
-        page.click('.o_navbar_apps_menu button, button.o_navbar_apps_menu, '
-                   '[aria-label="Home menu"], [title="Home menu"]', timeout=6000)
-        page.wait_for_timeout(1200)
-        page.click('.o_app:has-text("K-Message"), a.o_app:has-text("K-Message")', timeout=6000)
-        page.wait_for_timeout(2000)
-        page.click('button[data-menu-xmlid$="menu_kmessage_setup"], '
-                   'button:has-text("Configuration")', timeout=6000)
-        page.wait_for_timeout(1000)
-        page.click('[data-menu-xmlid$="menu_kmessage_connect"], '
-                   'a:has-text("Connect"), span:has-text("Connect")', timeout=6000)
-    except PlaywrightTimeout:
-        page.goto('%s/odoo/action-kmessage_connector.action_kmessage_connect' % odoo,
-                  wait_until='domcontentloaded')
-        page.wait_for_timeout(2000)
-    page.wait_for_selector('.modal, .o_form_view', timeout=20000)
-    page.wait_for_timeout(2200)
+    open_menu(page, odoo, 'kmessage_connector.action_kmessage_connect',
+              ['Configuration', 'Connect'], ready='.modal, .o_form_view')
 
 
 def fill_and_connect(page, key):
@@ -124,6 +64,8 @@ def apply_setup(page):
     page.wait_for_timeout(2200)
     caption(page, 'The issued token is shown once. Copy it now.', 3.6)
     page.wait_for_timeout(1500)
+    caption(page, 'Nothing sends yet — switching that on is the next video.', 3.6)
+    page.wait_for_timeout(1000)
 
 
 def main() -> int:
@@ -139,9 +81,9 @@ def main() -> int:
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch()
         context = browser.new_context(
-            viewport={'width': 1440, 'height': 900},
+            viewport=VIEWPORT,
             record_video_dir=str(out),
-            record_video_size={'width': 1440, 'height': 900},
+            record_video_size=VIEWPORT,
         )
         page = context.new_page()
         try:

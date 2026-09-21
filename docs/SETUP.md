@@ -105,7 +105,8 @@ thing that is left to do.
 4. **Switch it on.** New rules arrive off.
 
 Then post an invoice. Within two minutes the cron sends it, and the invoice's
-chatter says so.
+chatter says so. [`docs/quick-start/first-message-walkthrough.mp4`](quick-start/first-message-walkthrough.mp4)
+records exactly this, end to end, with nothing cut.
 
 **Try it safely first:** tick *Practice mode* on the connection. Every message
 is prepared and recorded, and nothing leaves.

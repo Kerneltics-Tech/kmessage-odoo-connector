@@ -253,8 +253,9 @@ cannot read a long list, and a long list is how an accident becomes an export.
 * [docs/SETUP.md](docs/SETUP.md) — the twenty-minute walkthrough: install,
   connect, turn on the first message, and what to hand your provider.
 * [docs/quick-start/](docs/quick-start/) — the one-page sheet to hand a
-  customer, in Arabic and English, and a 57-second video of the connect
-  screen doing its work.
+  customer, in Arabic and English, and two videos of the real web client: 57
+  seconds to connect, and two minutes to write the first rule, post an
+  invoice and watch the message go.
 
 * [docs/DESIGN.md](docs/DESIGN.md) — why the addon is shaped like this, and what
   the platform was verified to allow.

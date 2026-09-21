@@ -7,7 +7,7 @@ import secrets
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
-from ..tools.client import KMessageClient, KMessageError
+from ..tools.client import DEFAULT_BASE_URL, KMessageClient, KMessageError
 from ..tools.compat import LIST_FORM
 from ..tools.net import why_not_public
 
@@ -32,9 +32,10 @@ class KMessageAccount(models.Model):
         default=lambda self: self.env.company)
 
     base_url = fields.Char(
-        string='K-Message URL', required=True,
-        default='https://api.k-message.kerneltics.com',
-        help="The address of your K-Message service, without a trailing slash.")
+        string='K-Message URL', required=True, default=DEFAULT_BASE_URL,
+        help="The address of your K-Message service. It is the same for every "
+             "customer, so it is filled in already — change it only if your "
+             "tenant is hosted somewhere else.")
     api_key = fields.Char(
         string='Private Token', required=True,
         groups='kmessage_connector.group_kmessage_manager',
@@ -195,6 +196,71 @@ class KMessageAccount(models.Model):
         self.ensure_one()
         self.env['kmessage.template'].sync_from_platform(self)
         return self._notify(_("%s templates synced.", len(self.template_ids)))
+
+    def connect_everything(self, tools=None):
+        """Hand K-Message the webhook and the tools in a single call.
+
+        The customer sees one outcome instead of a list of things to forward
+        to their provider. Returns ``(done, note)`` — ``done`` is False when
+        the platform is too old to have the endpoint, which is the caller's
+        cue to fall back to setting each piece up on its own.
+        """
+        self.ensure_one()
+        record = self.sudo()
+        unreachable = why_not_public(record.webhook_url)
+        if unreachable:
+            return False, _("K-Message cannot call this Odoo: %s.", unreachable)
+
+        if not record.webhook_secret:
+            record.webhook_secret = secrets.token_hex(32)
+
+        tools = tools if tools is not None else self.env['kmessage.ai.tool'].sudo().search([
+            ('account_id', '=', record.id), ('capability_id.active', '=', True),
+        ])
+        payloads, by_name = [], {}
+        for tool in tools:
+            try:
+                payload = tool._connect_payload()
+            except UserError as error:
+                _logger.info('K-Message: %s was not offered (%s)', tool.name, error)
+                continue
+            payloads.append(payload)
+            by_name[payload['name']] = tool
+
+        try:
+            answer = record._client().connect_odoo(
+                webhook_url=record.webhook_url,
+                webhook_secret=record.webhook_secret,
+                events=SUBSCRIBED_EVENTS,
+                tools=payloads,
+            ) or {}
+        except KMessageError as error:
+            if error.status == 404:
+                return False, _("This K-Message does not take a connection from Odoo yet.")
+            if error.operator_only or error.status == 403:
+                return False, _("K-Message would not take the connection: %s", error)
+            raise UserError(_("K-Message refused the connection: %s", error))
+
+        webhook = answer.get('webhook') or {}
+        if webhook.get('id'):
+            record.write({
+                'webhook_remote_id': webhook.get('id'),
+                'webhook_secret': webhook.get('secret') or record.webhook_secret,
+                'webhook_state': 'registered',
+            })
+
+        published = 0
+        for outcome in answer.get('tools') or []:
+            tool = by_name.get(outcome.get('name'))
+            if not tool:
+                continue
+            if outcome.get('status') in ('created', 'updated'):
+                published += 1
+                tool.sudo().write({'state': 'published', 'last_error': False,
+                                   'last_published': fields.Datetime.now()})
+            else:
+                tool.sudo().write({'state': 'error', 'last_error': outcome.get('message') or ''})
+        return True, _("The assistant can now answer %s questions from Odoo.", published)
 
     def action_setup_webhook(self):
         """Subscribe our webhook URL, or explain what to ask the provider for."""

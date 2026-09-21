@@ -56,8 +56,10 @@ starts doing.
 
 *K-Message → Configuration → Connect*
 
-Two fields: the **K-Message URL** (`https://api.k-message.kerneltics.com`
-unless your tenant is hosted elsewhere) and the **private token**.
+One field: your **private token** from K-Message (*Settings → API Keys*, it
+starts with `whm_`). The address is the same for every customer, so it is
+already filled in — *My K-Message is hosted elsewhere* is there for the rare
+tenant that is not on the usual service.
 
 Press **Connect**. It looks before it leaps — who the token belongs to, which
 WhatsApp numbers the tenant has, how many templates exist, and what this token
@@ -72,9 +74,20 @@ Then choose what it should set up. All four are on by default:
 | **Teach the assistant to ask Odoo** | Publishes each capability as an assistant tool |
 | **Issue a token for K-Message** | The key K-Message presents when it asks Odoo about a customer |
 
-Press **Set it up**. You get a summary of what happened, line by line — and
-where the token was not allowed to do something, what to ask your provider for
-instead.
+Press **Set it up**. It wires both directions itself — one call registers the
+webhook and publishes the tools on the K-Message side — and hands you a summary,
+line by line:
+
+```
+• Connected as Odoo Connector.
+• 5 templates written and sent to Meta for approval.
+• K-Message will call this Odoo.
+• The assistant can now answer 6 questions from Odoo.
+```
+
+There is nothing to forward to anyone. If your K-Message is an older build
+without that endpoint, it falls back to the older route and tells you the one
+thing that is left to do.
 
 > The issued token is shown **once**. Odoo keeps only a fingerprint of it.
 > Copy it now, or press *Regenerate* on the token later and use the new value.
@@ -101,14 +114,14 @@ is prepared and recorded, and nothing leaves.
 
 ---
 
-## 4. Let K-Message ask Odoo (optional)
+## 4. If it could not wire itself (rare)
 
-This is the half that needs a public address.
+The half that lets K-Message ask Odoo needs a **public address** — Odoo on
+`localhost` is refused before anything is sent, and the screen says so.
 
-Whoever runs your K-Message tenant must add the webhook — on most plans the
-API answers `403 "This is managed by your provider."` even to a tenant
-administrator, because the permission belongs to the platform operator. The
-connection screen shows exactly what to send them:
+Ordinarily step 2 registers the webhook for you. On an older K-Message, or when
+a refusal comes back, the connection screen shows exactly what to send whoever
+runs your tenant:
 
 ```
 Address:   https://<your-odoo>/kmessage/api/v1/webhook
@@ -118,9 +131,9 @@ Secret:    the webhook secret on the connection form
 Signature: X-Webhook-Signature: sha256=<hex HMAC-SHA256 of the raw body>
 ```
 
-Assistant tools go the same way if the token's role may not change chatbot
-settings. The tools wait in *Configuration → Assistant tools* until somebody
-with that permission presses **Publish to K-Message**.
+Assistant tools take the same route in that case: they wait in
+*Configuration → Assistant tools* until somebody with the permission presses
+**Publish to K-Message**.
 
 No assistant on the plan? The flow path needs no permissions at all —
 [FLOWS.md](FLOWS.md) ships two ready graphs to import.

@@ -207,6 +207,35 @@ class KMessageAiTool(models.Model):
                 max=MAX_FIELDS, tool=self.name, count=len(allow)))
         return allow
 
+    def _connect_payload(self):
+        """This tool as the one-call connect endpoint wants it.
+
+        The token is minted here, exactly as publishing one tool at a time
+        mints it: the value travels in this payload and is never stored, only
+        its fingerprint.
+        """
+        self.ensure_one()
+        token = self.token_id.sudo()
+        if not token:
+            token, raw = self.env['kmessage.token'].sudo().issue(
+                name=_("K-Message assistant (%s)", self.account_id.company_id.name),
+                company=self.account_id.company_id,
+                capabilities=self.capability_id,
+            )
+            self.token_id = token.id
+        else:
+            raw = token.regenerate()
+            missing = self.capability_id - token.capability_ids
+            if missing:
+                token.capability_ids = [(4, capability.id) for capability in missing]
+
+        return {
+            'name': self.name,
+            'context_type': self.kind,
+            'enabled': self.active,
+            'api_config': self.with_context(kmessage_raw_token=raw)._api_config(),
+        }
+
     # -- publishing -------------------------------------------------------
     def action_publish(self):
         """Create or update this tool on the K-Message side."""

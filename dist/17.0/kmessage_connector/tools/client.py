@@ -19,6 +19,11 @@ import requests
 
 _logger = logging.getLogger(__name__)
 
+#: Where K-Message is, unless a tenant is hosted somewhere else. It is the
+#: same address for every customer, so asking each of them to type it is a
+#: field that can only ever be got wrong.
+DEFAULT_BASE_URL = 'https://api.k-message.kerneltics.com'
+
 DEFAULT_TIMEOUT = 30
 SEND_TIMEOUT = 60
 USER_AGENT = 'odoo-kmessage-connector/1.0'
@@ -242,6 +247,22 @@ class KMessageClient:
     def publish_template(self, template_id):
         """Submit to Meta. The answer carries the status Meta gave it."""
         return self._request('POST', '/api/templates/%s/publish' % template_id, json={})
+
+    # -- wiring the whole connection in one call --------------------------
+    def connect_odoo(self, webhook_url, webhook_secret, events, tools):
+        """Hand K-Message everything it needs to call this Odoo back.
+
+        Creating a webhook is otherwise reserved for the provider, which left
+        the customer copying an address and a secret into a support ticket.
+        This endpoint takes them directly. A platform that does not have it
+        yet answers 404, and the caller falls back to the older path.
+        """
+        return self._request('POST', '/api/integrations/odoo/connect', json={
+            'webhook_url': webhook_url,
+            'webhook_secret': webhook_secret,
+            'events': list(events or []),
+            'tools': tools or [],
+        }, timeout=SEND_TIMEOUT)
 
     # -- the assistant's tools --------------------------------------------
     # A "context" of type lookup_tool or document_tool is how K-Message lets a

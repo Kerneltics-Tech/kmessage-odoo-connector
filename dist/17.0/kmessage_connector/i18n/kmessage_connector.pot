@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-21 00:32+0000\n"
-"PO-Revision-Date: 2026-09-21 00:32+0000\n"
+"POT-Creation-Date: 2026-09-21 07:17+0000\n"
+"PO-Revision-Date: 2026-09-21 07:17+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -23,6 +23,12 @@ msgstr ""
 
 #. module: kmessage_connector
 #. odoo-python
+#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
+msgid "%s already there."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
 #: code:addons/kmessage_connector/wizard/kmessage_send.py:0
 msgid "%s has asked not to be messaged on WhatsApp."
 msgstr ""
@@ -30,13 +36,19 @@ msgstr ""
 #. module: kmessage_connector
 #. odoo-python
 #: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
-msgid "%s templates are now available to choose from."
+msgid "%s need attention: %s"
 msgstr ""
 
 #. module: kmessage_connector
 #. odoo-python
 #: code:addons/kmessage_connector/models/kmessage_account.py:0
 msgid "%s templates synced."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
+msgid "%s templates written and sent to Meta for approval."
 msgstr ""
 
 #. module: kmessage_connector
@@ -95,14 +107,6 @@ msgstr ""
 msgid ""
 "A token that has been used is revoked, not deleted, so its history stays "
 "readable."
-msgstr ""
-
-#. module: kmessage_connector
-#. odoo-python
-#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
-msgid ""
-"A token was issued for K-Message, covering %s capabilities. It is shown "
-"once, below."
 msgstr ""
 
 #. module: kmessage_connector
@@ -1001,8 +1005,20 @@ msgstr ""
 
 #. module: kmessage_connector
 #. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_account.py:0
+msgid "K-Message cannot call this Odoo: %s."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
 #: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
 msgid "K-Message did not accept that: %s"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
+msgid "K-Message did not take the connection: %s"
 msgstr ""
 
 #. module: kmessage_connector
@@ -1036,14 +1052,14 @@ msgstr ""
 
 #. module: kmessage_connector
 #. odoo-python
-#: code:addons/kmessage_connector/models/kmessage_account.py:0
-msgid "K-Message will now call this Odoo."
+#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
+msgid "K-Message will call this Odoo."
 msgstr ""
 
 #. module: kmessage_connector
 #. odoo-python
-#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
-msgid "K-Message will send replies and delivery news to this Odoo."
+#: code:addons/kmessage_connector/models/kmessage_account.py:0
+msgid "K-Message will now call this Odoo."
 msgstr ""
 
 #. module: kmessage_connector
@@ -1059,6 +1075,12 @@ msgstr ""
 #. odoo-python
 #: code:addons/kmessage_connector/models/kmessage_ai_tool.py:0
 msgid "K-Message would not remove the tool: %s"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_account.py:0
+msgid "K-Message would not take the connection: %s"
 msgstr ""
 
 #. module: kmessage_connector
@@ -1258,6 +1280,11 @@ msgid ""
 msgstr ""
 
 #. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_connect__elsewhere
+msgid "My K-Message is hosted elsewhere"
+msgstr ""
+
+#. module: kmessage_connector
 #: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_account__name
 #: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_ai_tool__name
 #: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_automation__name
@@ -1266,6 +1293,11 @@ msgstr ""
 #: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_template__name
 #: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_token__name
 msgid "Name"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_connect__needs_handover
+msgid "Needs Handover"
 msgstr ""
 
 #. module: kmessage_connector
@@ -1382,6 +1414,12 @@ msgstr ""
 
 #. module: kmessage_connector
 #. odoo-python
+#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
+msgid "Nothing to write."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
 #: code:addons/kmessage_connector/wizard/kmessage_send.py:0
 msgid "Nothing was queued — check the number and that sending is switched on."
 msgstr ""
@@ -1395,6 +1433,11 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_automation_form
 #: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_reply_rule_form
 msgid "Off"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_connect__elsewhere
+msgid "Off for everyone on the usual service, which is nearly everyone."
 msgstr ""
 
 #. module: kmessage_connector
@@ -1508,6 +1551,13 @@ msgid ""
 "Paste the address of your K-Message service and the private token from it.\n"
 "               Everything else — templates, the webhook, the token K-Message uses to ask\n"
 "               about a customer — is set up from here."
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_connect_form
+msgid ""
+"Paste the private token from K-Message. Nothing is changed until you\n"
+"                        press Connect."
 msgstr ""
 
 #. module: kmessage_connector
@@ -2048,12 +2098,6 @@ msgid ""
 msgstr ""
 
 #. module: kmessage_connector
-#. odoo-python
-#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
-msgid "Templates: %s"
-msgstr ""
-
-#. module: kmessage_connector
 #: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_account_form
 msgid "Test the connection"
 msgstr ""
@@ -2120,7 +2164,10 @@ msgstr ""
 
 #. module: kmessage_connector
 #: model:ir.model.fields,help:kmessage_connector.field_kmessage_account__base_url
-msgid "The address of your K-Message service, without a trailing slash."
+msgid ""
+"The address of your K-Message service. It is the same for every customer, so"
+" it is filled in already — change it only if your tenant is hosted somewhere"
+" else."
 msgstr ""
 
 #. module: kmessage_connector
@@ -2134,6 +2181,12 @@ msgstr ""
 #. odoo-python
 #: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
 msgid "The assistant can now answer %s question(s) from Odoo."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_account.py:0
+msgid "The assistant can now answer %s questions from Odoo."
 msgstr ""
 
 #. module: kmessage_connector
@@ -2266,6 +2319,13 @@ msgid ""
 msgstr ""
 
 #. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_connect__base_url
+msgid ""
+"The same address for every customer, so it is filled in. Change it only if "
+"your K-Message is hosted somewhere else."
+msgstr ""
+
+#. module: kmessage_connector
 #: model:ir.model.fields,help:kmessage_connector.field_kmessage_send__param_json
 msgid "The template placeholders, as {\"1\": \"…\", \"2\": \"…\"}."
 msgstr ""
@@ -2309,12 +2369,6 @@ msgstr ""
 
 #. module: kmessage_connector
 #. odoo-python
-#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
-msgid "The webhook was not set up: %s"
-msgstr ""
-
-#. module: kmessage_connector
-#. odoo-python
 #: code:addons/kmessage_connector/models/kmessage_document.py:0
 msgid "There is no report called “%s”."
 msgstr ""
@@ -2323,6 +2377,12 @@ msgstr ""
 #. odoo-python
 #: code:addons/kmessage_connector/models/kmessage_api.py:0
 msgid "There is no such capability here."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_account.py:0
+msgid "This K-Message does not take a connection from Odoo yet."
 msgstr ""
 
 #. module: kmessage_connector
@@ -2437,13 +2497,6 @@ msgid "Two capabilities cannot share a code."
 msgstr ""
 
 #. module: kmessage_connector
-#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_connect_form
-msgid ""
-"Two things from K-Message: the address of the service, and a private\n"
-"                        token. Nothing is changed until you press Connect."
-msgstr ""
-
-#. module: kmessage_connector
 #: model:ir.model.constraint,message:kmessage_connector.constraint_kmessage_ai_tool_tool_name_unique
 msgid "Two tools on one connection cannot share a name."
 msgstr ""
@@ -2515,6 +2568,12 @@ msgstr ""
 #: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_account__webhook_url
 #: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_connect__webhook_url
 msgid "Webhook Url"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
+msgid "Webhook: %s"
 msgstr ""
 
 #. module: kmessage_connector
@@ -2735,15 +2794,8 @@ msgstr ""
 
 #. module: kmessage_connector
 #. odoo-python
-#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
-msgid ""
-"Your plan is managed by your provider, so the webhook has to be added by "
-"them. The address and secret are below — send them these two lines."
-msgstr ""
-
-#. module: kmessage_connector
-#. odoo-python
 #: code:addons/kmessage_connector/models/kmessage_starter.py:0
+#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
 msgid "already there"
 msgstr ""
 
@@ -2857,6 +2909,12 @@ msgstr ""
 
 #. module: kmessage_connector
 #. odoo-python
+#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
+msgid "submitted"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
 #: code:addons/kmessage_connector/models/kmessage_starter.py:0
 msgid "submitted (%s)"
 msgstr ""
@@ -2900,6 +2958,11 @@ msgstr ""
 #. odoo-python
 #: code:addons/kmessage_connector/models/kmessage_message.py:0
 msgid "unknown error"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_connect_form
+msgid "whm_…"
 msgstr ""
 
 #. module: kmessage_connector

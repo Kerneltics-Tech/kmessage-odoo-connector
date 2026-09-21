@@ -8,14 +8,17 @@
                 <!-- Odoo 17 insists that a field driving a modifier is present
                      in the view, even when nothing renders it. -->
                 <field name="state" invisible="1"/>
+                <field name="needs_handover" invisible="1"/>
                 <group invisible="state != 'start'">
                     <div class="text-muted" colspan="2">
-                        Two things from K-Message: the address of the service, and a private
-                        token. Nothing is changed until you press Connect.
+                        Paste the private token from K-Message. Nothing is changed until you
+                        press Connect.
                     </div>
-                    <field name="base_url"/>
-                    <field name="api_key" password="True"/>
+                    <field name="api_key" password="True" placeholder="whm_…"/>
                     <field name="company_id" groups="base.group_multi_company"/>
+                    <field name="elsewhere"/>
+                    <field name="base_url" invisible="not elsewhere"
+                           required="elsewhere"/>
                 </group>
 
                 <div invisible="state != 'checked'">
@@ -45,7 +48,7 @@
                 <div invisible="state != 'done'">
                     <field name="summary" nolabel="1" readonly="1"/>
                     <group string="Give these to whoever administers K-Message"
-                           invisible="not webhook_url">
+                           invisible="not needs_handover">
                         <field name="webhook_url" readonly="1" widget="CopyClipboardChar"/>
                         <field name="webhook_secret" readonly="1" widget="CopyClipboardChar"/>
                     </group>

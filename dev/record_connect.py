@@ -2,7 +2,7 @@
 """Record the connect walkthrough as a video.
 
 What a person needs to see before they trust this with their customers is the
-whole of it: where the screen lives, what the two fields are, what the addon
+whole of it: where the screen lives, what the one field is, what the addon
 reports back, and that it finishes. So this drives the real Odoo web client —
 no mock-ups, no slides — against the bundled stand-in service in
 ``dev/fake_kmessage.py``, and Playwright records what the browser actually
@@ -10,6 +10,9 @@ showed.
 
     python3 dev/record_connect.py --odoo http://127.0.0.1:8169 \
         --platform http://127.0.0.1:8787 --key whm_… --out /tmp/connect
+
+``--platform`` is only needed to point the recording at the bundled stand-in;
+a real customer never types an address, and the video shows exactly that.
 
 It writes a .webm; ``ffmpeg`` turns that into the .mp4 most people can open.
 Deliberately slow: pauses are there so a viewer can read the screen, not
@@ -94,31 +97,58 @@ def open_wizard(page, odoo):
 
 
 def fill_and_connect(page, platform, key):
-    caption(page, 'Two things: the K-Message address, and your private token.', 3.4)
-    for name, value in (('base_url', platform), ('api_key', key)):
-        field = page.locator(
-            'div[name="%s"] input, input[id^="%s"], input[name="%s"]' % (name, name, name)).first
-        field.wait_for(state='visible', timeout=15000)
-        field.click()
-        field.fill('')
-        field.type(value, delay=45)
-        page.wait_for_timeout(700)
+    """Type the one field there is.
 
-    page.wait_for_timeout(900)
+    The address is in the addon already, so the only reason this ever touches
+    it is to aim the recording at the bundled stand-in — and it does that
+    behind the advanced switch, off-camera, exactly where a customer will
+    never go.
+    """
+    if platform:
+        point_at_the_stand_in(page, platform)
+
+    caption(page, 'One field: your private token from K-Message.', 3.4)
+    field = page.locator(
+        'div[name="api_key"] input, input[id^="api_key"], input[name="api_key"]').first
+    field.wait_for(state='visible', timeout=15000)
+    field.click()
+    field.fill('')
+    field.type(key, delay=45)
+    page.wait_for_timeout(1400)
+
     caption(page, 'Connect looks first — it changes nothing yet.', 3.0)
     page.click('button:has-text("Connect")')
     page.wait_for_timeout(3500)
 
 
+def point_at_the_stand_in(page, platform):
+    """Aim the wizard at a local K-Message, without making it part of the story."""
+    try:
+        toggle = page.locator(
+            'div[name="elsewhere"] input, input[id^="elsewhere"]').first
+        toggle.wait_for(state='visible', timeout=5000)
+        toggle.check()
+        page.wait_for_timeout(500)
+        url = page.locator(
+            'div[name="base_url"] input, input[id^="base_url"]').first
+        url.wait_for(state='visible', timeout=5000)
+        url.fill(platform)
+        page.wait_for_timeout(400)
+        toggle.uncheck()
+        page.wait_for_timeout(600)
+    except PlaywrightTimeout:
+        pass
+
+
 def apply_setup(page):
-    caption(page, 'It reports who the token is, and what it may do.', 3.6)
+    caption(page, 'It reports who the token belongs to, and what it may do.', 3.6)
     page.wait_for_timeout(1200)
-    caption(page, 'Now it writes the templates, subscribes the webhook, '
-                  'publishes the assistant tools, and issues a token.', 4.2)
+    caption(page, 'Now it writes the WhatsApp templates, registers itself with '
+                  'K-Message, and publishes the assistant tools.', 4.2)
     page.click('button:has-text("Set it up")')
     page.wait_for_timeout(4000)
-    caption(page, 'Done — line by line, what it did.', 3.8)
-    page.wait_for_timeout(2000)
+    caption(page, 'Done — line by line, what it did. Nothing to forward to anyone.', 4.0)
+    page.wait_for_timeout(2200)
     caption(page, 'The issued token is shown once. Copy it now.', 3.6)
     page.wait_for_timeout(1500)
 
@@ -126,7 +156,8 @@ def apply_setup(page):
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--odoo', default='http://127.0.0.1:8169')
-    parser.add_argument('--platform', default='http://127.0.0.1:8787')
+    parser.add_argument('--platform', default='http://127.0.0.1:8787',
+                        help='record against a stand-in K-Message; "" uses the built-in address')
     parser.add_argument('--key', default='whm_demo0000000000000000000000000000')
     parser.add_argument('--out', default='/tmp/kmessage-connect')
     args = parser.parse_args()

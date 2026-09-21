@@ -12,7 +12,7 @@ import logging
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
-from ..tools.client import KMessageClient, KMessageError
+from ..tools.client import DEFAULT_BASE_URL, KMessageClient, KMessageError
 
 _logger = logging.getLogger(__name__)
 
@@ -24,8 +24,12 @@ class KMessageConnect(models.TransientModel):
     company_id = fields.Many2one(
         'res.company', required=True, default=lambda self: self.env.company)
     base_url = fields.Char(
-        string='K-Message URL', required=True,
-        default='https://api.k-message.kerneltics.com')
+        string='K-Message URL', required=True, default=DEFAULT_BASE_URL,
+        help="The same address for every customer, so it is filled in. Change it "
+             "only if your K-Message is hosted somewhere else.")
+    elsewhere = fields.Boolean(
+        string='My K-Message is hosted elsewhere',
+        help="Off for everyone on the usual service, which is nearly everyone.")
     api_key = fields.Char(string='Private Token', required=True)
 
     state = fields.Selection(
@@ -62,6 +66,9 @@ class KMessageConnect(models.TransientModel):
         help="Publishes each switched-on capability to K-Message as an assistant tool. "
              "Needs a token whose role may change chatbot settings; when it may not, "
              "the tools stay here and can be published later.")
+    #: Whether the last step left something for a person to forward. Only
+    #: then is the handover block worth a customer's attention.
+    needs_handover = fields.Boolean(readonly=True)
     summary = fields.Html(readonly=True)
     issued_token = fields.Char(readonly=True)
     webhook_url = fields.Char(readonly=True)
@@ -116,7 +123,7 @@ class KMessageConnect(models.TransientModel):
 
     # -- step two: do it --------------------------------------------------
     def action_apply(self):
-        """Save the connection and set up everything this token allows."""
+        """Save the connection and wire both sides up."""
         self.ensure_one()
         account = self.env['kmessage.account'].sudo()._for_company(self.company_id)
         values = {
@@ -131,62 +138,71 @@ class KMessageConnect(models.TransientModel):
             account = self.env['kmessage.account'].sudo().create(dict(values, name='K-Message'))
 
         account._probe()
-        steps = []
-
         if account.state != 'connected':
             raise UserError(_("The connection could not be verified: %s", account.last_error))
-        steps.append(_("Connected as %s.", account.sudo().remote_user or self.remote_user))
 
-        if account.can_read_templates:
-            templates = self.env['kmessage.template'].sync_from_platform(account)
-            steps.append(_("%s templates are now available to choose from.", len(templates)))
-
-        if self.setup_webhook:
-            # A webhook that cannot be set up is a normal outcome — a managed
-            # plan, or an Odoo that is not published yet — and it must not cost
-            # the customer the rest of the setup, which has nothing to do with
-            # it. The reason is reported and the wizard carries on.
-            try:
-                account.action_setup_webhook()
-            except UserError as error:
-                steps.append(_(
-                    "The webhook was not set up: %s",
-                    error.args[0] if error.args else error))
-            else:
-                if account.webhook_state == 'registered':
-                    steps.append(_("K-Message will send replies and delivery news to this Odoo."))
-                else:
-                    steps.append(_(
-                        "Your plan is managed by your provider, so the webhook has to be added by them. "
-                        "The address and secret are below — send them these two lines."))
+        steps = [_("Connected as %s.", account.sudo().remote_user or self.remote_user)]
 
         if self.create_templates:
             steps.append(self._create_templates(account))
+        elif account.can_read_templates:
+            self.env['kmessage.template'].sync_from_platform(account)
 
-        if self.publish_tools:
-            steps.append(self._publish_tools(account))
+        # One call hands K-Message the webhook and the tools together. Older
+        # platforms have neither the endpoint nor the permission, and then the
+        # pieces are set up one at a time, as before.
+        wired = False
+        if self.setup_webhook or self.publish_tools:
+            try:
+                wired, note = account.connect_everything()
+            except UserError as error:
+                wired, note = False, (error.args[0] if error.args else str(error))
+            if wired:
+                steps.append(_("K-Message will call this Odoo."))
+                if note:
+                    steps.append(note)
+            else:
+                steps.extend(self._set_up_the_long_way(account, note))
 
         raw_token = False
         if self.issue_token:
             capabilities = self.env['kmessage.capability'].sudo().search([('active', '=', True)])
-            token, raw_token = self.env['kmessage.token'].sudo().issue(
+            _token, raw_token = self.env['kmessage.token'].sudo().issue(
                 name=_("K-Message (%s)", self.company_id.name),
                 company=self.company_id,
                 capabilities=capabilities,
             )
-            steps.append(_(
-                "A token was issued for K-Message, covering %s capabilities. "
-                "It is shown once, below.", len(capabilities)))
 
         self.write({
             'state': 'done',
             'account_id': account.id,
             'issued_token': raw_token or False,
+            'needs_handover': not wired and account.webhook_state != 'registered',
             'webhook_url': account.webhook_url,
             'webhook_secret': account.sudo().webhook_secret or '',
             'summary': '<ul>%s</ul>' % ''.join('<li>%s</li>' % step for step in steps),
         })
         return self._reopen()
+
+    def _set_up_the_long_way(self, account, note):
+        """When the platform will not take the connection, do what it allows.
+
+        Reported in one line each. The values a provider needs are on the
+        screen already; repeating them in a paragraph helps nobody.
+        """
+        self.ensure_one()
+        steps = [_("K-Message did not take the connection: %s", note)]
+        if self.setup_webhook:
+            try:
+                account.action_setup_webhook()
+            except UserError as error:
+                steps.append(_("Webhook: %s", error.args[0] if error.args else error))
+            else:
+                if account.webhook_state == 'registered':
+                    steps.append(_("K-Message will call this Odoo."))
+        if self.publish_tools:
+            steps.append(self._publish_tools(account))
+        return steps
 
     def _create_templates(self, account):
         """Write the starter templates and submit them, then say what happened."""
@@ -201,8 +217,23 @@ class KMessageConnect(models.TransientModel):
         if account.can_read_templates:
             self.env['kmessage.template'].sync_from_platform(account)
 
-        return _("Templates: %s", '; '.join(
-            '%s — %s' % (name, outcome) for name, outcome in outcomes))
+        # Counted, not listed. Five template names and five identical outcomes
+        # is a paragraph that says one thing, and the one thing worth a
+        # customer's attention is whatever did not work.
+        sent = [name for name, outcome in outcomes if _("submitted") in outcome or 'Meta' in outcome]
+        kept = [name for name, outcome in outcomes if outcome == _("already there")]
+        trouble = [(name, outcome) for name, outcome in outcomes
+                   if name not in sent and name not in kept]
+
+        said = []
+        if sent:
+            said.append(_("%s templates written and sent to Meta for approval.", len(sent)))
+        if kept:
+            said.append(_("%s already there.", len(kept)))
+        if trouble:
+            said.append(_("%s need attention: %s", len(trouble),
+                          '; '.join('%s — %s' % (name, outcome) for name, outcome in trouble)))
+        return ' '.join(said) or _("Nothing to write.")
 
     def _publish_tools(self, account):
         """Publish every live assistant tool, and say plainly what happened.

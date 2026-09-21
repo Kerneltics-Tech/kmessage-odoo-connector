@@ -58,20 +58,18 @@
 <div class="step">
   <div class="step-head"><span class="num">2</span><span class="title">Connect your account</span></div>
   <div class="body">
-    Open <span class="path">K-Message → Configuration → Connect</span> and paste two things:
-    <ul>
-      <li><b>K-Message URL</b> — <code>https://api.k-message.kerneltics.com</code></li>
-      <li><b>Private token</b> — in K-Message: <span class="path">Settings → API Keys</span>, starts with <code>whm_</code></li>
-    </ul>
-    Press <b>Connect</b>. It tells you who the token belongs to and what it may do — before
-    anything is written. Then choose what it should set up:
+    Open <span class="path">K-Message → Configuration → Connect</span> and paste one thing:
+    your <b>private token</b> from K-Message (<span class="path">Settings → API Keys</span>,
+    starts with <code>whm_</code>). The address is filled in already.
+    <br>
+    Press <b>Connect</b>, then <b>Set it up</b>, and it does the rest:
     <table class="switches">
       <tr><td>Write the templates for me</td><td>Creates the WhatsApp messages in Arabic and submits them to Meta. Approval usually within minutes.</td></tr>
-      <tr><td>Let K-Message call this Odoo</td><td>Subscribes to WhatsApp events, so replies and delivery news come back.</td></tr>
+      <tr><td>Let K-Message call this Odoo</td><td>Registers the connection with K-Message directly — nothing for you to send anyone.</td></tr>
       <tr><td>Teach the assistant to ask Odoo</td><td>Publishes Odoo's capabilities as tools for the assistant.</td></tr>
       <tr><td>Issue a token for K-Message</td><td>The key K-Message uses when it asks Odoo about a customer.</td></tr>
     </table>
-    Press <b>Set it up</b>, and you get a summary, line by line, of what happened.
+    You get a summary, line by line, of what it did.
     <div class="warn">
       The issued token is shown <b>once</b>. Odoo keeps only a fingerprint of it — copy it now,
       or issue another later from the Tokens screen.

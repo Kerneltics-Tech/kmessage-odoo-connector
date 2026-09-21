@@ -12,3 +12,4 @@ from . import test_reply_rule
 from . import test_ai_tool
 from . import test_document
 from . import test_starter
+from . import test_connect

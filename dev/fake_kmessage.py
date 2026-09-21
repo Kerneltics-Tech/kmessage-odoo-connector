@@ -11,6 +11,7 @@ what it was sent so a test can assert on it:
     GET  /api/webhooks                subscriptions + the event catalogue
     POST /api/webhooks                create one (returns the secret once)
     DELETE /api/webhooks/{id}
+    POST /api/integrations/odoo/connect   wire a whole Odoo up in one call
     POST /api/templates               write a template (DRAFT)
     PUT  /api/templates/{id}          change one, e.g. to attach a media handle
     POST /api/templates/{id}/publish  submit it to Meta
@@ -333,6 +334,48 @@ class Handler(BaseHTTPRequestHandler):
             with STATE.lock:
                 STATE.contexts[context_id] = record
             return self._send(201, {"status": "success", "data": record})
+
+        if path == "/api/integrations/odoo/connect":
+            payload = json.loads(self._body() or b"{}")
+            url = (payload.get("webhook_url") or "").strip()
+            if url and re.search(r"://(localhost|127\.|10\.|192\.168\.|169\.254\.)", url):
+                return self._err(400, "callback_url must not be a private or loopback host")
+            answer = {"webhook": {}, "tools": []}
+            if url:
+                with STATE.lock:
+                    existing = next((w for w in STATE.webhooks.values() if w["url"] == url), None)
+                    secret = payload.get("webhook_secret") or uuid.uuid4().hex
+                    events = payload.get("events") or ["message.incoming", "button.reply"]
+                    if existing:
+                        existing.update({"events": events, "updated_at": _now()})
+                        STATE.secrets[existing["id"]] = secret
+                        answer["webhook"] = {"id": existing["id"], "status": "updated",
+                                             "secret": secret, "events": events}
+                    else:
+                        hook_id = str(uuid.uuid4())
+                        record = {"id": hook_id, "name": "Odoo connector", "url": url,
+                                  "events": events, "headers": {"x-managed-by": "odoo_connector"},
+                                  "is_active": True, "has_secret": True,
+                                  "created_at": _now(), "updated_at": _now()}
+                        STATE.webhooks[hook_id] = record
+                        STATE.secrets[hook_id] = secret
+                        answer["webhook"] = {"id": hook_id, "status": "created",
+                                             "secret": secret, "events": events}
+            for tool in payload.get("tools") or []:
+                if STATE.refuse_tools:
+                    answer["tools"].append({"name": tool.get("name"), "status": "failed",
+                                            "message": "this plan does not include AI replies"})
+                    continue
+                config = dict(tool.get("api_config") or {}, managed_by="odoo_connector")
+                context_id = str(uuid.uuid4())
+                with STATE.lock:
+                    STATE.contexts[context_id] = {
+                        "id": context_id, "name": tool.get("name"),
+                        "context_type": tool.get("context_type"),
+                        "api_config": config, "is_enabled": tool.get("enabled", True),
+                    }
+                answer["tools"].append({"name": tool.get("name"), "status": "created"})
+            return self._ok(answer)
 
         if path == "/api/templates":
             payload = json.loads(self._body() or b"{}")

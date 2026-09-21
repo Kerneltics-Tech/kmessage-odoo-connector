@@ -6,7 +6,7 @@ Status: draft 1 · 2026-09-20 · Odoo 17.0 and 18.0 from one source tree
 
 A K-Message customer runs Odoo. Today, wiring the two together means one of
 their developers reading two APIs. This addon is what they install instead:
-paste a K-Message URL and a private token, press Connect, and
+paste a private token, press Connect, and
 
 * their invoices, quotations and delivery notes go out on WhatsApp as approved
   templates with the PDF attached,
@@ -43,8 +43,9 @@ These are not assumptions; each was checked against
 | `GET /api/accounts` | ✅ | the sending number is chosen from a list, not typed |
 | `GET /api/templates` | ✅ 76 rows, with `body_content`, `header_type`, `buttons`, `sample_values` | templates are synced, and `{{1}}`-style params are read off the body |
 | `GET /api/webhooks` | ✅ including the event catalogue | the addon shows what it could subscribe to |
-| `POST /api/webhooks` | ❌ `403 operator_only` — "This is managed by your provider." | **auto-subscribing cannot be assumed**; see below |
+| `POST /api/webhooks` | ❌ `403 operator_only` — "This is managed by your provider." | **auto-subscribing cannot be assumed** by this route; see below |
 | `POST /api/custom-actions` | ❌ `403 operator_only` | same |
+| `POST /api/integrations/odoo/connect` | ✅ — added to K-Message for this addon, deliberately outside the operator-only gate | one call registers the webhook *and* the assistant tools, so the customer is handed nothing to forward |
 | `POST /api/messages/template` | ✅ accepts JSON *and* multipart; `404 Template not found` when the name is wrong | sending is the one write that always works |
 | `GET /api/settings/odoo` | ❌ `403 Permission denied` | the addon cannot push its own credentials into K-Message |
 
@@ -53,8 +54,18 @@ Two consequences shape the whole design.
 **1. The addon must probe, not presume.** On Connect it tries each thing once
 and records what the token is allowed to do. What it can do, it does. What it
 cannot, it writes out as an exact instruction — URL, event list, secret — for
-whoever administers the tenant. A managed customer is the normal case, not an
-error state.
+whoever administers the tenant.
+
+The operator-only gate is not a weak-key problem: a tenant administrator with
+*Full system access* is refused the same way, because the permission belongs to
+the platform operator rather than to the account. Asking every customer to
+raise a ticket for it was the one part of setup that could not be automated
+from inside Odoo — so the platform grew a door of its own,
+`POST /api/integrations/odoo/connect`, narrow enough to be safe outside the
+gate: it reads the tenant from the API key, it marks every row it creates, and
+it refuses to touch a webhook or a tool that somebody set up by hand. The
+hand-over path stays for platforms that predate it, which is what a `404` on
+that call means.
 
 **2. Identity is never a parameter.** K-Message's own Odoo tools resolve the
 customer server-side from the conversation's phone number, on purpose: no

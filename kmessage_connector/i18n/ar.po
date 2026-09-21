@@ -24,6 +24,12 @@ msgstr "نُشرت %(done)s أداة، وبقيت %(left)s في الانتظار
 
 #. module: kmessage_connector
 #. odoo-python
+#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
+msgid "%s already there."
+msgstr "%s قوالب كانت موجودة من قبل."
+
+#. module: kmessage_connector
+#. odoo-python
 #: code:addons/kmessage_connector/wizard/kmessage_send.py:0
 msgid "%s has asked not to be messaged on WhatsApp."
 msgstr "%s طلب ألا نراسله على واتساب."
@@ -31,14 +37,20 @@ msgstr "%s طلب ألا نراسله على واتساب."
 #. module: kmessage_connector
 #. odoo-python
 #: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
-msgid "%s templates are now available to choose from."
-msgstr "%s قالب متاح للاختيار منها الآن."
+msgid "%s need attention: %s"
+msgstr "%s قالب يحتاج انتباهك: %s"
 
 #. module: kmessage_connector
 #. odoo-python
 #: code:addons/kmessage_connector/models/kmessage_account.py:0
 msgid "%s templates synced."
 msgstr "تمت مزامنة %s قالب."
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
+msgid "%s templates written and sent to Meta for approval."
+msgstr "تمت كتابة %s قوالب وإرسالها إلى Meta للموافقة."
 
 #. module: kmessage_connector
 #: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_token_reveal_form
@@ -97,14 +109,6 @@ msgid ""
 "A token that has been used is revoked, not deleted, so its history stays "
 "readable."
 msgstr "التوكن الذي استُخدم يُسحب ولا يُحذف، ليبقى سجل استخدامه مقروءًا."
-
-#. module: kmessage_connector
-#. odoo-python
-#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
-msgid ""
-"A token was issued for K-Message, covering %s capabilities. It is shown "
-"once, below."
-msgstr "صدر توكن لـ K-Message يغطي %s صلاحية. يظهر مرة واحدة فقط، بالأسفل."
 
 #. module: kmessage_connector
 #: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_send_form
@@ -326,10 +330,9 @@ msgid "Buttons Json"
 msgstr "الأزرار JSON"
 
 #. module: kmessage_connector
-#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_account__can_manage_webhooks
-#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_connect__can_manage_webhooks
-msgid "Can Manage Webhooks"
-msgstr "يستطيع إدارة الويبهوك"
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_connect__can_list_webhooks
+msgid "Can List Webhooks"
+msgstr "إمكانية عرض الويبهوك"
 
 #. module: kmessage_connector
 #: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_account__can_read_templates
@@ -341,6 +344,11 @@ msgstr "يستطيع قراءة القوالب"
 #: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_connect__can_send
 msgid "Can Send"
 msgstr "يستطيع الإرسال"
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_account__can_list_webhooks
+msgid "Can see webhooks"
+msgstr "يمكنه رؤية الويبهوك"
 
 #. module: kmessage_connector
 #: model:res.groups,comment:kmessage_connector.group_kmessage_user
@@ -530,6 +538,14 @@ msgstr "أنشأه"
 #: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_token_reveal__create_date
 msgid "Created on"
 msgstr "تاريخ الإنشاء"
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_connect__create_templates
+msgid ""
+"Creates the messages this addon sends — in Arabic, under names of its own — "
+"and submits them to Meta for approval. Templates that already exist are left"
+" alone, and anything created can be reworded in K-Message afterwards."
+msgstr "ينشئ الرسائل التي يرسلها هذا التطبيق — بالعربية وبأسماء خاصة به — ويرفعها إلى Meta للموافقة. والقوالب الموجودة مسبقاً تُترك كما هي، وما يُنشأ يمكن تعديل صياغته في K-Message بعد ذلك."
 
 #. module: kmessage_connector
 #: model:ir.model.fields,help:kmessage_connector.field_kmessage_connect__issue_token
@@ -947,6 +963,11 @@ msgid "K-Message Reply Rule"
 msgstr "قاعدة ردّ K-Message"
 
 #. module: kmessage_connector
+#: model:ir.model,name:kmessage_connector.model_kmessage_starter
+msgid "K-Message Starter Templates"
+msgstr "قوالب K-Message الجاهزة"
+
+#. module: kmessage_connector
 #: model:ir.model,name:kmessage_connector.model_kmessage_template
 msgid "K-Message Template"
 msgstr "قالب K-Message"
@@ -988,9 +1009,21 @@ msgstr ""
 
 #. module: kmessage_connector
 #. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_account.py:0
+msgid "K-Message cannot call this Odoo: %s."
+msgstr "لا يستطيع K-Message الاتصال بهذا الأودو: %s."
+
+#. module: kmessage_connector
+#. odoo-python
 #: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
 msgid "K-Message did not accept that: %s"
 msgstr "K-Message لم يقبل ذلك: %s"
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
+msgid "K-Message did not take the connection: %s"
+msgstr "لم يقبل K-Message الاتصال: %s"
 
 #. module: kmessage_connector
 #: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_token_form
@@ -1023,15 +1056,15 @@ msgstr "K-Message رفض الويبهوك: %s"
 
 #. module: kmessage_connector
 #. odoo-python
-#: code:addons/kmessage_connector/models/kmessage_account.py:0
-msgid "K-Message will now call this Odoo."
-msgstr "سيبدأ K-Message بإرسال الأحداث إلى أودو الآن."
+#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
+msgid "K-Message will call this Odoo."
+msgstr "سيتصل K-Message بهذا الأودو."
 
 #. module: kmessage_connector
 #. odoo-python
-#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
-msgid "K-Message will send replies and delivery news to this Odoo."
-msgstr "سيرسل K-Message الردود وتحديثات التسليم إلى أودو."
+#: code:addons/kmessage_connector/models/kmessage_account.py:0
+msgid "K-Message will now call this Odoo."
+msgstr "سيبدأ K-Message بإرسال الأحداث إلى أودو الآن."
 
 #. module: kmessage_connector
 #. odoo-python
@@ -1050,6 +1083,12 @@ msgstr ""
 #: code:addons/kmessage_connector/models/kmessage_ai_tool.py:0
 msgid "K-Message would not remove the tool: %s"
 msgstr "K-Message لم يحذف الأداة: %s"
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_account.py:0
+msgid "K-Message would not take the connection: %s"
+msgstr "رفض K-Message الاتصال: %s"
 
 #. module: kmessage_connector
 #: model:ir.actions.server,name:kmessage_connector.cron_send_queue_ir_actions_server
@@ -1179,11 +1218,6 @@ msgid "Make a tap do something"
 msgstr "اجعل ضغطة الزر تفعل شيئًا"
 
 #. module: kmessage_connector
-#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_connect_form
-msgid "Manage webhooks"
-msgstr "إدارة الويبهوك"
-
-#. module: kmessage_connector
 #: model:ir.model.fields,help:kmessage_connector.field_kmessage_reply_rule__button_text
 msgid ""
 "Matched when the payload is empty or does not match: the words on the "
@@ -1253,6 +1287,11 @@ msgid ""
 msgstr "أقصى عدد صفوف في الإجابة الواحدة. المحادثة لا تحتمل قائمة طويلة، والقائمة الطويلة هي ما يحوّل الخطأ البسيط إلى تسريب للبيانات."
 
 #. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_connect__elsewhere
+msgid "My K-Message is hosted elsewhere"
+msgstr "K-Message عندي مستضاف في مكان آخر"
+
+#. module: kmessage_connector
 #: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_account__name
 #: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_ai_tool__name
 #: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_automation__name
@@ -1262,6 +1301,11 @@ msgstr "أقصى عدد صفوف في الإجابة الواحدة. المحا�
 #: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_token__name
 msgid "Name"
 msgstr "الاسم"
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_connect__needs_handover
+msgid "Needs Handover"
+msgstr "يحتاج تسليم يدوي"
 
 #. module: kmessage_connector
 #. odoo-python
@@ -1321,6 +1365,14 @@ msgid "No message id to match."
 msgstr "لا يوجد معرّف رسالة للمطابقة."
 
 #. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
+msgid ""
+"No templates to write — they come with the Invoicing, Sales and Inventory "
+"apps."
+msgstr "لا توجد قوالب لكتابتها — تأتي مع تطبيقات الفوترة والمبيعات والمخزون."
+
+#. module: kmessage_connector
 #: model_terms:ir.actions.act_window,help:kmessage_connector.action_kmessage_template
 msgid "No templates yet"
 msgstr "لا توجد قوالب بعد"
@@ -1369,6 +1421,12 @@ msgstr "لا يوجد هنا ما يجيب على هذا بعد."
 
 #. module: kmessage_connector
 #. odoo-python
+#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
+msgid "Nothing to write."
+msgstr "لا شيء لكتابته."
+
+#. module: kmessage_connector
+#. odoo-python
 #: code:addons/kmessage_connector/wizard/kmessage_send.py:0
 msgid "Nothing was queued — check the number and that sending is switched on."
 msgstr "لم تُدرج أي رسالة — تأكد من الرقم ومن أن الإرسال مفعّل."
@@ -1383,6 +1441,11 @@ msgstr "الأرقام"
 #: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_reply_rule_form
 msgid "Off"
 msgstr "موقوفة"
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_connect__elsewhere
+msgid "Off for everyone on the usual service, which is nearly everyone."
+msgstr "اتركه مغلقاً إن كنت على الخدمة المعتادة، وهذا حال الجميع تقريباً."
 
 #. module: kmessage_connector
 #: model:ir.model.fields,help:kmessage_connector.field_kmessage_account__inbound_enabled
@@ -1496,6 +1559,13 @@ msgid ""
 "               Everything else — templates, the webhook, the token K-Message uses to ask\n"
 "               about a customer — is set up from here."
 msgstr "الصق عنوان خدمة K-Message لديك والتوكن الخاص منها. وكل ما عدا ذلك — القوالب والويبهوك والتوكن الذي يسأل به K-Message عن العميل — يُجهَّز من هنا."
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_connect_form
+msgid ""
+"Paste the private token from K-Message. Nothing is changed until you\n"
+"                        press Connect."
+msgstr "ألصق التوكن الخاص من K-Message. لا يتغيّر شيء حتى تضغط اتصال."
 
 #. module: kmessage_connector
 #: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_event__payload
@@ -1777,6 +1847,11 @@ msgid ""
 msgstr "القواعد تبدأ موقوفة. ولا يُنفَّذ شيء في أودو بسبب ضغطة زر حتى يفعّلها أحد."
 
 #. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_event__rule_ids
+msgid "Rules that ran"
+msgstr "القواعد التي نُفِّذت"
+
+#. module: kmessage_connector
 #: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_reply_rule__server_action_id
 msgid "Run"
 msgstr "الإجراء"
@@ -1785,6 +1860,11 @@ msgstr "الإجراء"
 #: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_reply_rule__run_count
 msgid "Run Count"
 msgstr "عدد مرات التنفيذ"
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_connect_form
+msgid "See the webhook list"
+msgstr "عرض قائمة الويبهوك"
 
 #. module: kmessage_connector
 #: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_automation_form
@@ -2035,6 +2115,12 @@ msgid "Text"
 msgstr "نص"
 
 #. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/controllers/main.py:0
+msgid "That request was too big to read."
+msgstr "الطلب أكبر من أن يُقرأ."
+
+#. module: kmessage_connector
 #: model:ir.model.constraint,message:kmessage_connector.constraint_kmessage_template_account_name_lang_unique
 msgid "That template is already mirrored for this connection."
 msgstr "هذا القالب منسوخ بالفعل لهذا الاتصال."
@@ -2085,8 +2171,11 @@ msgstr "الإجراء الذي يُنفَّذ على السجل الذي تخص
 
 #. module: kmessage_connector
 #: model:ir.model.fields,help:kmessage_connector.field_kmessage_account__base_url
-msgid "The address of your K-Message service, without a trailing slash."
-msgstr "عنوان خدمة K-Message لديك، دون شرطة مائلة في آخره."
+msgid ""
+"The address of your K-Message service. It is the same for every customer, so"
+" it is filled in already — change it only if your tenant is hosted somewhere"
+" else."
+msgstr "عنوان خدمة K-Message. هو نفسه لكل العملاء، لذلك جاء مُعبّأً — لا تغيّره إلا إذا كان حسابك مستضافاً في مكان آخر."
 
 #. module: kmessage_connector
 #: model:ir.model.fields,help:kmessage_connector.field_kmessage_ai_tool__fields_json
@@ -2100,6 +2189,12 @@ msgstr "حقول الإجابة التي يراها المساعد، بصيغة 
 #: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
 msgid "The assistant can now answer %s question(s) from Odoo."
 msgstr "صار بإمكان المساعد الإجابة على %s سؤال من أودو."
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_account.py:0
+msgid "The assistant can now answer %s questions from Odoo."
+msgstr "صار المساعد يقدر يجاوب على %s أسئلة من أودو."
 
 #. module: kmessage_connector
 #. odoo-python
@@ -2227,6 +2322,20 @@ msgid "The path K-Message calls, relative to this Odoo."
 msgstr "المسار الذي يستدعيه K-Message، نسبةً إلى عنوان أودو."
 
 #. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_event__rule_ids
+msgid ""
+"The reply rules this tap actually ran, which is how a second tap on the same"
+" message is recognised as a repeat."
+msgstr "قواعد الردّ التي نفّذتها هذه الضغطة فعلياً، وبها تُعرف الضغطة الثانية على الرسالة نفسها بأنها مكرّرة."
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_connect__base_url
+msgid ""
+"The same address for every customer, so it is filled in. Change it only if "
+"your K-Message is hosted somewhere else."
+msgstr "العنوان نفسه لكل العملاء، لذلك جاء مُعبّأً. غيّره فقط إذا كان K-Message عندك مستضافاً في مكان آخر."
+
+#. module: kmessage_connector
 #: model:ir.model.fields,help:kmessage_connector.field_kmessage_send__param_json
 msgid "The template placeholders, as {\"1\": \"…\", \"2\": \"…\"}."
 msgstr "متغيّرات القالب، بصيغة {\"1\": \"…\", \"2\": \"…\"}."
@@ -2279,6 +2388,12 @@ msgstr "لا يوجد تقرير باسم «%s»."
 #: code:addons/kmessage_connector/models/kmessage_api.py:0
 msgid "There is no such capability here."
 msgstr "لا توجد صلاحية بهذا الاسم."
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_account.py:0
+msgid "This K-Message does not take a connection from Odoo yet."
+msgstr "هذا الإصدار من K-Message لا يقبل الاتصال من أودو بعد."
 
 #. module: kmessage_connector
 #. odoo-python
@@ -2392,13 +2507,6 @@ msgid "Two capabilities cannot share a code."
 msgstr "لا يمكن أن تتشارك صلاحيتان الرمز نفسه."
 
 #. module: kmessage_connector
-#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_connect_form
-msgid ""
-"Two things from K-Message: the address of the service, and a private\n"
-"                        token. Nothing is changed until you press Connect."
-msgstr "شيئان من K-Message: عنوان الخدمة، والتوكن الخاص. ولا يتغيّر شيء حتى تضغط «اتصل»."
-
-#. module: kmessage_connector
 #: model:ir.model.constraint,message:kmessage_connector.constraint_kmessage_ai_tool_tool_name_unique
 msgid "Two tools on one connection cannot share a name."
 msgstr "لا يمكن أن تتشارك أداتان في اتصال واحد الاسم نفسه."
@@ -2471,6 +2579,12 @@ msgstr "حالة الويبهوك"
 #: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_connect__webhook_url
 msgid "Webhook Url"
 msgstr "عنوان الويبهوك"
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
+msgid "Webhook: %s"
+msgstr "الويبهوك: %s"
 
 #. module: kmessage_connector
 #: model:ir.actions.act_window,name:kmessage_connector.action_kmessage_capability
@@ -2629,6 +2743,14 @@ msgid "Whether this template carries a document, such as an invoice PDF."
 msgstr "هل يحمل هذا القالب مستندًا، مثل فاتورة PDF."
 
 #. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_account__can_list_webhooks
+msgid ""
+"Whether this token may read the tenant's webhook list. Being able to add one"
+" is a separate permission, and most managed plans reserve it for the "
+"provider."
+msgstr "هل يستطيع هذا التوكن قراءة قائمة الويبهوك في الحساب. أمّا إضافة ويبهوك جديد فهي صلاحية منفصلة، وأغلب الحسابات المُدارة تحتفظ بها للمزوّد."
+
+#. module: kmessage_connector
 #: model:ir.model.fields,help:kmessage_connector.field_kmessage_connect__account_name
 msgid ""
 "Which WhatsApp number to send from. Leave empty for the tenant's default."
@@ -2649,6 +2771,11 @@ msgstr "أي مطبوع يُرفق. والفراغ يعني المطبوع ال�
 #: model:ir.model.fields,help:kmessage_connector.field_kmessage_automation_param__index
 msgid "Which {{n}} in the template body this fills."
 msgstr "أي {{n}} في نص القالب يملؤه هذا."
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_connect__create_templates
+msgid "Write the templates for me"
+msgstr "اكتب القوالب نيابةً عني"
 
 #. module: kmessage_connector
 #: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_account_form
@@ -2677,11 +2804,10 @@ msgstr "التوكن الجديد"
 
 #. module: kmessage_connector
 #. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_starter.py:0
 #: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
-msgid ""
-"Your plan is managed by your provider, so the webhook has to be added by "
-"them. The address and secret are below — send them these two lines."
-msgstr "باقتك يديرها المزوّد، فإضافة الويبهوك من مسؤوليته. العنوان والسرّ بالأسفل — أرسل له هذين السطرين."
+msgid "already there"
+msgstr "موجود مسبقاً"
 
 #. module: kmessage_connector
 #: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_automation_form
@@ -2700,6 +2826,36 @@ msgid "approve"
 msgstr "approve"
 
 #. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_starter.py:0
+msgid "approved and ready to send"
+msgstr "تمت الموافقة عليه وجاهز للإرسال"
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_starter.py:0
+msgid "created, but Meta did not accept the sample document"
+msgstr "أُنشئ، لكن Meta لم تقبل الملف النموذجي"
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_starter.py:0
+msgid "created, but not submitted: %s"
+msgstr "أُنشئ، لكن لم يُرفع للموافقة: %s"
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_starter.py:0
+msgid "created, but the sample could not be attached: %s"
+msgstr "أُنشئ، لكن تعذّر إرفاق الملف النموذجي: %s"
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_starter.py:0
+msgid "created, but there was no document to show Meta as a sample"
+msgstr "أُنشئ، لكن لم يوجد مستند نعرضه على Meta كنموذج"
+
+#. module: kmessage_connector
 #: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_automation_form
 msgid "e.g. Send the invoice when it is posted"
 msgstr "مثال: أرسل الفاتورة عند ترحيلها"
@@ -2716,9 +2872,27 @@ msgstr "https://api.k-message.kerneltics.com"
 
 #. module: kmessage_connector
 #. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_starter.py:0
+msgid "no WhatsApp number to create it on"
+msgstr "لا يوجد رقم واتساب لإنشائه عليه"
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_starter.py:0
+msgid "no status"
+msgstr "بلا حالة"
+
+#. module: kmessage_connector
+#. odoo-python
 #: code:addons/kmessage_connector/models/kmessage_event.py:0
 msgid "noted on %s"
 msgstr "دُوّن على %s"
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_starter.py:0
+msgid "only your K-Message provider may add templates on this plan"
+msgstr "في هذه الباقة لا يضيف القوالب إلا مزوّد K-Message الخاص بك"
 
 #. module: kmessage_connector
 #. odoo-python
@@ -2736,6 +2910,36 @@ msgstr "record.amount_total - record.amount_residual"
 #: code:addons/kmessage_connector/models/kmessage_event.py:0
 msgid "recorded on %s"
 msgstr "سُجّل على %s"
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_starter.py:0
+msgid "refused: %s"
+msgstr "مرفوض: %s"
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
+msgid "submitted"
+msgstr "مُرسَل للمراجعة"
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_starter.py:0
+msgid "submitted (%s)"
+msgstr "تم الرفع (%s)"
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_starter.py:0
+msgid "submitted to Meta, waiting for approval"
+msgstr "رُفع إلى Meta، بانتظار الموافقة"
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_starter.py:0
+msgid "the platform did not say which template it created"
+msgstr "لم تذكر المنصّة أي قالب أنشأت"
 
 #. module: kmessage_connector
 #: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_account_form
@@ -2756,9 +2960,20 @@ msgstr "هذا التوكن"
 
 #. module: kmessage_connector
 #. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_starter.py:0
+msgid "this token may not add templates"
+msgstr "هذا التوكن لا يملك صلاحية إضافة القوالب"
+
+#. module: kmessage_connector
+#. odoo-python
 #: code:addons/kmessage_connector/models/kmessage_message.py:0
 msgid "unknown error"
 msgstr "خطأ غير معروف"
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_connect_form
+msgid "whm_…"
+msgstr "whm_…"
 
 #. module: kmessage_connector
 #: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_automation_form
@@ -2813,166 +3028,3 @@ msgstr "تحتاج «%s» إلى تطبيق أودو غير مثبّت."
 #: code:addons/kmessage_connector/models/kmessage_reply.py:0
 msgid "“%s” needs the record the message was about, and it is gone."
 msgstr "تحتاج «%s» إلى السجل الذي تخصّه الرسالة، وهو غير موجود."
-
-#. module: kmessage_connector
-#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_connect__can_list_webhooks
-msgid "Can List Webhooks"
-msgstr "إمكانية عرض الويبهوك"
-
-#. module: kmessage_connector
-#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_account__can_list_webhooks
-msgid "Can see webhooks"
-msgstr "يمكنه رؤية الويبهوك"
-
-#. module: kmessage_connector
-#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_connect_form
-msgid "See the webhook list"
-msgstr "عرض قائمة الويبهوك"
-
-#. module: kmessage_connector
-#. odoo-python
-#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
-msgid "The webhook was not set up: %s"
-msgstr "لم تتم تهيئة الويبهوك: %s"
-
-#. module: kmessage_connector
-#: model:ir.model.fields,help:kmessage_connector.field_kmessage_account__can_list_webhooks
-msgid ""
-"Whether this token may read the tenant's webhook list. Being able to add one"
-" is a separate permission, and most managed plans reserve it for the "
-"provider."
-msgstr "هل يستطيع هذا التوكن قراءة قائمة الويبهوك في الحساب. أمّا إضافة ويبهوك جديد فهي صلاحية منفصلة، وأغلب الحسابات المُدارة تحتفظ بها للمزوّد."
-
-#. module: kmessage_connector
-#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_event__rule_ids
-msgid "Rules that ran"
-msgstr "القواعد التي نُفِّذت"
-
-#. module: kmessage_connector
-#. odoo-python
-#: code:addons/kmessage_connector/controllers/main.py:0
-msgid "That request was too big to read."
-msgstr "الطلب أكبر من أن يُقرأ."
-
-#. module: kmessage_connector
-#: model:ir.model.fields,help:kmessage_connector.field_kmessage_event__rule_ids
-msgid ""
-"The reply rules this tap actually ran, which is how a second tap on the same"
-" message is recognised as a repeat."
-msgstr "قواعد الردّ التي نفّذتها هذه الضغطة فعلياً، وبها تُعرف الضغطة الثانية على الرسالة نفسها بأنها مكرّرة."
-
-#. module: kmessage_connector
-#: model:ir.model.fields,help:kmessage_connector.field_kmessage_connect__create_templates
-msgid ""
-"Creates the messages this addon sends — in Arabic, under names of its own — "
-"and submits them to Meta for approval. Templates that already exist are left"
-" alone, and anything created can be reworded in K-Message afterwards."
-msgstr "ينشئ الرسائل التي يرسلها هذا التطبيق — بالعربية وبأسماء خاصة به — ويرفعها إلى Meta للموافقة. والقوالب الموجودة مسبقاً تُترك كما هي، وما يُنشأ يمكن تعديل صياغته في K-Message بعد ذلك."
-
-#. module: kmessage_connector
-#: model:ir.model,name:kmessage_connector.model_kmessage_starter
-msgid "K-Message Starter Templates"
-msgstr "قوالب K-Message الجاهزة"
-
-#. module: kmessage_connector
-#. odoo-python
-#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
-msgid ""
-"No templates to write — they come with the Invoicing, Sales and Inventory "
-"apps."
-msgstr "لا توجد قوالب لكتابتها — تأتي مع تطبيقات الفوترة والمبيعات والمخزون."
-
-#. module: kmessage_connector
-#. odoo-python
-#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
-msgid "Templates: %s"
-msgstr "القوالب: %s"
-
-#. module: kmessage_connector
-#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_connect__create_templates
-msgid "Write the templates for me"
-msgstr "اكتب القوالب نيابةً عني"
-
-#. module: kmessage_connector
-#. odoo-python
-#: code:addons/kmessage_connector/models/kmessage_starter.py:0
-msgid "already there"
-msgstr "موجود مسبقاً"
-
-#. module: kmessage_connector
-#. odoo-python
-#: code:addons/kmessage_connector/models/kmessage_starter.py:0
-msgid "approved and ready to send"
-msgstr "تمت الموافقة عليه وجاهز للإرسال"
-
-#. module: kmessage_connector
-#. odoo-python
-#: code:addons/kmessage_connector/models/kmessage_starter.py:0
-msgid "created, but Meta did not accept the sample document"
-msgstr "أُنشئ، لكن Meta لم تقبل الملف النموذجي"
-
-#. module: kmessage_connector
-#. odoo-python
-#: code:addons/kmessage_connector/models/kmessage_starter.py:0
-msgid "created, but not submitted: %s"
-msgstr "أُنشئ، لكن لم يُرفع للموافقة: %s"
-
-#. module: kmessage_connector
-#. odoo-python
-#: code:addons/kmessage_connector/models/kmessage_starter.py:0
-msgid "created, but the sample could not be attached: %s"
-msgstr "أُنشئ، لكن تعذّر إرفاق الملف النموذجي: %s"
-
-#. module: kmessage_connector
-#. odoo-python
-#: code:addons/kmessage_connector/models/kmessage_starter.py:0
-msgid "created, but there was no document to show Meta as a sample"
-msgstr "أُنشئ، لكن لم يوجد مستند نعرضه على Meta كنموذج"
-
-#. module: kmessage_connector
-#. odoo-python
-#: code:addons/kmessage_connector/models/kmessage_starter.py:0
-msgid "no WhatsApp number to create it on"
-msgstr "لا يوجد رقم واتساب لإنشائه عليه"
-
-#. module: kmessage_connector
-#. odoo-python
-#: code:addons/kmessage_connector/models/kmessage_starter.py:0
-msgid "no status"
-msgstr "بلا حالة"
-
-#. module: kmessage_connector
-#. odoo-python
-#: code:addons/kmessage_connector/models/kmessage_starter.py:0
-msgid "only your K-Message provider may add templates on this plan"
-msgstr "في هذه الباقة لا يضيف القوالب إلا مزوّد K-Message الخاص بك"
-
-#. module: kmessage_connector
-#. odoo-python
-#: code:addons/kmessage_connector/models/kmessage_starter.py:0
-msgid "refused: %s"
-msgstr "مرفوض: %s"
-
-#. module: kmessage_connector
-#. odoo-python
-#: code:addons/kmessage_connector/models/kmessage_starter.py:0
-msgid "submitted (%s)"
-msgstr "تم الرفع (%s)"
-
-#. module: kmessage_connector
-#. odoo-python
-#: code:addons/kmessage_connector/models/kmessage_starter.py:0
-msgid "submitted to Meta, waiting for approval"
-msgstr "رُفع إلى Meta، بانتظار الموافقة"
-
-#. module: kmessage_connector
-#. odoo-python
-#: code:addons/kmessage_connector/models/kmessage_starter.py:0
-msgid "the platform did not say which template it created"
-msgstr "لم تذكر المنصّة أي قالب أنشأت"
-
-#. module: kmessage_connector
-#. odoo-python
-#: code:addons/kmessage_connector/models/kmessage_starter.py:0
-msgid "this token may not add templates"
-msgstr "هذا التوكن لا يملك صلاحية إضافة القوالب"

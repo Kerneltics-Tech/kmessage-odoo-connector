@@ -93,26 +93,31 @@ before editing anything:
 
 ## Connecting
 
-*K-Message → Configuration → Connect to K-Message*. The wizard asks for two
-things: the K-Message URL (`https://api.k-message.kerneltics.com` unless the
-tenant is hosted elsewhere) and the private token.
+*K-Message → Configuration → Connect to K-Message*. The wizard asks for one
+thing: the private token. The service address is the same for every customer,
+so it is compiled in; *My K-Message is hosted elsewhere* reveals the field for
+the rare tenant that is not on it.
 
 **Check** looks before leaping. It asks the platform who the token is, which
 WhatsApp numbers the tenant has, how many approved templates there are, and
 whether this token may manage webhooks — and then tells you, before anything is
 written.
 
-**Apply** does what the token turned out to be allowed to do:
+**Apply** wires both directions and reports back in four lines:
 
 * saves the connection and syncs the approved templates, so choosing a template
   later is a dropdown rather than a name typed from memory;
-* subscribes this Odoo to WhatsApp events, when the token may do that;
-* publishes the assistant tools, when the token may do that;
-* issues the token K-Message will present when it asks Odoo a question.
+* writes the WhatsApp templates this addon sends and submits them to Meta;
+* issues the token K-Message will present when it asks Odoo a question;
+* posts that token, the webhook address and the assistant tools to
+  `POST /api/integrations/odoo/connect`, which registers all of it in one call.
 
-Each of those is attempted once and reported honestly. A step the token is not
-allowed to take is written down as an instruction for whoever administers the
-tenant, not as a failure — see below.
+That last call is the reason there is nothing to hand anybody. It exists
+precisely because webhooks and custom actions are otherwise operator-only, and
+it is narrow on purpose: it reads the tenant from the API key, it only ever
+creates or updates rows it marked as its own, and a webhook or tool somebody
+set up by hand is left exactly as it was. On a K-Message that does not have it
+yet, the wizard falls back to the older route — see below.
 
 That issued token is shown **once**. Odoo stores a fingerprint of it and nothing
 else, so it cannot be read back later — copy it into K-Message now, or press
@@ -121,16 +126,16 @@ else, so it cannot be read back later — copy it into K-Message now, or press
 Nothing sends yet. Sending starts when somebody creates an automation, picks a
 template and switches it on.
 
-## When the plan is managed by the provider
+## When it has to be handed over
 
-Most tenants are on a managed plan, where creating webhooks and custom actions
-is reserved for whoever runs the platform. The API answers those two calls with
-`403 operator_only` — "This is managed by your provider." That is a fact about
-the account, not a failure of the connector: the wizard records it, sets the
-webhook state to *Waiting for your provider*, and shows the exact values to
-hand over.
+The one-call route above removes this for anyone on a current K-Message. Two
+cases still land here: a platform old enough not to have that endpoint, and a
+tenant whose operator has disabled it. Then the older truth applies — creating
+webhooks and custom actions answers `403 operator_only`, "This is managed by
+your provider" — and the wizard says so, sets the webhook state to *Waiting for
+your provider*, and shows the exact values to hand over.
 
-Send your provider exactly this:
+Only then, send your provider exactly this:
 
 ```
 Address:   https://<your-odoo>/kmessage/api/v1/webhook

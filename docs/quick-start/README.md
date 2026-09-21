@@ -7,7 +7,7 @@ so it can be regenerated when the screens change.
 | --- | --- |
 | `quick-start-ar.pdf` | One page, Arabic. Install → connect → first message |
 | `quick-start-en.pdf` | The same, English |
-| `connect-walkthrough.mp4` | 57 seconds: the real Odoo web client, connecting |
+| `connect-walkthrough.mp4` | 57 seconds: the real Odoo web client, one field, connected |
 
 ## Regenerating the PDFs
 
@@ -29,9 +29,14 @@ real tenant and never sends a real message.
 ```bash
 python3 dev/fake_kmessage.py --port 8787 --api-key whm_demo…   # the stand-in
 python3 dev/record_connect.py --out /tmp/connect               # records .webm
-ffmpeg -i /tmp/connect/*.webm -vf scale=1280:-2 -c:v libx264 -crf 26 \
-    -pix_fmt yuv420p -movflags +faststart -an connect-walkthrough.mp4
+ffmpeg -i /tmp/connect/*.webm -vf scale=1440:900,format=yuv420p \
+    -c:v libx264 -preset slow -crf 23 -movflags +faststart -an \
+    connect-walkthrough.mp4
 ```
+
+`--platform` aims the wizard at the stand-in, and it does that behind the
+*hosted elsewhere* switch — off camera, where a customer never goes. The
+recording shows the one field there is.
 
 Two things the recording needs, or the summary fills with refusals that are
 true but unhelpful in a demo:

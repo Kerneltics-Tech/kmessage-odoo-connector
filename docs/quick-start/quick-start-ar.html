@@ -8,18 +8,18 @@
   * { box-sizing: border-box; }
   body {
     font-family: "Geeza Pro", "Al Bayan", "Arial", sans-serif;
-    color: #12203a; font-size: 12pt; line-height: 1.75; margin: 0;
+    color: #12203a; font-size: 11pt; line-height: 1.55; margin: 0;
   }
-  h1 { font-size: 22pt; margin: 0 0 2mm; color: #09024B; }
-  .lede { color: #4a5670; margin: 0 0 7mm; font-size: 11pt; }
-  .step { border: 1px solid #dfe4ee; border-radius: 8px; padding: 5mm 6mm; margin-bottom: 4mm; }
-  .step-head { display: flex; align-items: center; gap: 4mm; margin-bottom: 2mm; }
+  h1 { font-size: 19pt; margin: 0 0 2mm; color: #09024B; }
+  .lede { color: #4a5670; margin: 0 0 4mm; font-size: 10.5pt; }
+  .step { border: 1px solid #dfe4ee; border-radius: 8px; padding: 3.5mm 5mm; margin-bottom: 2.5mm; }
+  .step-head { display: flex; align-items: center; gap: 3mm; margin-bottom: 1.5mm; }
   .num {
-    background: #09024B; color: #fff; width: 9mm; height: 9mm; border-radius: 50%;
+    background: #09024B; color: #fff; width: 8mm; height: 8mm; border-radius: 50%;
     display: inline-flex; align-items: center; justify-content: center;
     font-size: 13pt; font-weight: bold; flex: none;
   }
-  .title { font-size: 14pt; font-weight: bold; color: #09024B; }
+  .title { font-size: 12.5pt; font-weight: bold; color: #09024B; }
   .body { margin-right: 13mm; }
   ul { margin: 2mm 0; padding-right: 6mm; }
   li { margin-bottom: 1.5mm; }
@@ -27,12 +27,12 @@
     font-family: "Menlo", monospace; font-size: 10pt; background: #f2f4f9;
     padding: 0.5mm 1.5mm; border-radius: 3px; direction: ltr; display: inline-block;
   }
-  .note { background: #f7f9fc; border-right: 3px solid #06C565; padding: 3mm 4mm; margin: 3mm 0; font-size: 11pt; }
-  .warn { background: #fff8f0; border-right: 3px solid #e08b2f; padding: 3mm 4mm; margin: 3mm 0; font-size: 11pt; }
-  .switches { width: 100%; border-collapse: collapse; margin: 2mm 0; font-size: 11pt; }
-  .switches td { border-bottom: 1px solid #e8ecf4; padding: 2mm 1mm; vertical-align: top; }
+  .note { background: #f7f9fc; border-right: 3px solid #06C565; padding: 2mm 3mm; margin: 2mm 0; font-size: 10pt; }
+  .warn { background: #fff8f0; border-right: 3px solid #e08b2f; padding: 2mm 3mm; margin: 2mm 0; font-size: 10pt; }
+  .switches { width: 100%; border-collapse: collapse; margin: 1.5mm 0; font-size: 10pt; }
+  .switches td { border-bottom: 1px solid #e8ecf4; padding: 1.2mm 1mm; vertical-align: top; }
   .switches td:first-child { font-weight: bold; white-space: nowrap; width: 46mm; }
-  .footer { margin-top: 6mm; padding-top: 3mm; border-top: 1px solid #dfe4ee; color: #6b7488; font-size: 10pt; }
+  .footer { margin-top: 3mm; padding-top: 2mm; border-top: 1px solid #dfe4ee; color: #6b7488; font-size: 10pt; }
 </style>
 </head>
 <body>
@@ -49,9 +49,8 @@
     من <b>التطبيقات ← تحديث قائمة التطبيقات</b>، ابحث عن
     <b>K-Message Connector</b> واضغط <b>تفعيل</b>.
     <div class="note">
-      تُثبّت تطبيقاً واحداً فقط. وما يخص الفوترة والمبيعات والمخزون يُضاف من نفسه
-      إن كانت تلك التطبيقات موجودة لديك.
-      <br><b>ولا تُرسل أي رسالة بعد.</b> التثبيت يوسّع ما <i>يستطيع</i> أودو فعله، لا ما يبدأ بفعله.
+      تطبيق واحد فقط. وما يخص الفوترة والمبيعات والمخزون يُضاف من نفسه إن كانت تلك
+      التطبيقات موجودة. <b>ولا تُرسل أي رسالة بعد.</b>
     </div>
   </div>
 </div>
@@ -63,32 +62,28 @@
     من K-Message (<span class="path">Settings → API Keys</span>، ويبدأ بـ <code>whm_</code>).
     لا شيء آخر تكتبه.
     <br>
-    اضغط <b>اتصال</b>، ثم <b>جهّزه</b>، وسيتولّى الباقي:
+    اضغط <b>اتصال</b>. زر واحد، ويتولّى الباقي:
     <table class="switches">
-      <tr><td>اكتب القوالب نيابةً عني</td><td>ينشئ رسائل واتساب بالعربية ويرفعها إلى Meta للموافقة. الموافقة عادةً خلال دقائق.</td></tr>
-      <tr><td>دع K-Message يتصل بأودو</td><td>يسجّل الاتصال في K-Message مباشرةً — لا شيء ترسله لأحد.</td></tr>
-      <tr><td>علّم المساعد أن يسأل أودو</td><td>ينشر قدرات أودو كأدوات للمساعد الذكي.</td></tr>
-      <tr><td>أصدر توكن لـ K-Message</td><td>المفتاح الذي يستخدمه K-Message ليسأل أودو عن عميل.</td></tr>
+      <tr><td>القوالب</td><td>رسائل واتساب بالعربية، تُرفع إلى Meta وتُعتمد خلال دقائق.</td></tr>
+      <tr><td>القواعد</td><td>«أرسل الفاتورة عند ترحيلها» <b>شغّالة</b>؛ الطلب وعرض السعر والشحنة مطفأة.</td></tr>
+      <tr><td>الاتجاه الآخر</td><td>يسجّل نفسه في K-Message وينشر أدوات المساعد — لا شيء ترسله لأحد.</td></tr>
+      <tr><td>التوكن</td><td>المفتاح الذي يستخدمه K-Message ليسأل أودو عن عميل.</td></tr>
     </table>
-    وتظهر لك خلاصة سطراً سطراً بما تم.
     <div class="warn">
-      التوكن الصادر يظهر <b>مرة واحدة فقط</b>. أودو يحفظ بصمته لا قيمته — انسخه الآن،
-      أو أصدر غيره لاحقاً من شاشة التوكنات.
+      التوكن الصادر يظهر <b>مرة واحدة فقط</b> — انسخه الآن، أو أصدر غيره لاحقاً.
+      وإن أردت أن تختار بنفسك ما يجهّزه، «اختر ما يجهّزه» بجانب الزر.
     </div>
   </div>
 </div>
 
 <div class="step">
-  <div class="step-head"><span class="num">٣</span><span class="title">شغّل أول رسالة</span></div>
+  <div class="step-head"><span class="num">٣</span><span class="title">رحّل فاتورة</span></div>
   <div class="body">
-    افتح <span class="path">K-Message ← الإعدادات ← قواعد الأتمتة ← جديد</span>:
-    <ul>
-      <li><b>متى</b> — اختر الحدث: ترحيل فاتورة، تأكيد طلب، تأكيد أمر توصيل.</li>
-      <li><b>أرسل</b> — اختر القالب، مثل <code>odoo_invoice_ready</code>.</li>
-      <li><b>المتغيّرات</b> — سطر لكل <code>{{n}}</code> في القالب: اسم العميل، رقم الفاتورة، المبلغ.</li>
-      <li><b>فعّل القاعدة.</b> القواعد الجديدة تبدأ متوقفة.</li>
-    </ul>
-    رحّل فاتورة، وخلال دقيقتين تصل الرسالة ومعها ملف الفاتورة، ويُسجَّل ذلك في سجل الفاتورة نفسها.
+    هذا كل شيء. قاعدة «أرسل الفاتورة عند ترحيلها» جاهزة وشغّالة من الخطوة السابقة،
+    فرحّل فاتورة وخلال دقيقتين تصل الرسالة ومعها ملف الفاتورة، ويُسجَّل ذلك في سجل الفاتورة نفسها.
+    <br>
+    القواعد الأخرى تجدها في <span class="path">الإعدادات ← قواعد الأتمتة</span> مطفأة؛ اقرأ القاعدة ثم شغّلها.
+    وإن حذفت واحدة بالخطأ، «أعد القواعد الافتراضية» في شاشة الاتصال ترجّعها دون أن تمسّ قواعدك.
     <div class="note">
       <b>جرّب بأمان أولاً:</b> فعّل <b>وضع التجربة</b> في شاشة الاتصال. كل رسالة تُجهَّز وتُسجَّل، ولا يخرج شيء.
     </div>

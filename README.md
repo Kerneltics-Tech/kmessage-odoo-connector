@@ -99,12 +99,13 @@ question — `kmessage.account._service_url()` answers it, reading the system
 parameter `kmessage.base_url` if a developer has set one and otherwise the
 address built into the addon.
 
-**Check** looks before leaping. It asks the platform who the token is, which
-WhatsApp numbers the tenant has, how many approved templates there are, and
-whether this token may manage webhooks — and then tells you, before anything is
-written.
+**Connect** is the only button. It looks first — who the token is, which
+WhatsApp numbers the tenant has, how many approved templates there are, whether
+this token may manage webhooks — and then does everything it turned out to be
+allowed to do. *Choose what it sets up*, beside it, stops at that review with a
+switch per part, for anyone who would rather decide than be finished.
 
-**Apply** wires both directions and reports back in a few lines:
+What it does, and reports back in a few lines:
 
 * saves the connection and syncs the approved templates, so choosing a template
   later is a dropdown rather than a name typed from memory;

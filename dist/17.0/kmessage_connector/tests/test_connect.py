@@ -14,7 +14,7 @@ from odoo.exceptions import UserError
 from odoo.tests import tagged
 
 from ..tools.client import DEFAULT_BASE_URL, KMessageClient, KMessageError
-from .common import KMessageCase
+from .common import FAKE_API_KEY, KMessageCase
 
 
 @tagged('post_install', '-at_install')
@@ -147,3 +147,51 @@ class TestTheAddressIsNotAQuestion(KMessageCase):
         form = self.env.ref('kmessage_connector.view_kmessage_connect_form')
         self.assertNotIn('base_url', form.arch,
                          'the connect screen must ask for the token and nothing else')
+
+
+@tagged('post_install', '-at_install')
+class TestOneButton(KMessageCase):
+    """Paste the token, press Connect, and be finished.
+
+    Looking first and then asking which parts to do was honest, and it was
+    also a screen of decisions nobody outside this addon is equipped to make.
+    What has to stay true is that the short path does everything the long one
+    did, and that the long one is still there for anyone who wants it.
+    """
+
+    def setUp(self):
+        super().setUp()
+        self.account.write({'webhook_secret': False, 'webhook_state': 'none',
+                            'webhook_remote_id': False})
+        self.env['ir.config_parameter'].sudo().set_param(
+            'web.base.url', 'https://odoo.example.com')
+
+    def _wizard(self):
+        return self.env['kmessage.connect'].create({
+            'api_key': FAKE_API_KEY,
+            'base_url': self.fake.url,
+        })
+
+    def test_one_press_finishes_the_whole_thing(self):
+        wizard = self._wizard()
+        wizard.action_connect()
+
+        self.assertEqual(wizard.state, 'done')
+        self.assertTrue(wizard.account_id, 'the connection should have been saved')
+        self.assertTrue(wizard.summary, 'and it should say what it did')
+        self.assertEqual(wizard.account_id.state, 'connected')
+
+    def test_it_looks_before_it_leaps_all_the_same(self):
+        """A token the platform rejects must stop, not half-finish."""
+        wizard = self.env['kmessage.connect'].create(
+            {'api_key': 'whm_not_a_real_key', 'base_url': self.fake.url})
+        with self.assertRaises(UserError):
+            wizard.action_connect()
+        self.assertEqual(wizard.state, 'start')
+        self.assertFalse(wizard.account_id)
+
+    def test_choosing_is_still_possible(self):
+        wizard = self._wizard()
+        wizard.action_check()
+        self.assertEqual(wizard.state, 'checked', 'the review screen is still there')
+        self.assertFalse(wizard.account_id, 'and it still changes nothing by itself')

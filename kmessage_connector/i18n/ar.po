@@ -413,6 +413,11 @@ msgstr "تم الفحص"
 
 #. module: kmessage_connector
 #: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_connect_form
+msgid "Choose what it sets up"
+msgstr "اختر ما يجهّزه"
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_connect_form
 msgid "Close"
 msgstr "إغلاق"
 
@@ -1596,10 +1601,8 @@ msgstr "الصق عنوان خدمة K-Message لديك والتوكن الخا�
 
 #. module: kmessage_connector
 #: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_connect_form
-msgid ""
-"Paste the private token from K-Message. Nothing is changed until you\n"
-"                        press Connect."
-msgstr "ألصق التوكن الخاص من K-Message. لا يتغيّر شيء حتى تضغط اتصال."
+msgid "Paste the private token from K-Message. Connect does the rest."
+msgstr "ألصق التوكن الخاص من K-Message، و«اتصال» يتولّى الباقي."
 
 #. module: kmessage_connector
 #: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_event__payload

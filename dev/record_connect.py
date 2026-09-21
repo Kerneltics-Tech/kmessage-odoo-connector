@@ -38,7 +38,7 @@ def open_wizard(page, odoo):
 
 
 def fill_and_connect(page, key):
-    """Type the one field there is."""
+    """Type the one field there is, and press the one button."""
     caption(page, 'One field: your private token from K-Message.', 3.4)
     field = page.locator(
         'div[name="api_key"] input, input[id^="api_key"], input[name="api_key"]').first
@@ -48,24 +48,21 @@ def fill_and_connect(page, key):
     field.type(key, delay=45)
     page.wait_for_timeout(1400)
 
-    caption(page, 'Connect looks first — it changes nothing yet.', 3.0)
+    caption(page, 'One button. It checks the token, then does the rest.', 3.4)
     page.click('button:has-text("Connect")')
-    page.wait_for_timeout(3500)
+    page.wait_for_timeout(5000)
 
 
-def apply_setup(page):
-    caption(page, 'It reports who the token belongs to, and what it may do.', 3.6)
-    page.wait_for_timeout(1200)
-    caption(page, 'Now it writes the WhatsApp templates, registers itself with '
-                  'K-Message, and publishes the assistant tools.', 4.2)
-    page.click('button:has-text("Set it up")')
-    page.wait_for_timeout(4000)
-    caption(page, 'Done — line by line, what it did. Nothing to forward to anyone.', 4.0)
-    page.wait_for_timeout(2200)
+def show_what_it_did(page):
+    caption(page, 'Templates written and sent to Meta. Rules set up. '
+                  'K-Message told where to find this Odoo.', 4.4)
+    page.wait_for_timeout(2000)
+    caption(page, 'Done — line by line. Nothing to forward to anyone.', 4.0)
+    page.wait_for_timeout(1800)
     caption(page, 'The issued token is shown once. Copy it now.', 3.6)
     page.wait_for_timeout(1500)
-    caption(page, 'Nothing sends yet — switching that on is the next video.', 3.6)
-    page.wait_for_timeout(1000)
+    caption(page, 'Sending the invoice is already switched on.', 3.6)
+    page.wait_for_timeout(1200)
 
 
 def main() -> int:
@@ -90,7 +87,7 @@ def main() -> int:
             log_in(page, args.odoo)
             open_wizard(page, args.odoo)
             fill_and_connect(page, args.key)
-            apply_setup(page)
+            show_what_it_did(page)
         finally:
             video = page.video
             context.close()

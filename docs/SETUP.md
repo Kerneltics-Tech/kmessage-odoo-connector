@@ -63,25 +63,32 @@ Press **Connect**. It looks before it leaps — who the token belongs to, which
 WhatsApp numbers the tenant has, how many templates exist, and what this token
 is allowed to do — and shows you that before writing anything.
 
-Then choose what it should set up. All four are on by default:
+Behind *Choose what it sets up*, each part has its own switch. All five are on:
 
 | | What it does |
 | --- | --- |
 | **Write the templates for me** | Creates the messages this addon sends, in Arabic, and submits them to Meta. Approval usually lands within minutes. Existing templates are never touched |
+| **Set up the rules too** | Writes the automations that use them, filled in. Sending the invoice arrives on; the rest arrive off |
 | **Let K-Message call this Odoo** | Subscribes this Odoo to WhatsApp events |
 | **Teach the assistant to ask Odoo** | Publishes each capability as an assistant tool |
 | **Issue a token for K-Message** | The key K-Message presents when it asks Odoo about a customer |
 
-Press **Set it up**. It wires both directions itself — one call registers the
-webhook and publishes the tools on the K-Message side — and hands you a summary,
-line by line:
+Press **Connect**. That is the whole of it: one button, which checks the token
+and then does everything it turned out to be allowed to do — one call registers
+the webhook and publishes the tools on the K-Message side — and hands you a
+summary, line by line:
 
 ```
 • Connected as Odoo Connector.
 • 5 templates written and sent to Meta for approval.
+• 5 rules set up, 1 of them live.
 • K-Message will call this Odoo.
 • The assistant can now answer 6 questions from Odoo.
 ```
+
+*Choose what it sets up*, beside the button, stops at a review screen with a
+switch per part instead — for anyone who wants to decide rather than be
+finished.
 
 There is nothing to forward to anyone. If your K-Message is an older build
 without that endpoint, it falls back to the older route and tells you the one

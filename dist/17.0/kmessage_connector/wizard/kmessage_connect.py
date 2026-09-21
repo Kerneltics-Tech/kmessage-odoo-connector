@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Setup in one screen: a token and a button.
+"""Setup in one screen: a token and one button.
 
 There is one K-Message, so its address is not a question — it comes from
 ``kmessage.account._service_url()`` and never appears on the form. What the
@@ -82,6 +82,20 @@ class KMessageConnect(models.TransientModel):
     account_id = fields.Many2one('kmessage.account', readonly=True)
 
     # -- step one: look before leaping ------------------------------------
+    def action_connect(self):
+        """The whole of setup, from the only thing a customer has: the token.
+
+        Looking first and then asking which parts to do was honest, and it was
+        also a screen of decisions nobody outside this addon is equipped to
+        make. So the button does both: it looks, and then it does everything
+        the token turned out to be allowed to do. Anyone who does want to
+        choose can still press Choose what it sets up, which stops at the
+        same review screen as before.
+        """
+        self.ensure_one()
+        self.action_check()
+        return self.action_apply()
+
     def action_check(self):
         """Ask the platform who this token is and what it may do."""
         self.ensure_one()

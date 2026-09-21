@@ -11,8 +11,7 @@
                 <field name="needs_handover" invisible="1"/>
                 <group invisible="state != 'start'">
                     <div class="text-muted" colspan="2">
-                        Paste the private token from K-Message. Nothing is changed until you
-                        press Connect.
+                        Paste the private token from K-Message. Connect does the rest.
                     </div>
                     <field name="api_key" password="True" placeholder="whm_…"/>
                     <field name="company_id" groups="base.group_multi_company"/>
@@ -58,8 +57,10 @@
                 </div>
 
                 <footer>
-                    <button name="action_check" type="object" string="Connect" class="btn-primary"
-                            invisible="state != 'start'"/>
+                    <button name="action_connect" type="object" string="Connect"
+                            class="btn-primary" invisible="state != 'start'"/>
+                    <button name="action_check" type="object" string="Choose what it sets up"
+                            class="btn-secondary" invisible="state != 'start'"/>
                     <button name="action_apply" type="object" string="Set it up" class="btn-primary"
                             invisible="state != 'checked'"/>
                     <button name="action_open_account" type="object" string="Open the connection"

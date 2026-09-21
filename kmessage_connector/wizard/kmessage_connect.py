@@ -51,6 +51,12 @@ class KMessageConnect(models.TransientModel):
     issue_token = fields.Boolean(
         string='Issue a token for K-Message', default=True,
         help="Creates the token K-Message uses to ask this Odoo about a customer.")
+    create_templates = fields.Boolean(
+        string='Write the templates for me', default=True,
+        help="Creates the messages this addon sends — in Arabic, under names of its "
+             "own — and submits them to Meta for approval. Templates that already "
+             "exist are left alone, and anything created can be reworded in K-Message "
+             "afterwards.")
     publish_tools = fields.Boolean(
         string='Teach the assistant to ask Odoo', default=True,
         help="Publishes each switched-on capability to K-Message as an assistant tool. "
@@ -154,6 +160,9 @@ class KMessageConnect(models.TransientModel):
                         "Your plan is managed by your provider, so the webhook has to be added by them. "
                         "The address and secret are below — send them these two lines."))
 
+        if self.create_templates:
+            steps.append(self._create_templates(account))
+
         if self.publish_tools:
             steps.append(self._publish_tools(account))
 
@@ -178,6 +187,22 @@ class KMessageConnect(models.TransientModel):
             'summary': '<ul>%s</ul>' % ''.join('<li>%s</li>' % step for step in steps),
         })
         return self._reopen()
+
+    def _create_templates(self, account):
+        """Write the starter templates and submit them, then say what happened."""
+        self.ensure_one()
+        outcomes = self.env['kmessage.starter'].sudo().provision(account)
+        if not outcomes:
+            return _("No templates to write — they come with the Invoicing, Sales "
+                     "and Inventory apps.")
+
+        # Resynced because the ones that went through are now the tenant's, and
+        # an automation should be able to pick them the moment this closes.
+        if account.can_read_templates:
+            self.env['kmessage.template'].sync_from_platform(account)
+
+        return _("Templates: %s", '; '.join(
+            '%s — %s' % (name, outcome) for name, outcome in outcomes))
 
     def _publish_tools(self, account):
         """Publish every live assistant tool, and say plainly what happened.

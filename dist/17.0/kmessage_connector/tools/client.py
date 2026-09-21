@@ -200,6 +200,49 @@ class KMessageClient:
     def delete_webhook(self, webhook_id):
         return self._request('DELETE', '/api/webhooks/%s' % webhook_id)
 
+    # -- templates the connector provisions -------------------------------
+    # A tenant's templates are normally written by hand in K-Message and then
+    # approved by Meta, which is a day's work before a single invoice can go
+    # out. These three calls are how the connector does that for them: write
+    # the template, give Meta the sample document it insists on for a document
+    # header, and submit it.
+    def create_template(self, account_name, name, language, category, body,
+                        header_type=None, header_content=None, footer=None,
+                        buttons=None, samples=None, display_name=None):
+        body_values = {
+            'whatsapp_account': account_name,
+            'name': name,
+            'display_name': display_name or name,
+            'language': language,
+            'category': category,
+            'body_content': body,
+            'footer_content': footer or '',
+            'buttons': buttons or [],
+            'sample_values': samples or [],
+        }
+        if header_type:
+            body_values['header_type'] = header_type
+        if header_content:
+            body_values['header_content'] = header_content
+        return self._request('POST', '/api/templates', json=body_values)
+
+    def upload_template_media(self, account_name, filename, content, mimetype='application/pdf'):
+        """Give Meta the sample file a media header needs; returns its handle."""
+        data = self._request(
+            'POST', '/api/templates/upload-media',
+            data={'account': account_name},
+            files={'file': (filename, content, mimetype)},
+            timeout=SEND_TIMEOUT,
+        ) or {}
+        return data.get('handle') or ''
+
+    def update_template(self, template_id, **values):
+        return self._request('PUT', '/api/templates/%s' % template_id, json=values)
+
+    def publish_template(self, template_id):
+        """Submit to Meta. The answer carries the status Meta gave it."""
+        return self._request('POST', '/api/templates/%s/publish' % template_id, json={})
+
     # -- the assistant's tools --------------------------------------------
     # A "context" of type lookup_tool or document_tool is how K-Message lets a
     # company point the assistant at its own HTTP endpoint. Creating one needs

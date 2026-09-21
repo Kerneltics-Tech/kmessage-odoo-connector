@@ -321,3 +321,8 @@ msgstr "مجهّز وجاهز للإرسال"
 #: code:addons/kmessage_connector_stock/models/kmessage_api.py:0
 msgid "waiting for stock"
 msgstr "بانتظار توفّر الكمية"
+
+#. module: kmessage_connector_stock
+#: model:ir.model,name:kmessage_connector_stock.model_kmessage_starter
+msgid "K-Message Starter Templates"
+msgstr "قوالب K-Message الجاهزة"

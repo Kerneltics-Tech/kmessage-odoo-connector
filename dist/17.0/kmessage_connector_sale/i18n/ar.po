@@ -272,3 +272,8 @@ msgstr "تم التوصيل جزئياً"
 #: code:addons/kmessage_connector_sale/models/kmessage_api.py:0
 msgid "quotation"
 msgstr "عرض سعر"
+
+#. module: kmessage_connector_sale
+#: model:ir.model,name:kmessage_connector_sale.model_kmessage_starter
+msgid "K-Message Starter Templates"
+msgstr "قوالب K-Message الجاهزة"

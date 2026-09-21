@@ -35,6 +35,7 @@
                         </group>
                     </group>
                     <group string="Set up">
+                        <field name="create_templates"/>
                         <field name="setup_webhook"/>
                         <field name="issue_token"/>
                         <field name="publish_tools"/>

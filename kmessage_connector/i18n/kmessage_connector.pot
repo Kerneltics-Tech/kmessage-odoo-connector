@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-21 00:23+0000\n"
-"PO-Revision-Date: 2026-09-21 00:23+0000\n"
+"POT-Creation-Date: 2026-09-21 00:32+0000\n"
+"PO-Revision-Date: 2026-09-21 00:32+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -535,6 +535,14 @@ msgid "Created on"
 msgstr ""
 
 #. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_connect__create_templates
+msgid ""
+"Creates the messages this addon sends — in Arabic, under names of its own — "
+"and submits them to Meta for approval. Templates that already exist are left"
+" alone, and anything created can be reworded in K-Message afterwards."
+msgstr ""
+
+#. module: kmessage_connector
 #: model:ir.model.fields,help:kmessage_connector.field_kmessage_connect__issue_token
 msgid "Creates the token K-Message uses to ask this Odoo about a customer."
 msgstr ""
@@ -950,6 +958,11 @@ msgid "K-Message Reply Rule"
 msgstr ""
 
 #. module: kmessage_connector
+#: model:ir.model,name:kmessage_connector.model_kmessage_starter
+msgid "K-Message Starter Templates"
+msgstr ""
+
+#. module: kmessage_connector
 #: model:ir.model,name:kmessage_connector.model_kmessage_template
 msgid "K-Message Template"
 msgstr ""
@@ -1310,6 +1323,14 @@ msgstr ""
 #. odoo-python
 #: code:addons/kmessage_connector/models/kmessage_event.py:0
 msgid "No message id to match."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
+msgid ""
+"No templates to write — they come with the Invoicing, Sales and Inventory "
+"apps."
 msgstr ""
 
 #. module: kmessage_connector
@@ -2027,6 +2048,12 @@ msgid ""
 msgstr ""
 
 #. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
+msgid "Templates: %s"
+msgstr ""
+
+#. module: kmessage_connector
 #: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_account_form
 msgid "Test the connection"
 msgstr ""
@@ -2677,6 +2704,11 @@ msgid "Which {{n}} in the template body this fills."
 msgstr ""
 
 #. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_connect__create_templates
+msgid "Write the templates for me"
+msgstr ""
+
+#. module: kmessage_connector
 #: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_account_form
 msgid ""
 "Your K-Message plan is managed by your provider, so only they can add the\n"
@@ -2710,6 +2742,12 @@ msgid ""
 msgstr ""
 
 #. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_starter.py:0
+msgid "already there"
+msgstr ""
+
+#. module: kmessage_connector
 #: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_automation_form
 msgid "amount_total, partner_id.name"
 msgstr ""
@@ -2723,6 +2761,36 @@ msgstr ""
 #. module: kmessage_connector
 #: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_reply_rule_form
 msgid "approve"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_starter.py:0
+msgid "approved and ready to send"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_starter.py:0
+msgid "created, but Meta did not accept the sample document"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_starter.py:0
+msgid "created, but not submitted: %s"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_starter.py:0
+msgid "created, but the sample could not be attached: %s"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_starter.py:0
+msgid "created, but there was no document to show Meta as a sample"
 msgstr ""
 
 #. module: kmessage_connector
@@ -2742,8 +2810,26 @@ msgstr ""
 
 #. module: kmessage_connector
 #. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_starter.py:0
+msgid "no WhatsApp number to create it on"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_starter.py:0
+msgid "no status"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
 #: code:addons/kmessage_connector/models/kmessage_event.py:0
 msgid "noted on %s"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_starter.py:0
+msgid "only your K-Message provider may add templates on this plan"
 msgstr ""
 
 #. module: kmessage_connector
@@ -2764,6 +2850,30 @@ msgid "recorded on %s"
 msgstr ""
 
 #. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_starter.py:0
+msgid "refused: %s"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_starter.py:0
+msgid "submitted (%s)"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_starter.py:0
+msgid "submitted to Meta, waiting for approval"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_starter.py:0
+msgid "the platform did not say which template it created"
+msgstr ""
+
+#. module: kmessage_connector
 #: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_account_form
 msgid "the tenant's default number"
 msgstr ""
@@ -2778,6 +2888,12 @@ msgstr ""
 #: code:addons/kmessage_connector/models/kmessage_account.py:0
 #: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
 msgid "this token"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_starter.py:0
+msgid "this token may not add templates"
 msgstr ""
 
 #. module: kmessage_connector

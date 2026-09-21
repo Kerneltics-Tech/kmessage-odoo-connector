@@ -263,3 +263,8 @@ msgid ""
 "that there is nothing on their account here — do not name an amount, and "
 "never say an invoice is paid unless a row says so."
 msgstr "استخدمها عندما يسأل العميل عن فواتيره، أو عمّا عليه، أو هل سُدِّد شيء، أو عن رقم فاتورة. تُرجع فواتير صاحب هذه المحادثة وحده، الأحدث أولاً. والسطر الذي نوعه «credit_note» هو مبلغ لصالح العميل ويظهر بإشارة سالبة، وليس مبلغاً مطلوباً منه أبداً. وإن رجعت بلا نتيجة، قل إنه لا يوجد شيء على حسابه لدينا — ولا تذكر أي مبلغ، ولا تقل إن فاتورة مسدّدة ما لم يقل ذلك سطرٌ صراحةً."
+
+#. module: kmessage_connector_account
+#: model:ir.model,name:kmessage_connector_account.model_kmessage_starter
+msgid "K-Message Starter Templates"
+msgstr "قوالب K-Message الجاهزة"

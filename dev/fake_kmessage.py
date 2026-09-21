@@ -11,6 +11,10 @@ what it was sent so a test can assert on it:
     GET  /api/webhooks                subscriptions + the event catalogue
     POST /api/webhooks                create one (returns the secret once)
     DELETE /api/webhooks/{id}
+    POST /api/templates               write a template (DRAFT)
+    PUT  /api/templates/{id}          change one, e.g. to attach a media handle
+    POST /api/templates/{id}/publish  submit it to Meta
+    POST /api/templates/upload-media  hand Meta the sample a media header needs
     POST /api/messages/template       send a template (multipart or JSON)
     POST /api/contacts/{id}/messages  send free-form text
     GET  /api/contacts                look a contact up by phone
@@ -139,6 +143,8 @@ class State:
         self.fail_next = 0
         self.fail_status = 503
         self.contexts: dict[str, dict] = {}
+        self.drafts: dict[str, dict] = {}
+        self.uploads: list[dict] = []
         self.refuse_tools = False
 
     def reset(self) -> None:
@@ -147,6 +153,8 @@ class State:
             self.webhooks.clear()
             self.secrets.clear()
             self.contexts.clear()
+            self.drafts.clear()
+            self.uploads.clear()
             self.fail_next = 0
             self.refuse_tools = False
 
@@ -211,7 +219,9 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/api/accounts":
             return self._ok({"accounts": ACCOUNTS})
         if path == "/api/templates":
-            return self._ok({"templates": TEMPLATES, "total": len(TEMPLATES), "page": 1, "limit": 50})
+            with STATE.lock:
+                rows = TEMPLATES + list(STATE.drafts.values())
+            return self._ok({"templates": rows, "total": len(rows), "page": 1, "limit": 50})
         if path == "/api/webhooks":
             with STATE.lock:
                 hooks = list(STATE.webhooks.values())
@@ -299,6 +309,52 @@ class Handler(BaseHTTPRequestHandler):
                 STATE.contexts[context_id] = record
             return self._send(201, {"status": "success", "data": record})
 
+        if path == "/api/templates":
+            payload = json.loads(self._body() or b"{}")
+            for required in ("whatsapp_account", "name", "language", "category"):
+                if not payload.get(required):
+                    return self._err(400, "whatsapp_account, name, language, and category are required")
+            if any(t["name"] == payload["name"] for t in TEMPLATES) or payload["name"] in STATE.drafts:
+                return self._err(500, "Failed to create template")
+            body = payload.get("body_content") or ""
+            # Meta's rule, reproduced because it is the one that bites: a body
+            # may not begin or end with a placeholder.
+            stripped = body.strip()
+            if re.match(r"^\{\{\d+\}\}", stripped) or re.search(r"\{\{\d+\}\}[\s.،]*$", stripped):
+                return self._err(502, "Failed to submit template to Meta: API error 100: Invalid "
+                                      "parameter - variables must not be at the start or end")
+            template_id = str(uuid.uuid4())
+            record = dict(payload, id=template_id, status="DRAFT")
+            with STATE.lock:
+                STATE.drafts[payload["name"]] = record
+            return self._ok(record)
+
+        if path == "/api/templates/upload-media":
+            ctype = self.headers.get("Content-Type", "")
+            fields, upload = _parse_multipart(self._body(), ctype) if ctype.startswith("multipart/") else ({}, None)
+            if not fields.get("account"):
+                return self._err(400, "account is required")
+            if not any(a["name"] == fields["account"] for a in ACCOUNTS):
+                return self._err(400, "WhatsApp account not found")
+            if not upload:
+                return self._err(400, "No file provided")
+            with STATE.lock:
+                STATE.uploads.append(upload)
+            return self._ok({"filename": upload["filename"], "handle": "4:" + uuid.uuid4().hex,
+                             "mime_type": upload.get("content_type"), "size": upload["size"]})
+
+        m = re.fullmatch(r"/api/templates/([^/]+)/publish", path)
+        if m:
+            with STATE.lock:
+                record = next((t for t in STATE.drafts.values() if t["id"] == m.group(1)), None)
+                if not record:
+                    return self._err(404, "Template not found")
+                if (record.get("header_type") or "") == "DOCUMENT" and not record.get("header_content"):
+                    return self._err(400, "Template has DOCUMENT header but no media file has been "
+                                          "uploaded. Please upload a sample document first.")
+                record["status"] = "PENDING"
+                return self._ok(record)
+
         if path == "/api/messages/template":
             return self._template_send()
 
@@ -319,6 +375,15 @@ class Handler(BaseHTTPRequestHandler):
         if not self._authed():
             return
         path = self.path.split("?", 1)[0]
+        m = re.fullmatch(r"/api/templates/([^/]+)", path)
+        if m:
+            payload = json.loads(self._body() or b"{}")
+            with STATE.lock:
+                record = next((t for t in STATE.drafts.values() if t["id"] == m.group(1)), None)
+                if not record:
+                    return self._err(404, "Template not found")
+                record.update(payload)
+                return self._ok(record)
         m = re.fullmatch(r"/api/chatbot/ai-contexts/([^/]+)", path)
         if m:
             payload = json.loads(self._body() or b"{}")

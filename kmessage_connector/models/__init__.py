@@ -2,6 +2,7 @@ from . import kmessage_account
 from . import kmessage_capability
 from . import kmessage_token
 from . import kmessage_template
+from . import kmessage_starter
 from . import kmessage_document
 from . import kmessage_message
 from . import kmessage_automation

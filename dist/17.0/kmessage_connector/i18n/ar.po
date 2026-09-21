@@ -2860,3 +2860,119 @@ msgid ""
 "The reply rules this tap actually ran, which is how a second tap on the same"
 " message is recognised as a repeat."
 msgstr "قواعد الردّ التي نفّذتها هذه الضغطة فعلياً، وبها تُعرف الضغطة الثانية على الرسالة نفسها بأنها مكرّرة."
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_connect__create_templates
+msgid ""
+"Creates the messages this addon sends — in Arabic, under names of its own — "
+"and submits them to Meta for approval. Templates that already exist are left"
+" alone, and anything created can be reworded in K-Message afterwards."
+msgstr "ينشئ الرسائل التي يرسلها هذا التطبيق — بالعربية وبأسماء خاصة به — ويرفعها إلى Meta للموافقة. والقوالب الموجودة مسبقاً تُترك كما هي، وما يُنشأ يمكن تعديل صياغته في K-Message بعد ذلك."
+
+#. module: kmessage_connector
+#: model:ir.model,name:kmessage_connector.model_kmessage_starter
+msgid "K-Message Starter Templates"
+msgstr "قوالب K-Message الجاهزة"
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
+msgid ""
+"No templates to write — they come with the Invoicing, Sales and Inventory "
+"apps."
+msgstr "لا توجد قوالب لكتابتها — تأتي مع تطبيقات الفوترة والمبيعات والمخزون."
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
+msgid "Templates: %s"
+msgstr "القوالب: %s"
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_connect__create_templates
+msgid "Write the templates for me"
+msgstr "اكتب القوالب نيابةً عني"
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_starter.py:0
+msgid "already there"
+msgstr "موجود مسبقاً"
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_starter.py:0
+msgid "approved and ready to send"
+msgstr "تمت الموافقة عليه وجاهز للإرسال"
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_starter.py:0
+msgid "created, but Meta did not accept the sample document"
+msgstr "أُنشئ، لكن Meta لم تقبل الملف النموذجي"
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_starter.py:0
+msgid "created, but not submitted: %s"
+msgstr "أُنشئ، لكن لم يُرفع للموافقة: %s"
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_starter.py:0
+msgid "created, but the sample could not be attached: %s"
+msgstr "أُنشئ، لكن تعذّر إرفاق الملف النموذجي: %s"
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_starter.py:0
+msgid "created, but there was no document to show Meta as a sample"
+msgstr "أُنشئ، لكن لم يوجد مستند نعرضه على Meta كنموذج"
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_starter.py:0
+msgid "no WhatsApp number to create it on"
+msgstr "لا يوجد رقم واتساب لإنشائه عليه"
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_starter.py:0
+msgid "no status"
+msgstr "بلا حالة"
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_starter.py:0
+msgid "only your K-Message provider may add templates on this plan"
+msgstr "في هذه الباقة لا يضيف القوالب إلا مزوّد K-Message الخاص بك"
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_starter.py:0
+msgid "refused: %s"
+msgstr "مرفوض: %s"
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_starter.py:0
+msgid "submitted (%s)"
+msgstr "تم الرفع (%s)"
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_starter.py:0
+msgid "submitted to Meta, waiting for approval"
+msgstr "رُفع إلى Meta، بانتظار الموافقة"
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_starter.py:0
+msgid "the platform did not say which template it created"
+msgstr "لم تذكر المنصّة أي قالب أنشأت"
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_starter.py:0
+msgid "this token may not add templates"
+msgstr "هذا التوكن لا يملك صلاحية إضافة القوالب"

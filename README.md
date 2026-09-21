@@ -173,6 +173,18 @@ The addon ships two ready-made K-Message flow graphs in
 `kmessage_connector/data/flows/` — "where is my invoice" and "is it in stock" —
 for tenants who want the inbound half without an assistant.
 
+**The templates write themselves.** Nothing can be sent until an approved
+WhatsApp template exists, and writing one means learning Meta's rules about
+categories, sample values and media headers, then waiting for a review — a
+day's work standing between installing this and a customer receiving anything.
+So the connect wizard does it: it writes the templates the bridges need, in
+Arabic, under names of its own, renders a real invoice as the sample document
+Meta insists on for a document header, and submits them. Approval usually
+arrives within minutes. Templates that already exist are left alone, and the
+wording can be changed in K-Message afterwards — it is a starting point, not a
+decision taken for you. Switch it off in the wizard if you would rather write
+your own.
+
 Two smaller things that are easy to miss:
 
 **Sending one document by hand.** Any invoice, order or delivery has *Send on

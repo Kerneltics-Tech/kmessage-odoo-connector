@@ -54,6 +54,23 @@ def convert_xml(text: str) -> str:
     return text
 
 
+#: The series this tree is written for, and the one it is built into.
+SOURCE_SERIES = '18.0'
+TARGET_SERIES = '17.0'
+
+
+def convert_manifest(text: str) -> str:
+    """Point the version at the series this copy is for.
+
+    Odoo refuses a version carrying the wrong series outright: ``18.0.1.0.0``
+    on a 17 server is five components where its regex wants three, and it
+    raises before the module is even read. The Apps store wants the prefix, so
+    each copy has to carry its own.
+    """
+    return text.replace("'version': '%s." % SOURCE_SERIES,
+                        "'version': '%s." % TARGET_SERIES)
+
+
 def build_module(source: Path, target: Path) -> tuple[int, int]:
     if target.exists():
         shutil.rmtree(target)
@@ -73,6 +90,12 @@ def build_module(source: Path, target: Path) -> tuple[int, int]:
             destination.write_text(rewritten, encoding='utf-8')
             if rewritten != original:
                 converted += 1
+        elif item.name == '__manifest__.py':
+            original = item.read_text(encoding='utf-8')
+            rewritten = convert_manifest(original)
+            destination.write_text(rewritten, encoding='utf-8')
+            if rewritten != original:
+                converted += 1
         else:
             shutil.copy2(item, destination)
     return files, converted
@@ -85,10 +108,25 @@ def check_manifest(module: Path) -> list[str]:
     version = re.search(r"'version'\s*:\s*'([^']+)'", text)
     if not version:
         problems.append('%s: no version in the manifest' % module.name)
-    elif re.match(r'^\d\d\.0\.', version.group(1)):
+    elif not version.group(1).startswith(SOURCE_SERIES + '.'):
         problems.append(
-            "%s: version %r carries a series prefix, which raises on the other series; "
-            "use '1.0.0'" % (module.name, version.group(1)))
+            "%s: version %r does not start with %s — the Apps store wants the "
+            "series in front, and this copy is the %s one"
+            % (module.name, version.group(1), SOURCE_SERIES, SOURCE_SERIES))
+    elif not re.match(r'^\d\d\.0\.\d+\.\d+\.\d+$', version.group(1)):
+        problems.append(
+            "%s: version %r is not series.x.y.z" % (module.name, version.group(1)))
+
+    for key in ("'license'", "'author'", "'website'", "'summary'", "'category'"):
+        if key not in text:
+            problems.append('%s: the Apps store wants %s in the manifest' % (module.name, key))
+
+    listing = module / 'static' / 'description' / 'index.html'
+    if not listing.exists():
+        problems.append('%s: no static/description/index.html for the store page' % module.name)
+    icon = module / 'static' / 'description' / 'icon.png'
+    if not icon.exists():
+        problems.append('%s: no static/description/icon.png' % module.name)
     return problems
 
 

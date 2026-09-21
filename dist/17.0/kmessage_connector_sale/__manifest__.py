@@ -3,7 +3,11 @@
     'name': 'K-Message Connector — Sales',
     # No series prefix, for the reason core gives: Odoo stamps the running
     # series onto it, and one source tree installs on 17.0 and 18.0.
-    'version': '1.0.0',
+    # The Odoo Apps store wants the series in front of the version, and Odoo
+    # refuses a version carrying the wrong one — '18.0.1.0.0' on a 17 server
+    # is five components where the regex wants three, and it raises. So this
+    # is the 18 manifest, and dev/build.py rewrites it for the 17 copy.
+    'version': '17.0.1.0.0',
     'summary': 'Tell customers on WhatsApp when their order moves, and let them ask where it stands',
     'description': """
 Sales for the K-Message connector

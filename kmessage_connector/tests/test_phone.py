@@ -19,17 +19,17 @@ from .common import own_the_number
 class TestPhoneNormalising(TransactionCase):
 
     def test_digits_only_keeps_the_digits_in_order(self):
-        self.assertEqual(digits_only('+966 50 738-6853'), '966507386853')
-        self.assertEqual(digits_only(966507386853), '966507386853')
+        self.assertEqual(digits_only('+966 51 234-5678'), '966512345678')
+        self.assertEqual(digits_only(966512345678), '966512345678')
         self.assertEqual(digits_only(''), '')
         self.assertEqual(digits_only(None), '')
         self.assertEqual(digits_only('ext. 4'), '4')
 
     def test_one_saudi_number_in_every_shape_it_arrives_in(self):
-        for written in ('+966 50 738 6853', '00966507386853', '966507386853',
-                        '0507386853', '050-738-6853', ' 0507386853 ',
-                        '+966-50-7386853'):
-            self.assertEqual(normalize(written, '966'), '966507386853', written)
+        for written in ('+966 51 234 5678', '00966512345678', '966512345678',
+                        '0512345678', '051-234-5678', ' 0512345678 ',
+                        '+966-51-2345678'):
+            self.assertEqual(normalize(written, '966'), '966512345678', written)
 
     def test_a_number_that_carries_its_own_country_code_is_left_alone(self):
         """A UAE mobile in a Saudi company's database is still a UAE mobile."""
@@ -41,12 +41,12 @@ class TestPhoneNormalising(TransactionCase):
         self.assertEqual(normalize('011 234 5678', '966'), '966112345678')
 
     def test_the_international_prefix_only_goes_when_what_is_left_is_long_enough(self):
-        self.assertEqual(normalize('011966507386853', '966'), '966507386853')
+        self.assertEqual(normalize('011966512345678', '966'), '966512345678')
 
     def test_the_country_code_is_only_used_when_one_is_given(self):
-        self.assertEqual(normalize('0507386853', None), '0507386853')
-        self.assertEqual(normalize('0507386853', ''), '0507386853')
-        self.assertEqual(normalize('0507386853', '+966'), '966507386853')
+        self.assertEqual(normalize('0512345678', None), '0512345678')
+        self.assertEqual(normalize('0512345678', ''), '0512345678')
+        self.assertEqual(normalize('0512345678', '+966'), '966512345678')
 
     def test_what_cannot_be_made_sense_of_comes_back_empty_rather_than_raising(self):
         """Bad data in a partner record must never be able to break a send."""
@@ -61,10 +61,10 @@ class TestPhoneMatching(TransactionCase):
     def test_every_shape_of_one_number_has_the_same_key(self):
         keys = {
             match_key(written)
-            for written in ('+966 50 738 6853', '0507386853', '966507386853',
-                            '00966507386853', '966 50 738 6853')
+            for written in ('+966 51 234 5678', '0512345678', '966512345678',
+                            '00966512345678', '966 51 234 5678')
         }
-        self.assertEqual(keys, {'507386853'})
+        self.assertEqual(keys, {'512345678'})
         self.assertEqual(len(keys.pop()), MATCH_DIGITS)
 
     def test_a_number_too_short_to_identify_a_person_has_no_key(self):
@@ -76,16 +76,16 @@ class TestPhoneMatching(TransactionCase):
     def test_an_empty_key_matches_nobody(self):
         """The whole reason match_key returns '' instead of a short string."""
         self.assertFalse(same_number('', ''))
-        self.assertFalse(same_number('', '966507386853'))
-        self.assertFalse(same_number(None, '0507386853'))
-        self.assertFalse(same_number('1234', '966507386853'))
+        self.assertFalse(same_number('', '966512345678'))
+        self.assertFalse(same_number(None, '0512345678'))
+        self.assertFalse(same_number('1234', '966512345678'))
 
     def test_the_two_mistakes_that_actually_happen_still_match(self):
-        self.assertTrue(same_number('0507386853', '+966 50 738 6853'))
-        self.assertTrue(same_number('966507386853', '0507386853'))
+        self.assertTrue(same_number('0512345678', '+966 51 234 5678'))
+        self.assertTrue(same_number('966512345678', '0512345678'))
 
     def test_two_different_people_do_not_match(self):
-        self.assertFalse(same_number('0507386853', '0507386854'))
+        self.assertFalse(same_number('0512345678', '0512345679'))
 
 
 class TestPartnerLookup(TransactionCase):
@@ -93,7 +93,7 @@ class TestPartnerLookup(TransactionCase):
 
     def setUp(self):
         super().setUp()
-        own_the_number(self.env, '0507386853', '0501112233')
+        own_the_number(self.env, '0512345678', '0501112233')
         self.partners = self.env['res.partner']
 
     def _partner(self, name, mobile, **values):
@@ -102,15 +102,15 @@ class TestPartnerLookup(TransactionCase):
         return partner
 
     def test_a_customer_is_found_however_their_number_was_typed(self):
-        layla = self._partner('Layla', '0507386853')
-        for asked in ('966507386853', '+966 50 738 6853', '00966507386853', '0507386853'):
+        layla = self._partner('Layla', '0512345678')
+        for asked in ('966512345678', '+966 51 234 5678', '00966512345678', '0512345678'):
             self.assertEqual(
                 self.env['res.partner']._kmessage_find_by_phone(asked, self.env.company),
                 layla, asked)
 
     def test_the_stored_key_is_what_the_search_uses(self):
-        layla = self._partner('Layla', '+966 50 738 6853')
-        self.assertEqual(layla.kmessage_phone_key, '507386853')
+        layla = self._partner('Layla', '+966 51 234 5678')
+        self.assertEqual(layla.kmessage_phone_key, '512345678')
         layla.mobile = '0501112233'
         self.assertEqual(layla.kmessage_phone_key, '501112233')
 
@@ -119,26 +119,26 @@ class TestPartnerLookup(TransactionCase):
         self.assertFalse(nobody.kmessage_phone_key)
 
     def test_an_empty_number_finds_nobody(self):
-        self._partner('Layla', '0507386853')
+        self._partner('Layla', '0512345678')
         for asked in ('', None, '12345'):
             self.assertFalse(
                 self.env['res.partner']._kmessage_find_by_phone(asked, self.env.company), asked)
 
     def test_a_number_two_unrelated_people_share_finds_neither(self):
         """Answering with the wrong person's invoices is worse than answering nothing."""
-        self._partner('Layla', '0507386853')
-        self._partner('Nora', '966507386853')
+        self._partner('Layla', '0512345678')
+        self._partner('Nora', '966512345678')
         self.assertFalse(
-            self.env['res.partner']._kmessage_find_by_phone('0507386853', self.env.company))
+            self.env['res.partner']._kmessage_find_by_phone('0512345678', self.env.company))
 
     def test_a_number_shared_within_one_company_finds_the_company(self):
-        company = self._partner('Al Noor Trading', '0507386853', is_company=True)
-        self._partner('Layla', '0507386853', parent_id=company.id)
+        company = self._partner('Al Noor Trading', '0512345678', is_company=True)
+        self._partner('Layla', '0512345678', parent_id=company.id)
         self.assertEqual(
-            self.env['res.partner']._kmessage_find_by_phone('0507386853', self.env.company),
+            self.env['res.partner']._kmessage_find_by_phone('0512345678', self.env.company),
             company)
 
     def test_the_number_to_message_a_partner_on_is_international(self):
-        layla = self._partner('Layla', '0507386853')
+        layla = self._partner('Layla', '0512345678')
         self.env.company.country_id = self.env.ref('base.sa')
-        self.assertEqual(layla._kmessage_number(), '966507386853')
+        self.assertEqual(layla._kmessage_number(), '966512345678')

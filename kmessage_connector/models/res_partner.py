@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Finding the customer behind a WhatsApp number — quickly and only once.
 
-The stored key is the point. Without it, answering “who is 966507386853?”
+The stored key is the point. Without it, answering “who is 966512345678?”
 means scanning every partner and comparing digits in Python, which is slow at
 ten thousand partners and wrong at a hundred thousand. With it, the question is
 an index lookup, and the same key is what the search uses, so a number that

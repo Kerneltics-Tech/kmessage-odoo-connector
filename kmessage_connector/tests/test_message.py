@@ -36,7 +36,7 @@ class TestQueueing(KMessageCase):
     def test_a_queued_message_carries_what_it_needs_to_be_sent(self):
         message = self.enqueue(params={'1': 'S00021'})
         self.assertEqual(message.state, 'queued')
-        self.assertEqual(message.phone, '966507386853')
+        self.assertEqual(message.phone, '966512345678')
         self.assertEqual(message.template_name, 'order_confirmed')
         self.assertEqual(json.loads(message.params_json), {'1': 'S00021'})
         self.assertIn('S00021', message.body_preview)

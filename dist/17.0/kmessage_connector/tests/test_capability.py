@@ -154,7 +154,7 @@ class TestIdentityIsNeverAParameter(TransactionCase):
         self.assertEqual(caught.exception.status, 404)
 
     def test_a_known_number_answers_for_that_customer_only(self):
-        answer = self.api.dispatch('customer_lookup', {'phone': '+966 50 738 6853'}, self.token)
+        answer = self.api.dispatch('customer_lookup', {'phone': '+966 51 234 5678'}, self.token)
         self.assertTrue(answer['found'])
         self.assertEqual(answer['name'], self.layla.display_name)
         self.assertEqual(answer['city'], 'Riyadh')

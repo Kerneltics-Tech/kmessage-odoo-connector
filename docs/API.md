@@ -158,13 +158,13 @@ Is this number a customer here, and what should an agent know first.
 
 | Field | Required | Meaning |
 | --- | --- | --- |
-| `phone` | yes | The customer's number. `phone_number` is accepted as a synonym, because that is the name K-Message substitutes. Any format: `+966 50 738 6853`, `0507386853` and `966507386853` all find the same partner. |
+| `phone` | yes | The customer's number. `phone_number` is accepted as a synonym, because that is the name K-Message substitutes. Any format: `+966 51 234 5678`, `0512345678` and `966512345678` all find the same partner. |
 
 ```bash
 curl -s https://odoo.example.com/kmessage/api/v1/customer/lookup \
      -H 'Authorization: Bearer kmc_…' \
      -H 'Content-Type: application/json' \
-     -d '{"phone": "966507386853"}'
+     -d '{"phone": "966512345678"}'
 ```
 
 ```json
@@ -229,7 +229,7 @@ capped by the capability's *Max rows*.
 curl -s https://odoo.example.com/kmessage/api/v1/invoices \
      -H 'Authorization: Bearer kmc_…' \
      -H 'Content-Type: application/json' \
-     -d '{"phone": "966507386853", "unpaid_only": true, "limit": 3}'
+     -d '{"phone": "966512345678", "unpaid_only": true, "limit": 3}'
 ```
 
 ```json
@@ -267,7 +267,7 @@ as a synonym). The answer is the file: `application/pdf`, with a
 curl -s https://odoo.example.com/kmessage/api/v1/invoice/pdf \
      -H 'Authorization: Bearer kmc_…' \
      -H 'Content-Type: application/json' \
-     -d '{"phone": "966507386853", "invoice": "INV/2026/00184"}' \
+     -d '{"phone": "966512345678", "invoice": "INV/2026/00184"}' \
      -o invoice.pdf
 ```
 

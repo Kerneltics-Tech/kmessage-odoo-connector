@@ -22,7 +22,7 @@ class TestReplyRule(KMessageCase):
         self.message = self.env['kmessage.message'].create({
             'account_id': self.account.id,
             'partner_id': self.partner.id,
-            'phone': '966507386853',
+            'phone': '966512345678',
             'template_name': 'invoice_ready',
             'state': 'sent',
             'res_model': 'res.partner',
@@ -52,7 +52,7 @@ class TestReplyRule(KMessageCase):
             'timestamp': '2026-09-20T17:00:00Z',
             'data': {
                 'message_id': 'wamid-1',
-                'contact_phone': '966507386853',
+                'contact_phone': '966512345678',
                 'button': {'id': button_id, 'text': text},
                 'in_reply_to': {'reference': reference},
             },
@@ -223,7 +223,7 @@ class TestWhatATapCanReach(KMessageCase):
             'event': 'button.reply',
             'data': {
                 'message_id': 'wamid-9',
-                'contact_phone': '966507386853',
+                'contact_phone': '966512345678',
                 'button': {'id': 'confirm', 'text': 'نعم'},
                 'in_reply_to': {'reference': reference},
             },

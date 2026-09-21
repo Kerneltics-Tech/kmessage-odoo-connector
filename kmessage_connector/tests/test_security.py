@@ -49,14 +49,14 @@ class TestWhoMayDoWhat(TransactionCase):
             'res_model': 'res.partner',
             'res_id': self.partner.id,
             'partner_id': self.partner.id,
-            'phone': '966507386853',
+            'phone': '966512345678',
             'template_id': self.template.id,
         })
         self.assertTrue(wizard.id)
 
     def test_a_user_can_read_what_was_sent(self):
         message = self.env['kmessage.message'].enqueue(
-            account=self.account, phone='966507386853', template=self.template,
+            account=self.account, phone='966512345678', template=self.template,
             partner=self.partner)
         self.assertEqual(message.with_user(self.user).template_name, 'order_confirmed')
 

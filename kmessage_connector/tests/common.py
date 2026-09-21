@@ -36,7 +36,7 @@ from odoo.addons.kmessage_connector.tools.phone import match_key
 FAKE_API_KEY = 'test-key'
 
 #: A number with a Saudi shape, saved the way a salesperson types it.
-CUSTOMER_MOBILE = '0507386853'
+CUSTOMER_MOBILE = '0512345678'
 
 _LOADED = {}
 

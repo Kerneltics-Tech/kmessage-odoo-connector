@@ -101,7 +101,7 @@ class TestClientOverHttp(FakeServerCase):
 
     def test_a_send_without_a_document_goes_out_as_json(self):
         message_id = self.client.send_template(
-            phone_number='966507386853',
+            phone_number='966512345678',
             template_name='order_confirmed',
             language='ar',
             account_name='main number ',
@@ -113,7 +113,7 @@ class TestClientOverHttp(FakeServerCase):
         sent = self.fake.last_sent()
         self.assertIsNone(sent['header_file'])
         fields = sent['fields']
-        self.assertEqual(fields['phone_number'], '966507386853')
+        self.assertEqual(fields['phone_number'], '966512345678')
         self.assertEqual(fields['reference'], 'sale.order:21')
         # JSON keeps its types: the parameters arrive as an object, not a string.
         self.assertEqual(fields['template_params'], {'1': 'S00021'})
@@ -123,7 +123,7 @@ class TestClientOverHttp(FakeServerCase):
 
     def test_a_send_with_a_document_goes_out_as_multipart(self):
         message_id = self.client.send_template(
-            phone_number='966507386853',
+            phone_number='966512345678',
             template_name='invoice_ready',
             template_params={'1': 'Layla', '2': 'INV/2026/0001', '3': '100.00'},
             document=('INV_2026_0001.pdf', PDF, 'application/pdf'),
@@ -145,7 +145,7 @@ class TestClientOverHttp(FakeServerCase):
 
     def test_a_template_the_platform_does_not_have_is_a_404(self):
         with self.assertRaises(KMessageError) as caught:
-            self.client.send_template(phone_number='966507386853', template_name='no_such_template')
+            self.client.send_template(phone_number='966512345678', template_name='no_such_template')
         self.assertEqual(caught.exception.status, 404)
         self.assertFalse(self.fake.sent)
 

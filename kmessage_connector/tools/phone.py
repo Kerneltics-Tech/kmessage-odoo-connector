@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """Turning the many ways a phone number is typed into one comparable form.
 
-WhatsApp identifies a person by bare international digits (``966507386853``).
-Odoo stores whatever the salesperson typed: ``+966 50 738 6853``,
-``0507386853``, ``00966-50-738-6853``. Matching one against the other is the
+WhatsApp identifies a person by bare international digits (``966512345678``).
+Odoo stores whatever the salesperson typed: ``+966 51 234 5678``,
+``0512345678``, ``00966-51-234-5678``. Matching one against the other is the
 single most common reason an integration answers "we could not find an account
 under this number" for a customer who plainly has one.
 

@@ -244,6 +244,9 @@ cannot read a long list, and a long list is how an accident becomes an export.
 
 ## Where things are written down
 
+* [docs/SETUP.md](docs/SETUP.md) — the twenty-minute walkthrough: install,
+  connect, turn on the first message, and what to hand your provider.
+
 * [docs/DESIGN.md](docs/DESIGN.md) — why the addon is shaped like this, and what
   the platform was verified to allow.
 * [docs/API.md](docs/API.md) — every inbound endpoint, with curl and every error

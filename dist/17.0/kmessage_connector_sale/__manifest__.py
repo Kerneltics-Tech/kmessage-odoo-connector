@@ -33,6 +33,8 @@ connection and published to K-Message when the connection is set up.
         'data/kmessage_capability_data.xml',
         'data/kmessage_ai_tool_data.xml',
     ],
+    # What the Apps store shows before anybody clicks.
+    'images': ['static/description/banner.png'],
     'installable': True,
     'auto_install': True,
 }

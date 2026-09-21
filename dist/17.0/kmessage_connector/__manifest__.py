@@ -31,6 +31,8 @@
         'wizard/kmessage_send_views.xml',
         'views/kmessage_menus.xml',
     ],
+    # What the Apps store shows before anybody clicks.
+    'images': ['static/description/banner.png'],
     'installable': True,
     'application': True,
     'auto_install': False,

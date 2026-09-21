@@ -18,6 +18,8 @@
         'data/kmessage_ai_tool_data.xml',
         'views/kmessage_capability_views.xml',
     ],
+    # What the Apps store shows before anybody clicks.
+    'images': ['static/description/banner.png'],
     'installable': True,
     # Installs itself next to Inventory: a customer installs the connector and
     # gets exactly the bridges their Odoo can use.

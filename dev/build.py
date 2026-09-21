@@ -127,6 +127,14 @@ def check_manifest(module: Path) -> list[str]:
     icon = module / 'static' / 'description' / 'icon.png'
     if not icon.exists():
         problems.append('%s: no static/description/icon.png' % module.name)
+
+    # Every file named in 'images' has to be there, or the store page renders
+    # a broken thumbnail — which is worse than having no cover at all.
+    for relative in re.findall(r"'images'\s*:\s*\[([^\]]*)\]", text):
+        for name in re.findall(r"'([^']+)'", relative):
+            if not (module / name).exists():
+                problems.append("%s: 'images' names %s, which is not there"
+                                % (module.name, name))
     return problems
 
 

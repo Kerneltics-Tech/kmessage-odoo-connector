@@ -19,6 +19,8 @@
         'data/kmessage_ai_tool_data.xml',
         'views/kmessage_account_views.xml',
     ],
+    # What the Apps store shows before anybody clicks.
+    'images': ['static/description/banner.png'],
     'installable': True,
     # Whoever has both the connector and accounting wants the two joined up;
     # nothing here sends or answers anything until a switch is turned on.

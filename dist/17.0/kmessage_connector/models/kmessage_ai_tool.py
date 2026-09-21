@@ -125,7 +125,13 @@ class KMessageAiTool(models.Model):
                 'tool': {
                     'name': self.tool_name,
                     'description': self.description,
-                    'params': self._params(),
+                    # 'parameters' here, 'params' for a lookup tool: the two
+                    # halves of the platform read different keys, and a
+                    # document tool sent the lookup spelling is refused for
+                    # having declared none. It must declare at least one —
+                    # a document tool with no arguments would fetch the same
+                    # file for every customer.
+                    'parameters': self._params(),
                 },
                 'url': self._endpoint_url(),
                 'method': 'POST',
@@ -346,7 +352,24 @@ class KMessageAiTool(models.Model):
         return result
 
     def unlink(self):
+        """Take the tool off the platform on the way out — but go either way.
+
+        Unpublishing first is the point: a tool left behind on K-Message keeps
+        the assistant offering an answer this Odoo no longer gives. But a
+        platform that cannot be reached must not make the row undeletable —
+        somebody clearing up after an outage would be stuck, with no way
+        forward that does not involve the database. So a failure here is a
+        warning in the log and a revoked token, which is what actually closes
+        the door: the tool that stays behind can no longer get in.
+        """
         going = self.filtered(lambda tool: tool.remote_id or tool.token_id)
-        if going:
-            going.action_unpublish()
+        for tool in going:
+            try:
+                tool.action_unpublish()
+            except (UserError, KMessageError) as error:
+                _logger.warning(
+                    'K-Message: %s could not be taken off the platform (%s); '
+                    'revoking its token and deleting it here anyway',
+                    tool.name, error)
+                tool.token_id.sudo().action_revoke()
         return super().unlink()

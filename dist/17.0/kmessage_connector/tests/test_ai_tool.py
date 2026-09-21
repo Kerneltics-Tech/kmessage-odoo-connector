@@ -13,7 +13,7 @@ import json
 
 from odoo.exceptions import UserError
 
-from .common import KMessageCase
+from .common import free_port, KMessageCase
 
 PUBLIC_ODOO = 'https://odoo.example.test'
 
@@ -161,3 +161,36 @@ class TestAssistantTools(KMessageCase):
         self.assertEqual(shared.state, 'active', 'the first tool is still published')
         first.action_unpublish()
         self.assertEqual(shared.state, 'revoked')
+
+    def test_a_document_tool_declares_its_parameters_where_they_are_read(self):
+        """The platform reads a document tool's arguments from tool.parameters.
+
+        A lookup tool's live under 'params'. Sending the lookup spelling for a
+        document tool is refused — for having declared no parameters at all —
+        and only a live platform ever says so.
+        """
+        tool = self.tool(kind='document_tool', params_json=json.dumps(
+            [{'name': 'invoice', 'type': 'string', 'description': 'Which one.'}]))
+        token, _raw = self.env['kmessage.token'].issue(
+            'For the document tool', capabilities=self.capability)
+        tool.token_id = token.id
+        config = tool.with_context(kmessage_raw_token='kmc_test')._api_config()
+        self.assertIn('parameters', config['tool'])
+        self.assertNotIn('params', config['tool'])
+        self.assertEqual(len(config['tool']['parameters']), 1)
+
+    def test_a_tool_can_be_deleted_even_when_the_platform_is_unreachable(self):
+        """Clearing up after an outage must not need the database.
+
+        The tool still has to lose its way in, so the token is revoked on the
+        way out — what stays behind on the platform can no longer reach Odoo.
+        """
+        tool = self.tool()
+        tool.action_publish()
+        token = tool.token_id
+        self.assertTrue(token)
+        self.account.base_url = 'http://127.0.0.1:%s' % free_port()
+
+        tool.unlink()
+        self.assertFalse(tool.exists())
+        self.assertFalse(token.active, 'the token must not outlive the tool')

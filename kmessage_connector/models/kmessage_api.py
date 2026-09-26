@@ -120,14 +120,14 @@ class KMessageApi(models.AbstractModel):
     @api.model
     def _handle_ping(self, payload, capability):
         """Proof of life, and an honest list of what is switched on."""
-        account = self.env['kmessage.account']._for_company()
+        accounts = self.env['kmessage.account']._all_for_company()
         capabilities = self.env['kmessage.capability'].sudo().search([])
         return {
             'odoo': True,
             'company': self.env.company.display_name,
             'connector_version': '1.0.0',
-            'outbound_enabled': bool(account.outbound_enabled) if account else False,
-            'inbound_enabled': bool(account.inbound_enabled) if account else False,
+            'outbound_enabled': any(accounts.mapped('outbound_enabled')),
+            'inbound_enabled': any(accounts.mapped('inbound_enabled')),
             'capabilities': [
                 {'code': row.code, 'name': row.name, 'enabled': row.active and row.available}
                 for row in capabilities

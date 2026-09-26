@@ -143,11 +143,11 @@ def own_the_number(env, *numbers):
 
 
 def connection_for(env, company, values):
-    """The company's one connection, pointed at ``values``.
+    """The company's first connection, pointed at ``values``.
 
-    A company may hold only a single connection and a reused database may
-    already have one, so this takes the existing row over rather than adding a
-    second and falling over the constraint.
+    A reused database may already have one, so this takes the existing row
+    over rather than adding another: a test that counts what a connection
+    sent should not have to wonder which of two it was.
     """
     account = env['kmessage.account'].with_context(active_test=False).search(
         [('company_id', '=', company.id)], limit=1)

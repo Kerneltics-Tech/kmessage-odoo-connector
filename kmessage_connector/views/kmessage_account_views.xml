@@ -37,6 +37,7 @@
                             <field name="account_name" placeholder="the tenant's default number"/>
                             <field name="company_id" groups="base.group_multi_company"/>
                             <field name="remote_user" readonly="1" invisible="not remote_user"/>
+                            <field name="remote_organization" readonly="1" invisible="not remote_organization"/>
                             <field name="last_check" readonly="1" invisible="not last_check"/>
                             <field name="last_error" readonly="1" invisible="not last_error" class="text-danger"/>
                         </group>
@@ -85,6 +86,7 @@
         <field name="arch" type="xml">
             <list string="K-Message">
                 <field name="name"/>
+                <field name="remote_organization" optional="show"/>
                 <field name="company_id" groups="base.group_multi_company"/>
                 <field name="account_name"/>
                 <field name="outbound_enabled"/>
@@ -96,7 +98,7 @@
     </record>
 
     <record id="action_kmessage_account" model="ir.actions.act_window">
-        <field name="name">Connection</field>
+        <field name="name">Connections</field>
         <field name="res_model">kmessage.account</field>
         <field name="view_mode">list,form</field>
         <field name="help" type="html">

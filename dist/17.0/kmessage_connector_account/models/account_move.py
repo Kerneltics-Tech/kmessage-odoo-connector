@@ -82,15 +82,19 @@ class AccountMove(models.Model):
                     invoice.display_name)
 
     def _kmessage_prerender_wanted(self):
-        """The invoices whose own company asked for a PDF to be kept."""
-        connections = {}
+        """The invoices whose own company asked for a PDF to be kept.
+
+        Asked by any of the company's connections: the PDF is the invoice's,
+        not the tenant's, so one tenant wanting it is reason enough.
+        """
+        wanted_by = {}
         wanted = self.browse()
         for invoice in self:
             company = invoice.company_id
-            if company.id not in connections:
-                connections[company.id] = self.env['kmessage.account']._for_company(company)
-            connection = connections[company.id]
-            if connection and connection.prerender_invoice_pdf:
+            if company.id not in wanted_by:
+                connections = self.env['kmessage.account']._all_for_company(company)
+                wanted_by[company.id] = any(connections.mapped('prerender_invoice_pdf'))
+            if wanted_by[company.id]:
                 wanted |= invoice
         return wanted
 

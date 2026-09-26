@@ -101,7 +101,10 @@ the parts that match their Odoo. Core depends only on `base`, `mail` and
 
 ## Models
 
-* **`kmessage.account`** — one connection per company: base URL, API key,
+* **`kmessage.account`** — one connection per K-Message tenant, as many per
+  company as it is on (Connect recognises a tenant by the `organization_id`
+  `/api/me` reports, so a new token for the same tenant updates its
+  connection and another tenant's becomes a new one): base URL, API key,
   sending account name (never stripped: real account names can end in a space),
   webhook secret, state, last check, and the probed capability flags.
 * **`kmessage.token`** — the private tokens K-Message presents inbound. Stored

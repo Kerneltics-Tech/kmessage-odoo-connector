@@ -678,11 +678,6 @@ msgid "Draft"
 msgstr "مسودة"
 
 #. module: kmessage_connector
-#: model:ir.model.constraint,message:kmessage_connector.constraint_kmessage_account_company_unique
-msgid "Each company has a single K-Message connection."
-msgstr "لكل شركة اتصال واحد بـ K-Message."
-
-#. module: kmessage_connector
 #: model_terms:ir.actions.act_window,help:kmessage_connector.action_kmessage_capability
 msgid ""
 "Each line is one question K-Message may put to Odoo on a customer's behalf.\n"

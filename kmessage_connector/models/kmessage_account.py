@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""The connection to K-Message: one record per Odoo company."""
+"""The connections to K-Message: as many per Odoo company as it has tenants."""
 
 import logging
 import secrets
@@ -16,6 +16,22 @@ _logger = logging.getLogger(__name__)
 #: Events the connector knows how to act on. The platform may offer more; the
 #: ones we do not understand are logged and ignored rather than refused.
 SUBSCRIBED_EVENTS = ['message.incoming', 'message.sent', 'button.reply', 'contact.created']
+
+
+def _organization_of(me):
+    """The tenant a ``/api/me`` answer belongs to, as account values.
+
+    Only what the platform said: a missing key leaves the stored value alone
+    rather than blanking a tenant an older platform simply did not name.
+    """
+    organization = me.get('organization') if isinstance(me.get('organization'), dict) else {}
+    values = {}
+    ident = me.get('organization_id') or organization.get('id')
+    if ident:
+        values['remote_organization_id'] = str(ident)
+    if organization.get('name'):
+        values['remote_organization'] = organization['name']
+    return values
 
 
 class KMessageAccount(models.Model):
@@ -57,6 +73,14 @@ class KMessageAccount(models.Model):
     remote_user = fields.Char(
         string='Token belongs to', readonly=True, copy=False,
         help="The K-Message user this token authenticates as.")
+    remote_organization_id = fields.Char(
+        string='Tenant ID', readonly=True, copy=False, index=True,
+        help="Which K-Message tenant this token belongs to. Connecting a second "
+             "token from the same tenant updates this connection; a token from "
+             "another tenant becomes a connection of its own.")
+    remote_organization = fields.Char(
+        string='Tenant', readonly=True, copy=False,
+        help="The K-Message tenant's name, as the platform gives it.")
 
     # -- master switches --------------------------------------------------
     outbound_enabled = fields.Boolean(
@@ -100,11 +124,6 @@ class KMessageAccount(models.Model):
     message_count = fields.Integer(compute='_compute_counts')
     failed_count = fields.Integer(compute='_compute_counts')
 
-    _sql_constraints = [
-        ('company_unique', 'unique(company_id)',
-         'Each company has a single K-Message connection.'),
-    ]
-
     # -- computes ---------------------------------------------------------
     def _compute_webhook_url(self):
         base = self.env['ir.config_parameter'].sudo().get_param('web.base.url') or ''
@@ -123,9 +142,19 @@ class KMessageAccount(models.Model):
     # -- access -----------------------------------------------------------
     @api.model
     def _for_company(self, company=None):
-        """The live connection for ``company``, or an empty recordset."""
+        """The first live connection for ``company``, or an empty recordset.
+
+        A company may hold several — one per K-Message tenant — so this is only
+        a default for a form to start from. Anything that must hold for the
+        company as a whole asks ``_all_for_company`` instead.
+        """
+        return self._all_for_company(company)[:1]
+
+    @api.model
+    def _all_for_company(self, company=None):
+        """Every live connection for ``company``, in the usual order."""
         company = company or self.env.company
-        return self.sudo().search([('company_id', '=', company.id)], limit=1)
+        return self.sudo().search([('company_id', '=', company.id)])
 
     @api.model
     def action_restore_default_rules(self):
@@ -196,6 +225,7 @@ class KMessageAccount(models.Model):
             client = record._client()
             me = client.me() or {}
             values['remote_user'] = me.get('full_name') or me.get('email') or ''
+            values.update(_organization_of(me))
             values['state'] = 'connected'
             values['last_error'] = False
         except KMessageError as error:

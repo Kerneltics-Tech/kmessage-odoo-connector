@@ -14,7 +14,7 @@ from odoo.exceptions import UserError
 from odoo.tests import tagged
 
 from ..tools.client import DEFAULT_BASE_URL, KMessageClient, KMessageError
-from .common import FAKE_API_KEY, KMessageCase
+from .common import FAKE_API_KEY, KMessageCase, mirrored_template
 
 
 @tagged('post_install', '-at_install')
@@ -136,8 +136,7 @@ class TestTheAddressIsNotAQuestion(KMessageCase):
         wizard = self.env['kmessage.connect'].create({'api_key': 'whm_x'})
         self.assertEqual(wizard.base_url, 'http://127.0.0.1:9999',
                          'a trailing slash would double the one in every path')
-        # A connection is one per company, so ask for the default rather than
-        # making a second one.
+        # Ask for the default rather than making a connection just to read it.
         self.assertEqual(
             self.env['kmessage.account'].default_get(['base_url'])['base_url'],
             'http://127.0.0.1:9999')
@@ -195,3 +194,104 @@ class TestOneButton(KMessageCase):
         wizard.action_check()
         self.assertEqual(wizard.state, 'checked', 'the review screen is still there')
         self.assertFalse(wizard.account_id, 'and it still changes nothing by itself')
+
+
+@tagged('post_install', '-at_install')
+class TestSeveralTenants(KMessageCase):
+    """One Odoo company, more than one K-Message tenant.
+
+    A company that talks to customers from two tenants — two brands, two
+    numbers — needs a connection for each, and connecting the second must
+    not quietly take the first one over.
+    """
+
+    def setUp(self):
+        super().setUp()
+        self.env['ir.config_parameter'].sudo().set_param(
+            'web.base.url', 'https://odoo.example.com')
+        original = KMessageClient.me
+        self.tenant = {'organization_id': 'org-1', 'organization': {'id': 'org-1', 'name': 'Alia'}}
+
+        def me(client):
+            return dict(original(client) or {}, **self.tenant)
+
+        patcher = patch.object(KMessageClient, 'me', me)
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
+    def _connect(self):
+        wizard = self.env['kmessage.connect'].create({
+            'api_key': FAKE_API_KEY,
+            'base_url': self.fake.url,
+            'setup_webhook': False,
+            'publish_tools': False,
+            'import_flows': False,
+            'issue_token': False,
+        })
+        wizard.action_connect()
+        return wizard.account_id
+
+    def _connections(self):
+        return self.env['kmessage.account'].search([('company_id', '=', self.company.id)])
+
+    def test_a_company_may_hold_two_connections(self):
+        second = self.env['kmessage.account'].create({
+            'name': 'K-Message — Ziar',
+            'company_id': self.company.id,
+            'base_url': self.fake.url,
+            'api_key': 'another-key',
+        })
+        self.assertIn(second, self._connections())
+        self.assertIn(self.account, self._connections())
+
+    def test_another_tenant_becomes_a_connection_of_its_own(self):
+        alia = self._connect()
+        self.assertEqual(alia, self.account, 'the same token is the same connection')
+        self.assertEqual(alia.remote_organization, 'Alia')
+
+        self.tenant = {'organization_id': 'org-2', 'organization': {'id': 'org-2', 'name': 'Ziar'}}
+        ziar = self._connect()
+        self.assertNotEqual(ziar, alia, 'Ziar must not take over Alia’s connection')
+        self.assertEqual(ziar.name, 'K-Message — Ziar')
+        self.assertEqual(ziar.remote_organization_id, 'org-2')
+        self.assertEqual(alia.remote_organization_id, 'org-1', 'and Alia is left as it was')
+        self.assertEqual(len(self._connections()), 2)
+
+    def test_the_same_tenant_with_a_new_token_updates_its_connection(self):
+        alia = self._connect()
+        before = len(self._connections())
+        self.assertEqual(self._connect(), alia)
+        self.assertEqual(len(self._connections()), before)
+
+    def test_each_connection_gets_the_rules(self):
+        """The rules belong to a tenant: the first one's must not stop the second's."""
+        starter = self.env['kmessage.starter.automation']
+        catalogue = starter.catalogue()
+        if not catalogue:
+            self.skipTest('no bridge installed, so there are no rules to offer')
+        other = self.account.copy({'name': 'K-Message — Ziar', 'api_key': 'another-key'})
+        for account in (self.account, other):
+            for rule in catalogue:
+                mirrored_template(account, {
+                    'name': rule['template'],
+                    'language': 'ar',
+                    'status': 'APPROVED',
+                    'header_type': 'none',
+                    'body_content': ' '.join('{{%d}}' % n for n in range(1, len(rule['params']) + 1)),
+                })
+        starter.ensure(self.account)
+        made, held_back = starter.ensure(other)
+        self.assertFalse(held_back)
+        self.assertEqual(sorted(made), sorted(rule['key'] for rule in catalogue))
+        rules = self.env['kmessage.automation'].with_context(active_test=False).search(
+            [('account_id', '=', other.id), ('starter_key', '!=', False)])
+        self.assertEqual(len(rules), len(catalogue))
+
+    def test_a_token_is_refused_only_when_every_connection_is_off(self):
+        other = self.account.copy({'name': 'K-Message — Ziar', 'api_key': 'another-key'})
+        self.account.inbound_enabled = False
+        ping = self.env['kmessage.api']._handle_ping({}, self.env['kmessage.capability'])
+        self.assertTrue(ping['inbound_enabled'], 'Ziar still answers')
+        other.inbound_enabled = False
+        ping = self.env['kmessage.api']._handle_ping({}, self.env['kmessage.capability'])
+        self.assertFalse(ping['inbound_enabled'])

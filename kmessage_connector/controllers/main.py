@@ -98,8 +98,10 @@ class KMessageApiController(http.Controller):
         if _rate_limited(token):
             raise KMessageApiError('rate_limited', _("Too many requests; try again shortly."), 429)
 
-        account = request.env['kmessage.account'].sudo()._for_company(token.company_id)
-        if account and not account.inbound_enabled:
+        # A token reaches a company, not a tenant, so it is refused only when
+        # every connection the company has is switched off.
+        accounts = request.env['kmessage.account'].sudo()._all_for_company(token.company_id)
+        if accounts and not any(accounts.mapped('inbound_enabled')):
             raise KMessageApiError('inbound_disabled', _("This Odoo is not answering questions right now."), 503)
         return token
 

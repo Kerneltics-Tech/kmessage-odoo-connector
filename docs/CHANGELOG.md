@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.1.0 — 2026-09-26
+
+* A company may hold more than one connection — one per K-Message tenant.
+  *Connect* used to refuse a second one ("Each company has a single K-Message
+  connection"); now a token from another tenant becomes a connection of its
+  own, named after the tenant, and a new token for a tenant already connected
+  updates that connection instead of adding one.
+* The starter rules are offered per connection, so the second tenant gets its
+  own rather than being told the first one's are "already there".
+* A token is refused as "not answering" only when every connection of its
+  company has answering switched off; `ping` reports the same.
+* Upgrading drops the old one-per-company constraint from the database.
+
 ## 1.0.0 — 2026-09-20
 
 First release. Installs on Odoo 17.0 and 18.0 from one source tree; the 17

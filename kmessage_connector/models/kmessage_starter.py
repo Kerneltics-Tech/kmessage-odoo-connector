@@ -280,7 +280,7 @@ class KMessageStarterAutomations(models.AbstractModel):
         """
         automations = self.env['kmessage.automation'].sudo()
         existing = set(automations.with_context(active_test=False).search(
-            [('company_id', '=', account.company_id.id),
+            [('account_id', '=', account.id),
              ('starter_key', '!=', False)]).mapped('starter_key'))
 
         made, held_back = [], []

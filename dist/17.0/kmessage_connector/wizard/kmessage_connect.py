@@ -13,6 +13,7 @@ import logging
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
+from ..models.kmessage_account import _organization_of
 from ..tools.client import KMessageClient, KMessageError
 
 _logger = logging.getLogger(__name__)
@@ -37,6 +38,8 @@ class KMessageConnect(models.TransientModel):
 
     # What the check found.
     remote_user = fields.Char(readonly=True)
+    remote_organization_id = fields.Char(readonly=True)
+    remote_organization = fields.Char(readonly=True)
     account_options = fields.Char(readonly=True)
     account_name = fields.Char(
         string='Send from',
@@ -114,6 +117,7 @@ class KMessageConnect(models.TransientModel):
             'state': 'checked',
             'remote_user': me.get('full_name') or me.get('email') or _("this token"),
         }
+        values.update(_organization_of(me))
 
         try:
             accounts = client.accounts()
@@ -149,7 +153,7 @@ class KMessageConnect(models.TransientModel):
     def action_apply(self):
         """Save the connection and wire both sides up."""
         self.ensure_one()
-        account = self.env['kmessage.account'].sudo()._for_company(self.company_id)
+        account = self._existing_account()
         values = {
             'base_url': self.base_url,
             'api_key': self.api_key,
@@ -159,7 +163,8 @@ class KMessageConnect(models.TransientModel):
         if account:
             account.write(values)
         else:
-            account = self.env['kmessage.account'].sudo().create(dict(values, name='K-Message'))
+            account = self.env['kmessage.account'].sudo().create(
+                dict(values, name=self._new_account_name()))
 
         account._probe()
         if account.state != 'connected':
@@ -214,6 +219,34 @@ class KMessageConnect(models.TransientModel):
         })
         return self._reopen()
 
+    def _existing_account(self):
+        """The connection this token is a new key for, if there is one.
+
+        A company may be on several K-Message tenants, each a connection of
+        its own, so connecting is not "replace the company's connection". The
+        same tenant — or the very same token, on a connection made before
+        tenants were recorded — updates what is there; anything else is new.
+        """
+        self.ensure_one()
+        accounts = self.env['kmessage.account'].sudo().with_context(active_test=False)
+        domain = [('company_id', '=', self.company_id.id)]
+        if self.remote_organization_id:
+            found = accounts.search(
+                domain + [('remote_organization_id', '=', self.remote_organization_id)], limit=1)
+            if found:
+                return found
+        # Only a connection whose tenant is unknown can be matched by its key:
+        # one already known to be another tenant's never is.
+        return accounts.search(domain + [('remote_organization_id', '=', False)]).filtered(
+            lambda account: account.api_key == self.api_key)[:1]
+
+    def _new_account_name(self):
+        """``K-Message``, or ``K-Message — <tenant>`` once there is more than one."""
+        self.ensure_one()
+        if self.remote_organization:
+            return 'K-Message — %s' % self.remote_organization
+        return 'K-Message'
+
     def _create_rules(self, account):
         """Offer the rules, and say what arrived on."""
         made, held_back = self.env['kmessage.starter.automation'].ensure(account)
@@ -221,7 +254,7 @@ class KMessageConnect(models.TransientModel):
             return _("The rules were already there.")
 
         live = self.env['kmessage.automation'].sudo().search_count([
-            ('company_id', '=', self.company_id.id),
+            ('account_id', '=', account.id),
             ('starter_key', 'in', made),
             ('active', '=', True),
         ])

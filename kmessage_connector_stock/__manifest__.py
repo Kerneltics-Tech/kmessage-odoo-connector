@@ -5,7 +5,7 @@
     # refuses a version carrying the wrong one — '18.0.1.0.0' on a 17 server
     # is five components where the regex wants three, and it raises. So this
     # is the 18 manifest, and dev/build.py rewrites it for the 17 copy.
-    'version': '18.0.1.0.0',
+    'version': '17.0.1.0.0',
     'summary': "Tell a customer their delivery has left, and answer “do you have it in stock?”",
     'author': 'Kerneltics',
     'website': 'https://k-message.kerneltics.com',

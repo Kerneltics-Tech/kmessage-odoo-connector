@@ -4,7 +4,7 @@
         <field name="name">kmessage.ai.tool.list</field>
         <field name="model">kmessage.ai.tool</field>
         <field name="arch" type="xml">
-            <list string="Assistant tools">
+            <tree string="Assistant tools">
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="tool_name"/>
@@ -16,7 +16,7 @@
                 <field name="last_error" optional="hide"/>
                 <field name="company_id" groups="base.group_multi_company" optional="hide"/>
                 <field name="active" widget="boolean_toggle"/>
-            </list>
+            </tree>
         </field>
     </record>
 
@@ -77,7 +77,7 @@
     <record id="action_kmessage_ai_tool" model="ir.actions.act_window">
         <field name="name">Assistant tools</field>
         <field name="res_model">kmessage.ai.tool</field>
-        <field name="view_mode">list,form</field>
+        <field name="view_mode">tree,form</field>
         <field name="context">{'active_test': False}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">Let the assistant answer from Odoo</p>

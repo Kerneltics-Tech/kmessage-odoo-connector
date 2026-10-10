@@ -4,7 +4,7 @@
         <field name="name">kmessage.automation.tree</field>
         <field name="model">kmessage.automation</field>
         <field name="arch" type="xml">
-            <list string="Automations">
+            <tree string="Automations">
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="trigger"/>
@@ -15,7 +15,7 @@
                 <field name="company_id" groups="base.group_multi_company" optional="hide"/>
                 <field name="starter_key" string="Came with the addon" optional="hide"/>
                 <field name="active" widget="boolean_toggle"/>
-            </list>
+            </tree>
         </field>
     </record>
 
@@ -57,7 +57,7 @@
                             </div>
                             <field name="param_count" invisible="1"/>
                             <field name="param_ids">
-                                <list editable="bottom">
+                                <tree editable="bottom">
                                     <field name="index" string="{{n}}"/>
                                     <field name="source"/>
                                     <field name="field_path" invisible="source != 'field'"
@@ -66,7 +66,7 @@
                                     <field name="expression" invisible="source != 'expression'"
                                            groups="base.group_system"
                                            placeholder="record.amount_total - record.amount_residual"/>
-                                </list>
+                                </tree>
                             </field>
                         </page>
                         <page string="Results" name="stats">
@@ -84,7 +84,7 @@
     <record id="action_kmessage_automation" model="ir.actions.act_window">
         <field name="name">Automations</field>
         <field name="res_model">kmessage.automation</field>
-        <field name="view_mode">list,form</field>
+        <field name="view_mode">tree,form</field>
         <field name="context">{'active_test': False}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">Decide what Odoo says, and when</p>

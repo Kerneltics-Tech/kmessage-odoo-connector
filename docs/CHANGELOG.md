@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.1 — 2026-10-10
+
+* The app icons and the Apps-store covers carry the official K-Message logo
+  from the brand guide (the gradient "k" on navy; the account, sales and
+  inventory add-ons keep their corner badge). No code change.
+
 ## 1.1.0 — 2026-09-26
 
 * A company may hold more than one connection — one per K-Message tenant.

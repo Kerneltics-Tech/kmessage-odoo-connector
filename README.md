@@ -78,12 +78,13 @@ venv/bin/python odoo-bin -d <database> -i kmessage_connector --stop-after-init \
 Two more details keep the one source tree honest, and they are worth knowing
 before editing anything:
 
-* **The manifest version carries no series prefix.** It is `1.0.0`, not
-  `18.0.1.0.0`. Odoo stamps the running series onto it — the installed module
-  reads `17.0.1.0.0` on a 17 and `18.0.1.0.0` on an 18 — and a version that
-  already names a series raises on the other one. `python3 dev/build.py --check`
-  reports what the conversion would change and fails on a manifest that has
-  grown a prefix, which makes it a reasonable thing to run in CI.
+* **The manifest version names its series.** The Apps store wants the series
+  in front (`18.0.1.2.0`), and Odoo refuses a version that names the other
+  one: `18.0.…` on a 17 raises before the module is even read. So the source
+  carries `18.0.`, and the build rewrites it to `17.0.` in the 17 copy.
+  `python3 dev/build.py --check` reports what the conversion would change and
+  fails on a source manifest without the `18.0.` prefix, which makes it a
+  reasonable thing to run in CI.
 * **Python never hardcodes a view type.** Anything that builds a `view_mode` at
   runtime imports it from `kmessage_connector/tools/compat.py`, which asks the
   running server which name it uses. The build script therefore copies Python
@@ -101,6 +102,37 @@ before editing anything:
   *invoices that have fallen due* cron comes back too, so a rule on that
   trigger starts reminding about every invoice still overdue, within the
   rule's own cooldown.
+
+## Upgrading
+
+Put the new code where the old was, then upgrade the module: restart Odoo
+and press *Upgrade* on **K-Message Connector** in *Apps*, or
+
+```bash
+venv/bin/python odoo-bin -d <database> -u kmessage_connector --stop-after-init \
+    --addons-path=<the same as above>
+```
+
+Upgrading the connector upgrades the bridges with it. How to get the new code
+depends on one question: **has anybody changed the connector's code?**
+
+* **No**: take the release as it is. `git pull` on `main` or `18.0`; on
+  `17.0`, which is rebuilt for every release, `git fetch` and
+  `git reset --hard origin/17.0`; or download the branch and replace the four
+  folders.
+* **Yes**: do not replace the folders, which would throw those changes away
+  without a word. A release that needs it ships a patch per Odoo series and a
+  guide in `docs/upgrade/<version>/`: for 1.2.0,
+  [docs/upgrade/1.2.0](docs/upgrade/1.2.0/README.md)
+  ([بالعربي](docs/upgrade/1.2.0/README.ar.md)). The patch applies to 1.1.1
+  (and to 1.1.0 after a one-line change) and keeps the changes; where they
+  meet the release's, git marks the place and you choose.
+
+After upgrading to 1.2.0, open *K-Message → Configuration → Connection* and
+press *Switch on delivery news*. For the maintainers: once a release is
+committed, with `dist/17.0` rebuilt, `sh dev/make_upgrade_patch.sh <previous
+release commit>` writes its patches into `docs/upgrade/<version>/` and checks
+that each turns an untouched previous release into this one, byte for byte.
 
 ---
 
@@ -317,6 +349,9 @@ cannot read a long list, and a long list is how an accident becomes an export.
   to edit in them.
 * [docs/SECURITY.md](docs/SECURITY.md) — what is stored where, and how to revoke
   access in one step.
+* [docs/CHANGELOG.md](docs/CHANGELOG.md) — what each release changed, and
+  [docs/upgrade/](docs/upgrade/) — how to take a release into a copy you
+  changed yourself.
 
 ## Branches
 

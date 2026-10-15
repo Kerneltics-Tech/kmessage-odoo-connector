@@ -293,12 +293,19 @@ class TestTheCron(KMessageCase):
         self.assertEqual(self.env['kmessage.message']._cron_send_queue(), 0)
         self.assertFalse(self.fake.sent)
 
-    def test_every_cron_of_ours_keeps_running(self):
-        """Odoo 17 stops a cron after ``numbercall`` runs, and that defaults to 1.
 
-        The 17 build writes -1 on each of ours (dev/build.py); Odoo 18 has no
-        such field, and there every cron recurs.
-        """
+@tagged('post_install', '-at_install')
+class TestEveryCronRecurs(TransactionCase):
+    """Odoo 17 stops a cron after ``numbercall`` runs, and that defaults to 1.
+
+    The 17 build writes -1 on each of ours (dev/build.py); Odoo 18 has no such
+    field, and there every cron recurs. Checked once every module is loaded:
+    when 1.1.1 is upgraded on Odoo 17, a bridge's cron, stopped by then, is
+    switched back on only when that bridge loads, after this module's own
+    at_install tests have run.
+    """
+
+    def test_every_cron_of_ours_keeps_running(self):
         data = self.env['ir.model.data'].search([
             ('module', '=like', 'kmessage_connector%'), ('model', '=', 'ir.cron'),
         ])

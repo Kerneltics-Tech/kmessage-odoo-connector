@@ -43,7 +43,7 @@ Download the untouched 1.1.1 and compare your folders with it:
 
 ```bash
 mkdir -p ~/kmessage-1.1.1 && cd ~/kmessage-1.1.1
-curl -sL https://github.com/Kerneltics-Tech/kmessage-odoo-connector/archive/3c406d9d0fd312698db0b667702bea2387559505.tar.gz | tar -xz --strip-components=1
+curl -fsSL https://github.com/Kerneltics-Tech/kmessage-odoo-connector/archive/3c406d9d0fd312698db0b667702bea2387559505.tar.gz | tar -xz --strip-components=1
 
 cd /path/to/your/addons       # the folder that holds kmessage_connector/
 
@@ -86,13 +86,17 @@ There is one patch per Odoo version, from 1.1.1 to 1.2.0:
   `kmessage_connector_account/data/ir_cron.xml` so that the *invoices that
   have fallen due* job keeps running. If your folder has no
   `kmessage_connector_account`, add `--exclude='kmessage_connector_account/*'`
-  to the `git apply` commands.
+  to the `git apply` commands. `patch` has no such option and stops at
+  `File to patch:` instead: press Enter, then Enter again at the question
+  that follows, to skip that file. It then says one hunk was ignored: that
+  line, and nothing else. macOS's `patch` also leaves an `Oops.rej` file
+  behind when it applies; delete it.
 
 The commands below use the Odoo 18 file; on Odoo 17 write `17.0` instead of
 `18.0` everywhere.
 
 ```bash
-curl -sL -o ~/kmessage_connector-18.0.patch https://raw.githubusercontent.com/Kerneltics-Tech/kmessage-odoo-connector/main/docs/upgrade/1.2.0/kmessage_connector-18.0.patch
+curl -fsSL -o ~/kmessage_connector-18.0.patch https://raw.githubusercontent.com/Kerneltics-Tech/kmessage-odoo-connector/main/docs/upgrade/1.2.0/kmessage_connector-18.0.patch
 cd /path/to/your/addons       # the folder that holds kmessage_connector/
 ```
 
@@ -111,6 +115,15 @@ git apply --check -v ~/kmessage_connector-18.0.patch
 # or, without git:  patch -p1 --dry-run < ~/kmessage_connector-18.0.patch
 ```
 
+> **If it prints `Skipped patch '…'` for every file** (instead of
+> `Checking patch …`), the folder is inside a git repository, but not at its
+> top. There `git apply` skips every file and still reports success (without
+> `-v` it prints nothing at all), and the version line stays at 1.1.1. Run
+> the commands from the top of the repository instead, with `--directory=`
+> the path from there to the folder, for example
+> `git apply --check -v --directory=custom/addons ~/kmessage_connector-18.0.patch`.
+> `patch -p1` does not have this problem.
+
 **No error**: none of your changes is on, or right next to, a line 1.2.0
 changes. Apply it, and make sure it really went in:
 
@@ -123,13 +136,6 @@ grep "'version'" kmessage_connector/__manifest__.py        # must now say 18.0.1
 Then [upgrade the module](#upgrade-the-module). Your changes are still there:
 compared with the untouched 1.2.0, only they differ.
 
-> **If that folder is inside a git repository, but not at its top**,
-> `git apply` skips every file, says nothing and reports success, and the
-> version line still says 1.1.1. Run it from the top of the repository
-> instead, with `--directory=` the path from there to the folder, for example
-> `git apply -v --directory=custom/addons ~/kmessage_connector-18.0.patch`.
-> `patch -p1` does not have this problem.
-
 **Errors** (`patch failed: …` and `patch does not apply`, or `FAILED` from
 `patch`): some of your changes are on, or right next to, lines 1.2.0 changes.
 Nothing has been changed yet: `git apply` applies everything or nothing, and `--dry-run`
@@ -141,12 +147,13 @@ mkdir ~/kmessage-merge && cp -R /path/to/your/addons/kmessage_connector* ~/kmess
 cd ~/kmessage-merge
 git init -q && git add -A
 git fetch -q https://github.com/Kerneltics-Tech/kmessage-odoo-connector.git main    # how 1.1.1 looked
-git apply --3way ~/kmessage_connector-18.0.patch
+git -c merge.conflictStyle=merge apply --3way ~/kmessage_connector-18.0.patch
 git diff --name-only --diff-filter=U        # the files left for you to resolve
 ```
 
 Everything else is applied. In each file listed, every place where your change
-and 1.2.0's meet looks like this:
+and 1.2.0's meet looks like this (`-c merge.conflictStyle=merge` keeps it to
+these three markers, whatever your own git settings say):
 
 ```
 <<<<<<< ours
@@ -157,13 +164,15 @@ and 1.2.0's meet looks like this:
 ```
 
 Keep 1.2.0's version, put your change back into it where it still makes
-sense, and delete the three marker lines. If your change was to add delivery
+sense, and delete the three marker lines. (If you merge some other way, a
+place may also have a `|||||||` marker, with 1.1.1's lines under it down to
+`=======`: delete those lines too.) If your change was to add delivery
 events to the list of events yourself, simply keep 1.2.0's version: it asks
 for them itself, and only from a K-Message that limits them to this Odoo's
 messages. When you are done, these must print nothing but the version:
 
 ```bash
-grep -rnE '^(<<<<<<<|=======|>>>>>>>)' kmessage_connector*
+grep -rnE '^(<{7} |[|]{7} |={7}$|>{7} )' kmessage_connector*    # markers left over
 python3 -m compileall -q kmessage_connector*
 grep "'version'" kmessage_connector/__manifest__.py        # 18.0.1.2.0
 ```
@@ -182,17 +191,19 @@ Odoo does with each event), `models/kmessage_message.py` (the delivery fields,
 sending), `tools/client.py`, `controllers/main.py` (the end of the webhook),
 `views/kmessage_account_views.xml`, `views/kmessage_message_views.xml`,
 `data/ir_cron.xml` and `i18n/ar.po`. Beyond those, the patch changes only the
-version line, the store page, the translation template (`.pot`) and the
+version line, the store page, the translation template (`.pot`), the width of
+the *Outcome* column in *Incoming* (`views/kmessage_event_views.xml`) and the
 tests, and on Odoo 17 the one line in the invoicing bridge. Your own
 templates, rules and reports, and the rest of the bridges, are not touched.
 
 **Your copy lives in your own git repository** (on Odoo.sh, for example): do
 the same there instead of in a scratch copy. Commit your work, then, at the
 top of the repository, run the `git fetch` above and
-`git apply --3way --directory=<path to the folder> ~/kmessage_connector-18.0.patch`;
+`git -c merge.conflictStyle=merge apply --3way --directory=<path to the folder> ~/kmessage_connector-18.0.patch`;
 resolve, commit and push. If the repository is a clone of this one, with your
-changes committed on `main` or `18.0`, `git pull --no-rebase` merges 1.2.0 for
-you and stops the same way where your changes meet it.
+changes committed on `main` or `18.0`,
+`git -c merge.conflictStyle=merge pull --no-rebase` merges 1.2.0 for you and
+stops the same way where your changes meet it.
 
 ## Route C: send us your folders
 
@@ -223,8 +234,17 @@ with it. Either:
   Python code; then open *Apps*, find **K-Message Connector**, and choose
   *Upgrade* in its card's menu (or on its *Module Info*).
 
-In developer mode, *Module Info* shows *Latest Version* 18.0.1.2.0
-(17.0.1.2.0 on Odoo 17).
+To see that the upgrade ran, open *K-Message → Messages* and the search
+options (the arrow at the end of the search bar): under *Filters*, 1.2.0 adds
+*Not delivered* and *Delivered or read*. *Latest Version* under *Module Info*
+does not tell you: Odoo reads it from the module's files, so it says
+18.0.1.2.0 as soon as Odoo starts on the new files, upgraded or not. With
+access to the database, this prints the version the database is on:
+18.0.1.2.0 (17.0.1.2.0 on Odoo 17) once the upgrade ran.
+
+```bash
+psql -d <database> -Atc "select latest_version from ir_module_module where name = 'kmessage_connector'"
+```
 
 ## Switch on delivery news
 
@@ -263,6 +283,10 @@ It worked when:
   changes.
 * **This K-Message does not take a connection from Odoo yet.** The platform is
   older still; the same applies.
+* **There is no banner**, and the webhook state says *Not set up*: this Odoo
+  has no webhook yet, so K-Message tells it nothing, not even customers'
+  replies. Press *Set up the webhook*: the banner appears, and *Switch on
+  delivery news* works as above.
 * **There is no banner**, and the webhook state says *Waiting for your
   provider*: on your plan only the provider sets up webhooks. Ask them to add
   `message.delivered`, `message.read` and `message.failed` to this Odoo's

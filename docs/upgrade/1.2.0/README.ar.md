@@ -39,7 +39,7 @@
 
 ```bash
 mkdir -p ~/kmessage-1.1.1 && cd ~/kmessage-1.1.1
-curl -sL https://github.com/Kerneltics-Tech/kmessage-odoo-connector/archive/3c406d9d0fd312698db0b667702bea2387559505.tar.gz | tar -xz --strip-components=1
+curl -fsSL https://github.com/Kerneltics-Tech/kmessage-odoo-connector/archive/3c406d9d0fd312698db0b667702bea2387559505.tar.gz | tar -xz --strip-components=1
 
 cd /path/to/your/addons       # المجلد اللي فيه kmessage_connector/
 
@@ -78,12 +78,15 @@ for m in kmessage_connector*; do diff -ru -x __pycache__ -x '*.pyc' ~/kmessage-1
 * [kmessage_connector-17.0.patch](kmessage_connector-17.0.patch) لأودو 17. وغير الموصل،
   يضيف سطر واحد في `kmessage_connector_account/data/ir_cron.xml` عشان مهمة «الفواتير
   اللي حلّ موعدها» تكمّل شغلها. وإذا ما عندك مجلد `kmessage_connector_account` أضف
-  `--exclude='kmessage_connector_account/*'` لأوامر `git apply`.
+  `--exclude='kmessage_connector_account/*'` لأوامر `git apply`. أما `patch` فما فيه
+  هالخيار، ويوقف عند `File to patch:`: اضغط Enter، وEnter مرة ثانية على السؤال اللي
+  بعده، عشان يتجاوز هالملف. بعدها يقول إنه تجاهل جزء واحد (hunk)، وهذا هو السطر وبس،
+  وما فاته شي غيره. و`patch` حق الماك يخلّي وراه كمان ملف `Oops.rej` لما يطبّق، احذفه.
 
 الأوامر تحت مكتوبة بملف أودو 18، وعلى أودو 17 اكتب `17.0` بدل `18.0` في كل مكان.
 
 ```bash
-curl -sL -o ~/kmessage_connector-18.0.patch https://raw.githubusercontent.com/Kerneltics-Tech/kmessage-odoo-connector/main/docs/upgrade/1.2.0/kmessage_connector-18.0.patch
+curl -fsSL -o ~/kmessage_connector-18.0.patch https://raw.githubusercontent.com/Kerneltics-Tech/kmessage-odoo-connector/main/docs/upgrade/1.2.0/kmessage_connector-18.0.patch
 cd /path/to/your/addons       # المجلد اللي فيه kmessage_connector/
 ```
 
@@ -102,6 +105,13 @@ git apply --check -v ~/kmessage_connector-18.0.patch
 # أو بدون git:  patch -p1 --dry-run < ~/kmessage_connector-18.0.patch
 ```
 
+> **إذا طلع `Skipped patch '…'` لكل الملفات** (بدل `Checking patch …`): المجلد داخل
+> مستودع git بس مو في أعلاه. هناك الأمر `git apply` يتجاوز كل الملفات ويطلع كأنه نجح
+> (وبدون `-v` ما يطلّع ولا كلمة)، ويبقى سطر الإصدار 1.1.1. شغّل الأوامر بدالها من أعلى
+> المستودع ومعها `--directory=` والمسار من هناك إلى المجلد، مثلًا
+> `git apply --check -v --directory=custom/addons ~/kmessage_connector-18.0.patch`.
+> والأمر `patch -p1` ما فيه هالمشكلة.
+
 **ما طلع خطأ**: يعني ولا تعديل من تعديلاتكم على سطر غيّره 1.2.0 أو لاصق فيه. طبّقه
 وتأكد إنه دخل فعلًا:
 
@@ -114,12 +124,6 @@ grep "'version'" kmessage_connector/__manifest__.py        # لازم يطلع �
 وبعدها روح لقسم «تحديث الموديول». تعديلاتكم باقية: لو قارنت نسختك بـ1.2.0 الأصلية
 ما يختلف إلا هي.
 
-> **إذا المجلد داخل مستودع git (بس مو في أعلاه)**: الأمر `git apply` يتجاوز كل
-> الملفات بدون ما يقول شي ويطلع كأنه نجح، ويبقى سطر الإصدار 1.1.1. شغّله بدالها من
-> أعلى المستودع ومعه `--directory=` والمسار من هناك إلى المجلد، مثلًا
-> `git apply -v --directory=custom/addons ~/kmessage_connector-18.0.patch`.
-> والأمر `patch -p1` ما فيه هالمشكلة.
-
 **طلعت أخطاء** (`patch failed: …` و`patch does not apply`، أو `FAILED` من `patch`):
 يعني بعض تعديلاتكم على أسطر غيّرها 1.2.0 أو لاصقة فيها. ما تغيّر شي للحين، لأن
 `git apply` يا يطبّق كل شي يا ولا شي، و`--dry-run` يشيّك بس. خلّ git يدمج الاثنين في
@@ -130,12 +134,13 @@ mkdir ~/kmessage-merge && cp -R /path/to/your/addons/kmessage_connector* ~/kmess
 cd ~/kmessage-merge
 git init -q && git add -A
 git fetch -q https://github.com/Kerneltics-Tech/kmessage-odoo-connector.git main    # شكل 1.1.1 الأصلي
-git apply --3way ~/kmessage_connector-18.0.patch
+git -c merge.conflictStyle=merge apply --3way ~/kmessage_connector-18.0.patch
 git diff --name-only --diff-filter=U        # الملفات اللي باقي تحلّها أنت
 ```
 
 الباقي كله ينطبق. وفي كل ملف من الملفات اللي طلعت، أي مكان يلتقي فيه تعديلكم مع
-تعديل 1.2.0 يطلع بهالشكل:
+تعديل 1.2.0 يطلع بهالشكل (و`-c merge.conflictStyle=merge` يخلّيها هالعلامات الثلاث بس،
+مهما كانت إعدادات git عندكم):
 
 ```
 <<<<<<< ours
@@ -145,13 +150,14 @@ git diff --name-only --diff-filter=U        # الملفات اللي باقي �
 >>>>>>> theirs
 ```
 
-خذ نسخة 1.2.0، ورجّع تعديلكم فيها إذا لسا له داعي، وامسح أسطر العلامات الثلاثة. وإذا
-كان تعديلكم إنكم أضفتوا أحداث التسليم بأنفسكم لقائمة الأحداث، خذ نسخة 1.2.0 وبس:
-هي تطلبها بنفسها، وما تطلبها إلا من K-Message يحصرها في رسائل هذا الأودو. لما تخلص،
-هذي الأوامر لازم ما تطلّع شي غير رقم الإصدار:
+خذ نسخة 1.2.0، ورجّع تعديلكم فيها إذا لسا له داعي، وامسح أسطر العلامات الثلاثة. (وإذا
+دمجتوا بطريقة ثانية، ممكن تلقون كمان علامة `|||||||` وتحتها أسطر 1.1.1 لين `=======`:
+امسحوا هالأسطر بعد.) وإذا كان تعديلكم إنكم أضفتوا أحداث التسليم بأنفسكم لقائمة الأحداث،
+خذ نسخة 1.2.0 وبس: هي تطلبها بنفسها، وما تطلبها إلا من K-Message يحصرها في رسائل هذا
+الأودو. لما تخلص، هذي الأوامر لازم ما تطلّع شي غير رقم الإصدار:
 
 ```bash
-grep -rnE '^(<<<<<<<|=======|>>>>>>>)' kmessage_connector*
+grep -rnE '^(<{7} |[|]{7} |={7}$|>{7} )' kmessage_connector*    # العلامات اللي بقت
 python3 -m compileall -q kmessage_connector*
 grep "'version'" kmessage_connector/__manifest__.py        # 18.0.1.2.0
 ```
@@ -169,15 +175,16 @@ cp -R ~/kmessage-merge/kmessage_connector* /path/to/your/addons/
 (حقول التسليم والإرسال)، و`tools/client.py`، و`controllers/main.py` (آخر الويبهوك)،
 و`views/kmessage_account_views.xml`، و`views/kmessage_message_views.xml`،
 و`data/ir_cron.xml`، و`i18n/ar.po`. وغيرها ما يغيّر ملف التعديل إلا سطر الإصدار وصفحة
-المتجر وقالب الترجمة (`.pot`) والاختبارات، وعلى أودو 17 السطر الواحد في إضافة
+المتجر وقالب الترجمة (`.pot`) وعرض عمود *النتيجة* في *الوارد*
+(`views/kmessage_event_views.xml`) والاختبارات، وعلى أودو 17 السطر الواحد في إضافة
 الفوترة. قوالبكم وقواعدكم وتقاريركم، وباقي الإضافات، ما ينلمس منها شي.
 
 **إذا نسختكم في مستودع git حقكم** (على Odoo.sh مثلًا): سوّوا نفس الشي هناك بدل النسخة
 المؤقتة. احفظوا شغلكم بـcommit، وبعدها من أعلى المستودع شغّلوا `git fetch` اللي فوق
-و`git apply --3way --directory=<مسار المجلد> ~/kmessage_connector-18.0.patch`، وحلّوا
-التعارضات وسوّوا commit وpush. وإذا المستودع نسخة من مستودعنا وتعديلاتكم محفوظة على
-`main` أو `18.0`، فالأمر `git pull --no-rebase` يدمج 1.2.0 لكم، ويوقف بنفس الطريقة
-عند الأماكن اللي تلتقي فيها تعديلاتكم معه.
+و`git -c merge.conflictStyle=merge apply --3way --directory=<مسار المجلد> ~/kmessage_connector-18.0.patch`،
+وحلّوا التعارضات وسوّوا commit وpush. وإذا المستودع نسخة من مستودعنا وتعديلاتكم محفوظة
+على `main` أو `18.0`، فالأمر `git -c merge.conflictStyle=merge pull --no-rebase` يدمج
+1.2.0 لكم، ويوقف بنفس الطريقة عند الأماكن اللي تلتقي فيها تعديلاتكم معه.
 
 ## المسار ج: أرسلوا لنا المجلدات
 
@@ -206,7 +213,16 @@ cd /path/to/your/addons && zip -r ~/kmessage-connector-ours.zip kmessage_connect
   *التطبيقات* ودوّر على **K-Message Connector**، واختر *ترقية* من قائمة البطاقة (أو من
   *معلومات التطبيق*).
 
-في وضع المطوّر، *معلومات التطبيق* تعرض *آخر اصدار* 18.0.1.2.0 (و17.0.1.2.0 على أودو 17).
+عشان تتأكد إن التحديث تم، افتح *K-Message ← الرسائل* وخيارات البحث (السهم في طرف شريط
+البحث): تحت *عوامل التصفية* يضيف 1.2.0 الفلترين *لم تُسلَّم* و*تم التسليم أو القراءة*. أما
+*آخر اصدار* في *معلومات التطبيق* فما يعطيك الجواب: أودو يقراه من ملفات الموديول، فيطلع
+18.0.1.2.0 أول ما يشتغل أودو على الملفات الجديدة، سواء تم التحديث أو لا. وإذا تقدر توصل
+لقاعدة البيانات، هذا الأمر يطلّع الإصدار اللي عليه القاعدة: 18.0.1.2.0 (و17.0.1.2.0 على
+أودو 17) بعد ما يتم التحديث.
+
+```bash
+psql -d <database> -Atc "select latest_version from ir_module_module where name = 'kmessage_connector'"
+```
 
 ## تفعيل حالة التسليم
 
@@ -239,6 +255,9 @@ K-Message بس). الزر يغيّر أحداث الويبهوك وبس: ما ي
   لين ذاك الوقت عمود *التسليم* يوقف عند *أُرسلت* مثل 1.1.1، وما يتغيّر شي ثاني.
 * **«هذا الإصدار من K-Message لا يقبل الاتصال من أودو بعد.»** المنصة أقدم بعد، ونفس
   الكلام ينطبق.
+* **ما فيه شريط أصلًا**، وحالة الويبهوك *غير مهيّأ*: هذا الأودو ما عنده ويبهوك للحين،
+  فـK-Message ما يبلّغه بشي، ولا حتى بردود العملاء. اضغط *جهّز الويبهوك*: يطلع الشريط،
+  و*تفعيل حالة التسليم* يشتغل مثل ما فوق.
 * **ما فيه شريط أصلًا**، وحالة الويبهوك *بانتظار المزوّد*: في باقتكم المزوّد بس هو اللي
   يسوي الويبهوك. اطلبوا منه يضيف `message.delivered` و`message.read` و`message.failed`
   للويبهوك حق هذا الأودو، وعنوانه والسر حقه موجودين في نموذج الاتصال.

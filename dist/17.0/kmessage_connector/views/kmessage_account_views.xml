@@ -84,6 +84,11 @@
                             events <b>message.incoming</b>, <b>message.sent</b>, <b>button.reply</b>,
                             <b>contact.created</b>, <b>message.delivered</b>, <b>message.read</b>
                             and <b>message.failed</b>.
+                            <div class="mt-2">
+                                The last three bring delivery news. On a webhook set up by hand they
+                                come for every message the company sends, not only Odoo's: Odoo
+                                ignores the others, but each one is still a call to this Odoo.
+                            </div>
                         </div>
                         <field name="webhook_url" readonly="1" widget="CopyClipboardChar"/>
                         <field name="webhook_secret" password="True"/>

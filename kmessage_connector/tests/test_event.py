@@ -353,15 +353,20 @@ class TestDeliveryNews(KMessageCase):
         self.assertFalse(self.news('message.read', message_id=''))
 
     # -- news that arrives before its message -----------------------------
-    def early_failure(self):
+    def early_failure(self, message_id='k-message-id-early'):
         """A send-time refusal, posted while the send is still uncommitted."""
         waiting = self.env['kmessage.message'].enqueue(
             account=self.account, phone=CUSTOMER_MOBILE, template=self.template,
             partner=self.partner, record=self.partner)
         self.assertFalse(waiting.remote_message_id)
-        event = self.news('message.failed', message=waiting, message_id='k-message-id-early',
+        event = self.news('message.failed', message=waiting, message_id=message_id,
                           error_message=PAYMENT_PROBLEM)
         return waiting, event
+
+    def send_committed(self, waiting, message_id):
+        """The send that the early refusal was about, recorded a moment later."""
+        waiting.write({'state': 'sent', 'delivery_status': 'sent',
+                       'remote_message_id': message_id})
 
     def test_a_failure_that_beats_its_send_is_kept_for_later(self):
         waiting, event = self.early_failure()
@@ -400,9 +405,36 @@ class TestDeliveryNews(KMessageCase):
         self.assertEqual(event.outcome, 'No matching message in the outbox.')
 
     def test_the_retry_cron_takes_no_more_than_it_was_asked_for(self):
-        events = [self.early_failure()[1] for _ in range(3)]
-        self.assertEqual(self.env['kmessage.event']._cron_retry_delivery_news(limit=2), 2)
-        self.assertTrue(all(not event.handled for event in events))
+        early = []
+        for number in range(3):
+            message_id = 'k-message-id-early-%s' % number
+            waiting, event = self.early_failure(message_id)
+            self.send_committed(waiting, message_id)
+            early.append(event)
+        retry = self.env['kmessage.event']._cron_retry_delivery_news
+        self.assertEqual(retry(limit=2), 2)
+        self.assertEqual([event.handled for event in early], [True, True, False])
+        self.assertEqual(retry(limit=2), 1, 'the next run takes the rest')
+        self.assertTrue(early[2].handled)
+
+    def test_news_still_waiting_never_keeps_newer_news_from_its_turn(self):
+        """A run reads only what it can settle now, however much is still waiting.
+
+        Taken oldest first and bounded, the news still waiting for its message
+        would fill every run, and a newer one that could be applied would wait
+        until they had all been given up on a day later.
+        """
+        stuck = [self.early_failure('k-message-id-stuck-%s' % number)[1] for number in range(3)]
+        waiting, latest = self.early_failure('k-message-id-latest')
+        self.send_committed(waiting, 'k-message-id-latest')
+
+        self.assertEqual(self.env['kmessage.event']._cron_retry_delivery_news(limit=2), 1)
+
+        self.assertTrue(latest.handled)
+        self.assertEqual(waiting.delivery_status, 'failed')
+        self.assertEqual(waiting.delivery_error, PAYMENT_PROBLEM)
+        self.assertFalse(any(event.handled for event in stuck))
+        self.assertTrue(all('Waiting' in event.outcome for event in stuck))
 
     # -- a reply to a message about no record ------------------------------
     def test_a_reply_to_a_message_about_no_record_finds_its_row(self):

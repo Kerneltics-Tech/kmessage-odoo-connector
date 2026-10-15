@@ -214,7 +214,11 @@ recorded before anything was done about it).
 * **Delivery news on a connection made before it existed.** The connection
   form says *Delivery news is off*; press *Switch on delivery news*. It changes
   the subscription and nothing else. If K-Message is too old to limit the news
-  to this Odoo's messages, the button says so and leaves it off.
+  to this Odoo's messages, the button says so and leaves it off. If the webhook
+  was set up outside *Connect to K-Message* — by hand, or by an older version
+  of this connector — the button says that too: whoever manages K-Message for
+  your company adds the header `x-managed-by: odoo_connector` to that webhook,
+  and then the button works.
 * **A template is a starting point.** Reword anything the connector wrote, in
   K-Message. It never touches a template twice.
 * **Meta locks a deleted template name** for weeks. If you delete one the

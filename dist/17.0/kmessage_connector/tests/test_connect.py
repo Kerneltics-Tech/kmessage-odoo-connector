@@ -305,8 +305,8 @@ class TestDeliveryNewsSubscription(KMessageCase):
     On the platform, delivered, read and failed fire for every message the
     company sends. An Odoo subscribed to them without the scope would hear
     about every campaign message and every bot reply, so the connector asks
-    for them only from a K-Message that echoes the scope back — and an older
-    one is never asked at all, not even for a moment.
+    for them only from a K-Message that echoes the scope back — and one that
+    never confirmed it is never asked at all.
     """
 
     def setUp(self):
@@ -351,6 +351,7 @@ class TestDeliveryNewsSubscription(KMessageCase):
         self.assertEqual(sorted(self.account._webhook_event_list()),
                          sorted(BASE_EVENTS + DELIVERY_EVENTS))
         self.assertTrue(self.account.delivery_news)
+        self.assertEqual(self.account.webhook_status_scope, STATUS_SCOPE)
         self.assertIn('Delivery news is on', note)
 
     def test_a_full_connect_still_says_what_the_assistant_got(self):
@@ -389,7 +390,34 @@ class TestDeliveryNewsSubscription(KMessageCase):
         self.assertEqual(sorted(self.hook()['events']), sorted(BASE_EVENTS))
         self.assertEqual(sorted(self.account._webhook_event_list()), sorted(BASE_EVENTS))
         self.assertFalse(self.account.delivery_news)
+        self.assertFalse(self.account.webhook_status_scope)
         self.assertIn('newer K-Message', note)
+
+    def test_news_copied_from_a_hand_made_webhook_is_not_a_confirmed_scope(self):
+        """The seven events a hand-made webhook had say nothing about the platform.
+
+        Once that webhook is marked as the connector's, the next Connect must
+        not carry the delivery events in its first call: a platform that never
+        echoed the scope would be subscribed to every message's news.
+        """
+        hook = self.hand_made_hook(BASE_EVENTS + DELIVERY_EVENTS)
+        self.account.connect_everything()
+        self.assertTrue(self.account.delivery_news, 'the hand-made webhook sends the news')
+        self.assertFalse(self.account.webhook_status_scope)
+        with self.state.lock:
+            self.state.webhooks[hook['id']]['headers'] = {'x-managed-by': 'odoo_connector'}
+            self.state.connects.clear()
+        self.old_platform()
+
+        done, note = self.account.connect_everything()
+
+        self.assertTrue(done, note)
+        self.assertTrue(self.connects())
+        for call in self.connects():
+            self.assertFalse(set(DELIVERY_EVENTS) & set(call['events']),
+                             'a platform that never confirmed the scope was asked for the news')
+        self.assertEqual(sorted(self.hook()['events']), sorted(BASE_EVENTS))
+        self.assertFalse(self.account.delivery_news)
 
     def test_news_without_the_scope_is_taken_back(self):
         """Only reachable if a platform stopped scoping; the four go back in."""
@@ -455,8 +483,23 @@ class TestDeliveryNewsSubscription(KMessageCase):
         done, note = self.account.connect_everything()
         self.assertTrue(done, note)
         self.assertIn('x-managed-by: odoo_connector', note)
+        # Not only by hand: an older connector's own route made webhooks
+        # without the marker, and a self-managed tenant's admin can add it.
+        self.assertIn('older version of this connector', note)
+        self.assertIn('whoever manages K-Message', note)
         self.assertEqual(sorted(self.hook()['events']), sorted(BASE_EVENTS))
         self.assertFalse(self.account.delivery_news)
+
+    def test_a_hand_made_webhook_that_already_has_the_news_says_so(self):
+        """The button never shows an empty notice."""
+        self.hand_made_hook(BASE_EVENTS + DELIVERY_EVENTS)
+        action = self.account.action_update_subscription()
+        message = action['params']['message']
+        self.assertEqual(action['params']['type'], 'success')
+        self.assertIn('Delivery news is on', message)
+        self.assertIn('every message the company sends', message,
+                      'a hand-made webhook is not limited to this Odoo\'s messages')
+        self.assertTrue(self.account.delivery_news)
 
     # -- the older route --------------------------------------------------
     def test_the_older_route_adds_missing_events_and_keeps_the_webhook_on(self):
@@ -473,8 +516,22 @@ class TestDeliveryNewsSubscription(KMessageCase):
         self.account.action_setup_webhook()
         self.assertEqual(sorted(self.hook()['events']), sorted(BASE_EVENTS))
         self.assertFalse(self.account.delivery_news)
+        self.assertFalse(self.account.webhook_status_scope)
+
+    def test_the_older_route_marks_its_webhook_so_connect_can_scope_it_later(self):
+        self.account.action_setup_webhook()
+        self.assertEqual(self.hook()['headers'].get('x-managed-by'), 'odoo_connector')
+
+        action = self.account.action_update_subscription()
+
+        self.assertEqual(action['params']['type'], 'success', action['params']['message'])
+        self.assertTrue(self.account.delivery_news)
+        self.assertEqual(sorted(self.hook()['events']), sorted(BASE_EVENTS + DELIVERY_EVENTS))
+        self.assertEqual(self.state.scopes[self.hook()['id']], STATUS_SCOPE)
 
     def test_the_hand_over_text_names_all_seven_events(self):
         form = self.env.ref('kmessage_connector.view_kmessage_account_form')
         for event in BASE_EVENTS + DELIVERY_EVENTS:
             self.assertIn(event, form.arch)
+        # and what the last three cost on a webhook nobody can scope
+        self.assertIn('every message the company sends', form.arch)

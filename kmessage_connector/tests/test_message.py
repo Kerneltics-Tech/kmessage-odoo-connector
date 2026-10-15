@@ -14,9 +14,10 @@ from odoo import fields
 from odoo.exceptions import UserError
 from odoo.tests import tagged
 from odoo.tests.common import TransactionCase
+from odoo.tools.sql import index_exists
 
 from odoo.addons.kmessage_connector.models.kmessage_message import (
-    BACKOFF_MINUTES, PERMANENT_STATUSES,
+    BACKOFF_MINUTES, PERMANENT_STATUSES, STALE_AFTER_HOURS,
 )
 
 from .common import CUSTOMER_MOBILE, KMessageCase
@@ -345,3 +346,113 @@ class TestTheRenamedLabel(TransactionCase):
         self.set_label({'ar_001': 'ما وصلت'})
         self.env['kmessage.message'].init()
         self.assertEqual(self.label()[1]['ar_001'], 'ما وصلت')
+
+
+@tagged('post_install', '-at_install')
+class TestWhatAnUpgradeDoes(KMessageCase):
+    """What ``init`` does to the outbox before an upgrade loads the data.
+
+    On Odoo 17 the 1.1.1 build let every cron run once and stop, the outbox
+    among them, and the upgrade starts them again. Whatever had waited more
+    than a day in the stopped outbox is held back first, so the upgrade does
+    not send weeks-old messages by itself. Odoo 18 has no ``numbercall``, no
+    cron of ours ever stopped there, and nothing is held back.
+    """
+
+    def setUp(self):
+        super().setUp()
+        # Rows this database already carried would be held back as well.
+        self.env['kmessage.message'].search([('state', 'in', ('queued', 'failed'))]).write(
+            {'state': 'cancelled', 'next_attempt': False})
+        self.cron = self.env.ref('kmessage_connector.cron_send_queue')
+        self.on_17 = 'numbercall' in self.cron._fields
+
+    def waiting(self, hours, **values):
+        """A message that has been in the outbox for ``hours``."""
+        message = self.env['kmessage.message'].enqueue(
+            account=self.account, phone=CUSTOMER_MOBILE, template=self.template,
+            partner=self.partner, record=self.partner)
+        if values:
+            message.write(values)
+        message.flush_recordset()
+        self.env.cr.execute(
+            'UPDATE kmessage_message SET create_date = %s WHERE id = %s',
+            (fields.Datetime.subtract(fields.Datetime.now(), hours=hours), message.id))
+        message.invalidate_recordset()
+        return message
+
+    def stop_the_outbox(self):
+        """The cron as the 1.1.1 build on Odoo 17 left it: run once, switched off."""
+        if not self.on_17:
+            self.skipTest('Odoo 18 has no numbercall: every cron recurs, and none stopped')
+        self.cron.write({'numbercall': 0, 'active': False})
+        self.cron.flush_recordset()
+
+    def run_the_outbox_again(self):
+        """What the upgrade's data load does to the cron afterwards."""
+        if self.on_17:
+            self.cron.write({'numbercall': -1, 'active': True})
+            self.cron.flush_recordset()
+
+    def upgrade(self):
+        self.env['kmessage.message'].init()
+        self.env.invalidate_all()
+
+    def test_an_upgrade_holds_back_what_a_stopped_outbox_kept(self):
+        self.stop_the_outbox()
+        old = self.waiting(hours=72)
+        retrying = self.waiting(hours=STALE_AFTER_HOURS + 6, state='failed', attempts=1,
+                                next_attempt=fields.Datetime.now())
+        recent = self.waiting(hours=2)
+        notes = len(self.partner.message_ids)
+
+        self.upgrade()
+
+        for message in (old, retrying):
+            with self.subTest(message=message.id):
+                self.assertEqual(message.state, 'failed')
+                self.assertTrue(message.permanent_error, 'the outbox would pick it up again')
+                self.assertFalse(message.next_attempt)
+                self.assertIn('Held back when the connector was upgraded', message.error)
+                self.assertIn(fields.Date.to_string(message.create_date.date()), message.error)
+        self.assertEqual(recent.state, 'queued', 'a message from today still goes out')
+        self.assertFalse(recent.error)
+        self.assertEqual(len(self.partner.message_ids), notes, 'no note on any document')
+
+        # The outbox, running again, sends the recent one and nothing older.
+        self.run_the_outbox_again()
+        self.assertEqual(self.env['kmessage.message']._cron_send_queue(), 1)
+        self.assertEqual(recent.state, 'sent')
+        self.assertEqual(len(self.fake.sent), 1)
+        self.assertEqual(old.state, 'failed')
+
+        # Try again is how a person sends one that should still go out.
+        old.action_retry()
+        self.env['kmessage.message']._cron_send_queue()
+        self.assertEqual(old.state, 'sent')
+        self.assertEqual(len(self.fake.sent), 2)
+
+    def test_a_second_upgrade_finds_nothing_to_do(self):
+        self.stop_the_outbox()
+        held = self.waiting(hours=72)
+        self.upgrade()
+        reason = held.error
+        self.run_the_outbox_again()
+        later = self.waiting(hours=48)
+        self.upgrade()
+        self.assertEqual(later.state, 'queued', 'a running outbox is left to do its job')
+        self.assertEqual(held.error, reason)
+
+    def test_an_outbox_that_runs_is_left_alone(self):
+        """Odoo 18, or an Odoo 17 whose outbox never stopped."""
+        self.run_the_outbox_again()
+        old = self.waiting(hours=72)
+        self.upgrade()
+        self.assertEqual(old.state, 'queued')
+        self.assertFalse(old.error)
+        self.assertFalse(old.permanent_error)
+
+    def test_not_delivered_has_an_index_of_its_own(self):
+        """The connection form counts them each time it opens."""
+        self.upgrade()
+        self.assertTrue(index_exists(self.env.cr, 'kmessage_message_not_delivered_idx'))

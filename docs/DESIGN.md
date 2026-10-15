@@ -99,14 +99,22 @@ reference Odoo sent with it.
 * **Asked for only where it is scoped.** The platform fires these for every
   message a company sends. Connect always sends `status_scope: referenced`,
   and asks for the three only once `webhook.status_scope` has come back: the
-  first call asks for the four events (or the seven, once confirmed) with the
-  scope, and a second call, with no tools, adds the three once the scope is
-  echoed — or puts the four back if a platform ever stops echoing it. An
-  older platform never sees a request for them. Every outbox row carries a
+  first call asks for the four events with the scope — the seven only when
+  the news is on and the platform echoed the scope last time
+  (`webhook_status_scope`) — and a second call, with no tools, adds the three
+  once the scope is echoed, or puts the four back if a platform stops
+  echoing it. A platform that never echoed the scope never sees a request for
+  them; one rolled back after echoing it sees one, taken back by the second
+  call a moment later. Events copied from a webhook set up by hand never
+  count as a confirmed scope. Every outbox row carries a
   reference (`kmessage.message:<id>` when nothing else names it), so the scope
   never hides one of Odoo's own messages. The general webhooks API cannot
   scope, so the older route (*Set up the webhook*) only ever adds the four,
-  and always sends `is_active` (the platform reads it from every update).
+  and always sends `is_active` (the platform reads it from every update). The
+  webhook it creates carries the `x-managed-by: odoo_connector` header that
+  Connect puts on its own, so Connect may later bring it up to date and scope
+  it; a webhook it merely finds is never marked, because Connect would then
+  overwrite whatever headers and secret somebody gave it.
 * **Matched within the connection that signed it**, by `remote_message_id` —
   the same rule button replies follow — so one tenant's secret cannot settle
   another company's message.
@@ -121,8 +129,18 @@ reference Odoo sent with it.
   names a row of this connection still waiting for its K-Message id — a
   refusal at send time can arrive before the send is committed — and the
   retry cron (every 5 minutes, 200 a run) applies it once the id is there,
-  closing it after 24 hours. The daily tidy deletes up to 20,000 old events a
-  run.
+  closing it after 24 hours. A run reads only the news it can settle — its
+  message is now in the outbox, or its day is up — so news still waiting is
+  not read again every five minutes and never keeps newer news from its turn.
+  The daily tidy deletes up to 20,000 old events a run. The count of messages
+  not delivered, on the connection form, has a partial index of its own
+  (`delivery_status = 'failed'`).
+* **Odoo 17 upgrades.** The 1.1.1 build's crons stopped after one run there
+  (`numbercall` defaulted to 1). Before the upgrade's data switches the outbox
+  back on, `kmessage.message.init()` marks every message that waited more than
+  a day failed and permanent, with a reason that says so, and logs how many;
+  *Try again* sends one. Nothing is held back on 18, or on a 17 whose outbox
+  kept running.
 
 ## Modules
 

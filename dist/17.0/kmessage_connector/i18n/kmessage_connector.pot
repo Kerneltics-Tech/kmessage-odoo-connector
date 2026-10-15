@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-15 15:36+0000\n"
-"PO-Revision-Date: 2026-10-15 15:36+0000\n"
+"POT-Creation-Date: 2026-10-15 17:15+0000\n"
+"PO-Revision-Date: 2026-10-15 17:15+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -664,6 +664,15 @@ msgstr ""
 #. odoo-python
 #: code:addons/kmessage_connector/models/kmessage_account.py:0
 msgid ""
+"Delivery news is on. This webhook was set up outside Odoo, so it brings the "
+"status of every message the company sends; Odoo keeps only the news about "
+"its own."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_account.py:0
+msgid ""
 "Delivery news is on: Odoo hears when a message is delivered, read or not "
 "delivered."
 msgstr ""
@@ -679,6 +688,11 @@ msgstr ""
 #. module: kmessage_connector
 #: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_account__delivery_news
 msgid "Delivery news on"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_account__webhook_status_scope
+msgid "Delivery news scope"
 msgstr ""
 
 #. module: kmessage_connector
@@ -945,6 +959,15 @@ msgstr ""
 #. module: kmessage_connector
 #: model:kmessage.capability,name:kmessage_connector.capability_ping
 msgid "Health check"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_message.py:0
+msgid ""
+"Held back when the connector was upgraded: it had waited since %s, while the"
+" outbox was stopped on Odoo 17. Press Try again (or Queue again on the "
+"message) if it should still go out."
 msgstr ""
 
 #. module: kmessage_connector
@@ -2522,6 +2545,14 @@ msgid ""
 msgstr ""
 
 #. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_account_form
+msgid ""
+"The last three bring delivery news. On a webhook set up by hand they\n"
+"                                come for every message the company sends, not only Odoo's: Odoo\n"
+"                                ignores the others, but each one is still a call to this Odoo."
+msgstr ""
+
+#. module: kmessage_connector
 #. odoo-python
 #: code:addons/kmessage_connector/wizard/kmessage_send.py:0
 msgid "The message is on its way to %s."
@@ -2627,9 +2658,11 @@ msgstr ""
 #. odoo-python
 #: code:addons/kmessage_connector/models/kmessage_account.py:0
 msgid ""
-"The webhook for this address was set up by hand in K-Message, so Odoo cannot"
-" change its events. Ask your provider to add the header x-managed-by: "
-"odoo_connector to that webhook, then press Switch on delivery news again."
+"The webhook for this address was set up outside Connect to K-Message (by "
+"hand, or by an older version of this connector), so Odoo cannot change its "
+"events. Ask whoever manages K-Message for your company to add the header "
+"x-managed-by: odoo_connector to that webhook, then press Switch on delivery "
+"news again."
 msgstr ""
 
 #. module: kmessage_connector
@@ -2856,6 +2889,14 @@ msgstr ""
 #. odoo-python
 #: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
 msgid "Webhook: %s"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_account__webhook_status_scope
+msgid ""
+"What K-Message confirmed it limits delivery news to, the last time the "
+"subscription was set up from here: 'referenced' means this Odoo's own "
+"messages only. Empty means it confirmed no limit."
 msgstr ""
 
 #. module: kmessage_connector

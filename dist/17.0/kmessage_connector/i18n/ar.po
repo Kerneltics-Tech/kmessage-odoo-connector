@@ -665,6 +665,15 @@ msgstr "تعذّر تفعيل حالة التسليم: %s"
 #. odoo-python
 #: code:addons/kmessage_connector/models/kmessage_account.py:0
 msgid ""
+"Delivery news is on. This webhook was set up outside Odoo, so it brings the "
+"status of every message the company sends; Odoo keeps only the news about "
+"its own."
+msgstr "حالة التسليم مفعّلة. هذا الويبهوك أُنشئ خارج أودو، فيجيب حالة كل رسالة ترسلها الشركة، وأودو يحتفظ بأخبار رسائله هو فقط."
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_account.py:0
+msgid ""
 "Delivery news is on: Odoo hears when a message is delivered, read or not "
 "delivered."
 msgstr "حالة التسليم مفعّلة: صار أودو يعرف إذا وصلت الرسالة أو انقرأت أو لم تُسلَّم."
@@ -681,6 +690,11 @@ msgstr "حالة التسليم تحتاج نسخة أحدث من K-Message، ف
 #: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_account__delivery_news
 msgid "Delivery news on"
 msgstr "حالة التسليم مفعّلة"
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_account__webhook_status_scope
+msgid "Delivery news scope"
+msgstr "نطاق حالة التسليم"
 
 #. module: kmessage_connector
 #. odoo-python
@@ -947,6 +961,15 @@ msgstr "نوع الترويسة"
 #: model:kmessage.capability,name:kmessage_connector.capability_ping
 msgid "Health check"
 msgstr "فحص الاتصال"
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_message.py:0
+msgid ""
+"Held back when the connector was upgraded: it had waited since %s, while the"
+" outbox was stopped on Odoo 17. Press Try again (or Queue again on the "
+"message) if it should still go out."
+msgstr "أُوقفت عند تحديث الموصل: كانت تنتظر من %s والصادر متوقف على أودو 17. اضغط «أعد المحاولة» (أو «أعد الإدراج للإرسال» في نموذج الرسالة) إذا لازم تنرسل."
 
 #. module: kmessage_connector
 #: model:res.groups,comment:kmessage_connector.group_kmessage_manager
@@ -2532,6 +2555,14 @@ msgid ""
 msgstr "آخر أرقام جوال العميل، تُستخدم لمطابقة رسائل واتساب الواردة."
 
 #. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_account_form
+msgid ""
+"The last three bring delivery news. On a webhook set up by hand they\n"
+"                                come for every message the company sends, not only Odoo's: Odoo\n"
+"                                ignores the others, but each one is still a call to this Odoo."
+msgstr "الأحداث الثلاثة الأخيرة هي حالة التسليم. في الويبهوك اللي يُضاف يدويًا توصل عن كل رسالة ترسلها الشركة، مو بس رسائل أودو: أودو يتجاهل الباقي، لكن كل وحدة منها طلب يوصل لهذا الأودو."
+
+#. module: kmessage_connector
 #. odoo-python
 #: code:addons/kmessage_connector/wizard/kmessage_send.py:0
 msgid "The message is on its way to %s."
@@ -2637,10 +2668,12 @@ msgstr "الأدوات جاهزة في أودو لكن K-Message لم يقبله
 #. odoo-python
 #: code:addons/kmessage_connector/models/kmessage_account.py:0
 msgid ""
-"The webhook for this address was set up by hand in K-Message, so Odoo cannot"
-" change its events. Ask your provider to add the header x-managed-by: "
-"odoo_connector to that webhook, then press Switch on delivery news again."
-msgstr "الويبهوك لهذا العنوان أُنشئ يدويًا في K-Message، فأودو ما يقدر يغيّر أحداثه. اطلب من المزوّد يضيف الترويسة x-managed-by: odoo_connector لهذا الويبهوك، وبعدها اضغط «تفعيل حالة التسليم» مرة ثانية."
+"The webhook for this address was set up outside Connect to K-Message (by "
+"hand, or by an older version of this connector), so Odoo cannot change its "
+"events. Ask whoever manages K-Message for your company to add the header "
+"x-managed-by: odoo_connector to that webhook, then press Switch on delivery "
+"news again."
+msgstr "الويبهوك لهذا العنوان أُنشئ خارج «الاتصال بـ K-Message» (يدويًا، أو من نسخة أقدم من هذا الموصل)، فأودو ما يقدر يغيّر أحداثه. اطلب من المسؤول عن K-Message في شركتك يضيف الترويسة x-managed-by: odoo_connector لهذا الويبهوك، وبعدها اضغط «تفعيل حالة التسليم» مرة ثانية."
 
 #. module: kmessage_connector
 #. odoo-python
@@ -2867,6 +2900,14 @@ msgstr "عنوان الويبهوك"
 #: code:addons/kmessage_connector/wizard/kmessage_connect.py:0
 msgid "Webhook: %s"
 msgstr "الويبهوك: %s"
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_account__webhook_status_scope
+msgid ""
+"What K-Message confirmed it limits delivery news to, the last time the "
+"subscription was set up from here: 'referenced' means this Odoo's own "
+"messages only. Empty means it confirmed no limit."
+msgstr "النطاق اللي أكّد K-Message إنه يحصر فيه حالة التسليم، آخر مرة ضُبط فيها الاشتراك من هنا: 'referenced' تعني رسائل هذا الأودو فقط. وإذا كان فارغًا فهو ما أكّد أي حصر."
 
 #. module: kmessage_connector
 #: model:ir.actions.act_window,name:kmessage_connector.action_kmessage_capability

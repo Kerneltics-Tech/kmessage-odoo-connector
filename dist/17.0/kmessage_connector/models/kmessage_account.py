@@ -28,6 +28,11 @@ DELIVERY_EVENTS = ['message.delivered', 'message.read', 'message.failed']
 #: What the connector asks K-Message to limit status events to.
 STATUS_SCOPE = 'referenced'
 
+#: The header K-Message reads to tell a webhook the connector made from one
+#: somebody set up by hand. Connect changes only webhooks that carry it.
+MANAGED_HEADER = 'x-managed-by'
+MANAGED_BY = 'odoo_connector'
+
 #: The name the events went by before delivery news, kept for code that
 #: imported it.
 SUBSCRIBED_EVENTS = BASE_EVENTS
@@ -137,6 +142,11 @@ class KMessageAccount(models.Model):
         string='Events', readonly=True, copy=False,
         help="The events K-Message confirmed it sends to this Odoo, the last time "
              "the subscription was set up from here.")
+    webhook_status_scope = fields.Char(
+        string='Delivery news scope', readonly=True, copy=False,
+        help="What K-Message confirmed it limits delivery news to, the last time the "
+             "subscription was set up from here: 'referenced' means this Odoo's own "
+             "messages only. Empty means it confirmed no limit.")
     delivery_news = fields.Boolean(
         string='Delivery news on', compute='_compute_delivery_news',
         help="Whether K-Message tells this Odoo when a message it sent is "
@@ -382,27 +392,32 @@ class KMessageAccount(models.Model):
         """Register the webhook and the tools; delivery news only where it is scoped.
 
         Delivery news is asked for only from a K-Message that confirms it will
-        limit it to this Odoo's own messages, by echoing the scope back. So
-        the first call asks for the events this connection already had
-        confirmed — the four, on a first connect — together with the scope,
-        and the answer decides the rest:
+        limit it to this Odoo's own messages, by echoing the scope back. The
+        first call always sends the scope, and carries the three delivery
+        events only when the news is on and the platform confirmed the scope
+        the last time (``webhook_status_scope``); otherwise it asks for the
+        four. The answer decides the rest:
 
         * the scope came back and the news is not on yet: a second call adds
           it, with no tools, which the first call already handled;
         * the scope did not come back: the platform is older than the scope,
-          the news stays off, and if it was somehow on, the four are
-          registered again in its place;
-        * the webhook was set up by hand (``unchanged``): nothing here may
-          change it, and the note says who can.
+          the news stays off, and if it was on, the four are registered again
+          in its place;
+        * the webhook was set up outside Connect (``unchanged``): nothing here
+          may change it, and the note says who can.
 
-        At no point is an older platform asked for delivery news, not even
-        for a moment. Raises ``KMessageError`` only for the first call.
-        Returns ``(answer to the first call, a sentence about delivery news)``
-        and writes the events the platform confirmed to ``webhook_events``.
+        A platform that never confirmed the scope is therefore never asked
+        for delivery news. One that confirmed it and has since been rolled
+        back is asked once more, and the second call takes it back a moment
+        later. Raises ``KMessageError`` only for the first call. Returns
+        ``(answer to the first call, a sentence about delivery news)`` and
+        writes what the platform confirmed to ``webhook_events`` and
+        ``webhook_status_scope``.
         """
         self.ensure_one()
         record = self.sudo()
-        asked = list(BASE_EVENTS) + (list(DELIVERY_EVENTS) if record.delivery_news else [])
+        confirmed = record.delivery_news and record.webhook_status_scope == STATUS_SCOPE
+        asked = list(BASE_EVENTS) + (list(DELIVERY_EVENTS) if confirmed else [])
         answer = client.connect_odoo(
             webhook_url=record.webhook_url,
             webhook_secret=record.webhook_secret,
@@ -415,17 +430,26 @@ class KMessageAccount(models.Model):
             return answer, ''
 
         events = webhook.get('events') or asked
+        echoed = webhook.get('status_scope') or False
         if webhook.get('status') == 'unchanged':
-            record.webhook_events = ', '.join(sorted(set(events)))
+            record.write({'webhook_events': ', '.join(sorted(set(events))),
+                          'webhook_status_scope': echoed})
+            if record.delivery_news and echoed == STATUS_SCOPE:
+                return answer, _("Delivery news is on: Odoo hears when a message is delivered, "
+                                 "read or not delivered.")
             if record.delivery_news:
-                return answer, ''
+                return answer, _(
+                    "Delivery news is on. This webhook was set up outside Odoo, so it brings "
+                    "the status of every message the company sends; Odoo keeps only the news "
+                    "about its own.")
             return answer, _(
-                "The webhook for this address was set up by hand in K-Message, so Odoo "
-                "cannot change its events. Ask your provider to add the header "
-                "x-managed-by: odoo_connector to that webhook, then press Switch on "
-                "delivery news again.")
+                "The webhook for this address was set up outside Connect to K-Message (by "
+                "hand, or by an older version of this connector), so Odoo cannot change its "
+                "events. Ask whoever manages K-Message for your company to add the header "
+                "x-managed-by: odoo_connector to that webhook, then press Switch on delivery "
+                "news again.")
 
-        scoped = webhook.get('status_scope') == STATUS_SCOPE
+        scoped = echoed == STATUS_SCOPE
         has_news = bool(set(DELIVERY_EVENTS) & set(events))
         trouble = None
         if scoped != has_news:
@@ -438,11 +462,14 @@ class KMessageAccount(models.Model):
                     tools=[],
                     status_scope=STATUS_SCOPE,
                 ) or {}
-                events = (again.get('webhook') or {}).get('events') or wanted
+                settled = again.get('webhook') or {}
+                events = settled.get('events') or wanted
+                echoed = settled.get('status_scope', echoed) or False
             except KMessageError as error:
                 _logger.warning('K-Message: could not settle delivery news (%s)', error)
                 trouble = error
-        record.webhook_events = ', '.join(sorted(set(events)))
+        record.write({'webhook_events': ', '.join(sorted(set(events))),
+                      'webhook_status_scope': echoed})
 
         if trouble and scoped:
             return answer, _("Delivery news could not be switched on: %s", trouble)
@@ -515,11 +542,16 @@ class KMessageAccount(models.Model):
             return record._add_missing_events(client, mine)
 
         try:
+            # Marked as the connector's own, the way Connect marks the webhooks
+            # it makes, so that Connect may bring this one up to date later —
+            # delivery news included — instead of leaving it alone as one
+            # somebody set up by hand.
             created = client.create_webhook(
                 name='Odoo — %s' % record.company_id.name,
                 url=record.webhook_url,
                 events=BASE_EVENTS,
                 secret=record.webhook_secret,
+                headers={MANAGED_HEADER: MANAGED_BY},
             ) or {}
         except KMessageError as error:
             if error.operator_only:
@@ -537,6 +569,8 @@ class KMessageAccount(models.Model):
             'webhook_secret': created.get('secret') or record.webhook_secret,
             'webhook_state': 'registered',
             'webhook_events': ', '.join(sorted(set(created.get('events') or BASE_EVENTS))),
+            # The general webhooks API has no scope to give.
+            'webhook_status_scope': False,
         })
         return record._notify(_("K-Message will now call this Odoo."))
 

@@ -266,16 +266,32 @@ class KMessageEvent(models.Model):
     def _cron_retry_delivery_news(self, hours=NEWS_WAIT_HOURS, limit=200):
         """Apply the "not delivered" news that arrived before its message.
 
-        Each one is tried again until its message turns up in the outbox, and
-        closed with "no matching message" once ``hours`` have passed. Bounded
-        per run, and every event in a savepoint of its own, so one that cannot
-        be applied never holds up the rest.
+        Each one is applied once its message turns up in the outbox, and closed
+        with "no matching message" once ``hours`` have passed. A run reads only
+        those two kinds — news it can now apply, and news it must give up on —
+        so the ones still waiting are not read again every five minutes, and
+        however many of them there are, they never keep a newer one from its
+        turn. Bounded per run, and every event in a savepoint of its own, so
+        one that cannot be applied never holds up the rest.
         """
-        waiting = self.sudo().search([
-            ('event', '=', 'message.failed'),
-            ('handled', '=', False),
-        ], order='id', limit=limit)
         given_up_before = fields.Datetime.subtract(fields.Datetime.now(), hours=hours)
+        self.env['kmessage.event'].flush_model(
+            ['event', 'handled', 'remote_message_id', 'account_id'])
+        self.env['kmessage.message'].flush_model(['remote_message_id', 'account_id'])
+        self.env.cr.execute("""
+            SELECT e.id
+              FROM kmessage_event e
+             WHERE e.event = 'message.failed'
+               AND e.handled IS NOT TRUE
+               AND (e.create_date < %s
+                    OR EXISTS (SELECT 1
+                                 FROM kmessage_message m
+                                WHERE m.remote_message_id = e.remote_message_id
+                                  AND m.account_id = e.account_id))
+          ORDER BY e.id
+             LIMIT %s
+        """, (given_up_before, limit))
+        waiting = self.sudo().browse([row[0] for row in self.env.cr.fetchall()])
         for event in waiting.with_context(kmessage_news_wait_hours=hours):
             try:
                 with self.env.cr.savepoint():

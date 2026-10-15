@@ -93,9 +93,14 @@ before editing anything:
   dropped the field and refuses it. The build writes `numbercall` -1 on every
   cron. Builds up to 1.1.1 did not, so on Odoo 17 their crons — the outbox
   among them — stopped after their first run; upgrading the modules switches
-  them back on. The outbox then sends everything that has been waiting in it
-  since, so before upgrading an Odoo 17, open *K-Message ▸ Messages*, filter
-  *Waiting*, and cancel whatever should no longer go out.
+  them back on. So that the outbox does not then send weeks-old messages by
+  itself, the upgrade first holds back every message that had waited in the
+  stopped outbox for more than a day: it is marked *Failed*, with the reason
+  *Held back when the connector was upgraded…*, and *Try again* sends it if it
+  should still go out. Messages from the last day go out as usual. The
+  *invoices that have fallen due* cron comes back too, so a rule on that
+  trigger starts reminding about every invoice still overdue, within the
+  rule's own cooldown.
 
 ---
 
@@ -136,7 +141,9 @@ precisely because webhooks and custom actions are otherwise operator-only, and
 it is narrow on purpose: it reads the tenant from the API key, it only ever
 creates or updates rows it marked as its own, and a webhook or tool somebody
 set up by hand is left exactly as it was. On a K-Message that does not have it
-yet, the wizard falls back to the older route — see below.
+yet, the wizard falls back to the older route — see below. The webhook that
+route creates carries the same marker, so Connect can bring it up to date
+later.
 
 That issued token is shown **once**. Odoo stores a fingerprint of it and nothing
 else, so it cannot be read back later — copy it into K-Message now, or press
@@ -244,8 +251,8 @@ afterwards never comes back on that call — it comes back as delivery news.
 platform, `message.delivered`, `message.read` and `message.failed` fire for
 every message a company sends. Connect sends `status_scope: referenced` —
 only messages that carry a reference, which every message from this Odoo does —
-and asks for the three only once the platform has echoed that scope back. An
-older K-Message is never asked for them, not even for a moment: the connection
+and asks for the three only once the platform has echoed that scope back. A
+K-Message that has never echoed it is never asked for them: the connection
 keeps the four events above, says that delivery news needs a newer K-Message,
 and the *Delivery* column stops at *Sent*. A connection made
 before delivery news existed shows *Delivery news is off* on its form, with a

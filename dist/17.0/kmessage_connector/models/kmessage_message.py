@@ -10,9 +10,11 @@ roll back an accounting entry, and a retry must never post the invoice twice.
 import base64
 import json
 import logging
+from collections import defaultdict
 
 from odoo import _, api, fields, models, modules
 from odoo.exceptions import UserError
+from odoo.tools.sql import column_exists, create_index
 
 from ..tools.client import KMessageError
 from ..tools.phone import normalize
@@ -21,6 +23,11 @@ _logger = logging.getLogger(__name__)
 
 #: How long to wait before each further attempt, in minutes.
 BACKOFF_MINUTES = [1, 5, 15, 60, 180]
+
+#: How long a message may have waited in an outbox that had stopped and still
+#: be sent by itself once an upgrade starts the outbox again. Older ones are
+#: held back for a person to look at (``_hold_back_a_stopped_outbox``).
+STALE_AFTER_HOURS = 24
 
 #: Answers that will never succeed no matter how often they are repeated.
 PERMANENT_STATUSES = (400, 401, 403, 404, 422)
@@ -97,7 +104,12 @@ class KMessageMessage(models.Model):
             message.display_name = '%s → %s' % (message.template_name or _("Message"), who)
 
     def init(self):
-        """Let the renamed delivery label reach a database that had the old one.
+        """What an install or upgrade does before the module's data is loaded.
+
+        Three things, each a no-op when there is nothing to do: the renamed
+        delivery label below, an index for the messages that were not
+        delivered, and, on Odoo 17, holding back what a stopped outbox kept
+        (``_hold_back_a_stopped_outbox``).
 
         The delivery value ``failed`` was labelled "Failed" until delivery news
         existed; it is "Not delivered" now, to tell it apart from a send that
@@ -122,6 +134,87 @@ class KMessageMessage(models.Model):
                AND EXISTS (SELECT 1 FROM jsonb_each_text(s.name)
                             WHERE key LIKE 'ar%%' AND value = %s)
         """, (stale, stale))
+        self._index_not_delivered()
+        self._hold_back_a_stopped_outbox()
+
+    def _index_not_delivered(self):
+        """An index for the one delivery value anybody looks for.
+
+        The connection form counts the messages WhatsApp did not deliver each
+        time it opens, and the outbox filters on them. They are a sliver of an
+        outbox that grows by a row for every invoice sent, so the index holds
+        only them: small, and exactly what both questions need.
+        """
+        create_index(self.env.cr, 'kmessage_message_not_delivered_idx', self._table,
+                     ['account_id'], where="delivery_status = 'failed'")
+
+    def _hold_back_a_stopped_outbox(self):
+        """On Odoo 17, keep the upgrade from sending what a stopped outbox kept.
+
+        The Odoo 17 build of 1.1.1 and earlier did not say that its crons
+        recur, and Odoo 17 runs a cron ``numbercall`` times — 1, unless it is
+        told otherwise — and then switches it off. So the outbox ran once and
+        has kept every message queued since. This version's data switches it
+        back on, and its next run would send all of them: an invoice from weeks
+        ago announced as if it were new, and a WhatsApp message cannot be
+        taken back.
+
+        So, before the data is loaded, every message that has waited more than
+        ``STALE_AFTER_HOURS`` is marked failed with a reason that says why,
+        and *Try again* sends it if it should still go out. Newer ones are sent
+        as usual, and no note goes on any document. Only an outbox that really
+        stopped is touched: Odoo 18 has no ``numbercall``, a 17 whose outbox
+        runs does not have 0 there, and the data load writes -1, so the next
+        upgrade finds nothing to do.
+        """
+        cr = self.env.cr
+        if not column_exists(cr, 'ir_cron', 'numbercall'):
+            return
+        cr.execute("""
+            SELECT c.numbercall
+              FROM ir_cron c
+              JOIN ir_model_data d ON d.res_id = c.id AND d.model = 'ir.cron'
+             WHERE d.module = 'kmessage_connector' AND d.name = 'cron_send_queue'
+        """)
+        row = cr.fetchone()
+        if not row or row[0] != 0:
+            return
+        cutoff = fields.Datetime.subtract(fields.Datetime.now(), hours=STALE_AFTER_HOURS)
+        # The rows the outbox would pick up: _cron_send_queue's own domain,
+        # less the time of the next attempt, which a stopped outbox let pass.
+        cr.execute("""
+            SELECT id, create_date FROM kmessage_message
+             WHERE state IN ('queued', 'failed')
+               AND permanent_error IS NOT TRUE
+               AND create_date < %s
+        """, (cutoff,))
+        stale = cr.fetchall()
+        if not stale:
+            return
+        by_day = defaultdict(list)
+        for message_id, created in stale:
+            by_day[created.date()].append(message_id)
+        # Written with nobody signed in, so in the language the administrator
+        # reads Odoo in.
+        admin = self.env.ref('base.user_admin', raise_if_not_found=False)
+        writer = self.with_context(lang=(admin and admin.sudo().lang) or 'en_US')
+        for day, ids in by_day.items():
+            cr.execute("""
+                UPDATE kmessage_message
+                   SET state = 'failed', permanent_error = TRUE, next_attempt = NULL,
+                       error = %s, write_date = (now() at time zone 'UTC')
+                 WHERE id IN %s
+            """, (writer._held_back_reason(day), tuple(ids)))
+        _logger.warning(
+            'K-Message: the outbox had stopped (Odoo 17 cron with numbercall 0). %s message(s) '
+            'that had waited more than %s hours were held back instead of being sent now; '
+            'they are marked failed, and Try again sends one.', len(stale), STALE_AFTER_HOURS)
+
+    def _held_back_reason(self, day):
+        return _("Held back when the connector was upgraded: it had waited since %s, "
+                 "while the outbox was stopped on Odoo 17. Press Try again (or Queue again "
+                 "on the message) if it should still go out.",
+                 fields.Date.to_string(day))
 
     @api.model_create_multi
     def create(self, vals_list):

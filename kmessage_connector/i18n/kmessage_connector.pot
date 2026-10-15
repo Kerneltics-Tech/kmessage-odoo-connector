@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-21 12:14+0000\n"
-"PO-Revision-Date: 2026-09-21 12:14+0000\n"
+"POT-Creation-Date: 2026-10-15 15:36+0000\n"
+"PO-Revision-Date: 2026-10-15 15:36+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -95,6 +95,21 @@ msgstr ""
 msgid ""
 "<b>Copy this token now.</b> Odoo keeps only a fingerprint of it, so it\n"
 "                        cannot be shown again."
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_account_form
+msgid ""
+"<span class=\"flex-grow-1\">\n"
+"                            <b>Delivery news is off for this connection.</b>\n"
+"                            Odoo does not hear whether a message it sent was delivered, read or not\n"
+"                            delivered, nor WhatsApp's reason.\n"
+"                        </span>"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_message_form
+msgid "<strong>WhatsApp did not deliver this message.</strong>"
 msgstr ""
 
 #. module: kmessage_connector
@@ -205,6 +220,18 @@ msgstr ""
 #. odoo-python
 #: code:addons/kmessage_connector/models/kmessage_event.py:0
 msgid "Already a customer here."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_message.py:0
+msgid "Already known; nothing changed."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_message.py:0
+msgid "Already marked not delivered."
 msgstr ""
 
 #. module: kmessage_connector
@@ -501,10 +528,14 @@ msgid "Connected to K-Message as %s."
 msgstr ""
 
 #. module: kmessage_connector
-#: model:ir.actions.act_window,name:kmessage_connector.action_kmessage_account
 #: model:ir.ui.menu,name:kmessage_connector.menu_kmessage_account
 #: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_account_form
 msgid "Connection"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.actions.act_window,name:kmessage_connector.action_kmessage_account
+msgid "Connections"
 msgstr ""
 
 #. module: kmessage_connector
@@ -609,14 +640,56 @@ msgid "Delivered"
 msgstr ""
 
 #. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_message_search
+msgid "Delivered or read"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_message_search
+msgid "Delivery"
+msgstr ""
+
+#. module: kmessage_connector
 #: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_message__delivery_status
 msgid "Delivery Status"
 msgstr ""
 
 #. module: kmessage_connector
 #. odoo-python
-#: code:addons/kmessage_connector/models/kmessage_event.py:0
+#: code:addons/kmessage_connector/models/kmessage_account.py:0
+msgid "Delivery news could not be switched on: %s"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_account.py:0
+msgid ""
+"Delivery news is on: Odoo hears when a message is delivered, read or not "
+"delivered."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_account.py:0
+msgid ""
+"Delivery news needs a newer K-Message, so it stays off for now. Your "
+"provider can update K-Message; then press Switch on delivery news."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_account__delivery_news
+msgid "Delivery news on"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_message.py:0
 msgid "Delivery status updated."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_message__delivery_date
+msgid "Delivery updated"
 msgstr ""
 
 #. module: kmessage_connector
@@ -713,6 +786,11 @@ msgid "Event"
 msgstr ""
 
 #. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_account__webhook_events
+msgid "Events"
+msgstr ""
+
+#. module: kmessage_connector
 #. odoo-python
 #: code:addons/kmessage_connector/models/kmessage_account.py:0
 msgid "Every default rule is already there."
@@ -761,7 +839,6 @@ msgid "Expression"
 msgstr ""
 
 #. module: kmessage_connector
-#: model:ir.model.fields.selection,name:kmessage_connector.selection__kmessage_message__delivery_status__failed
 #: model:ir.model.fields.selection,name:kmessage_connector.selection__kmessage_message__state__failed
 #: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_account_form
 #: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_message_search
@@ -1088,6 +1165,14 @@ msgid "K-Message did not take the connection: %s"
 msgstr ""
 
 #. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_account.py:0
+msgid ""
+"K-Message is sending delivery news about every message to this Odoo and did "
+"not take it back: %s. Connect again to retry."
+msgstr ""
+
+#. module: kmessage_connector
 #: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_token_form
 msgid "K-Message production"
 msgstr ""
@@ -1114,6 +1199,12 @@ msgstr ""
 #. odoo-python
 #: code:addons/kmessage_connector/models/kmessage_account.py:0
 msgid "K-Message refused the webhook: %s"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_account.py:0
+msgid "K-Message refused to update the webhook: %s"
 msgstr ""
 
 #. module: kmessage_connector
@@ -1147,6 +1238,11 @@ msgstr ""
 #. odoo-python
 #: code:addons/kmessage_connector/models/kmessage_account.py:0
 msgid "K-Message would not take the connection: %s"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.actions.server,name:kmessage_connector.cron_retry_delivery_news_ir_actions_server
+msgid "K-Message: apply early delivery news"
 msgstr ""
 
 #. module: kmessage_connector
@@ -1443,8 +1539,35 @@ msgid "None"
 msgstr ""
 
 #. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/controllers/main.py:0
+msgid "Not about a message this Odoo sent."
+msgstr ""
+
+#. module: kmessage_connector
 #: model:ir.model.fields.selection,name:kmessage_connector.selection__kmessage_account__state__draft
 msgid "Not connected"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_account.py:0
+#: model:ir.model.fields.selection,name:kmessage_connector.selection__kmessage_message__delivery_status__failed
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_account_form
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_message_search
+msgid "Not delivered"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_message.py:0
+msgid "Not delivered on WhatsApp to %(who)s: %(reason)s"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_message.py:0
+msgid "Not delivered: %s"
 msgstr ""
 
 #. module: kmessage_connector
@@ -1530,8 +1653,20 @@ msgid ""
 msgstr ""
 
 #. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_message.py:0
+msgid "Older news than what is already known; nothing changed."
+msgstr ""
+
+#. module: kmessage_connector
 #: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_reply_rule__model_id
 msgid "On records of"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_account.py:0
+msgid "Only a K-Message administrator can change the subscription."
 msgstr ""
 
 #. module: kmessage_connector
@@ -1561,6 +1696,14 @@ msgstr ""
 msgid ""
 "Only your K-Message provider can add a webhook on this plan. The address and"
 " secret to give them are on this page."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_account.py:0
+msgid ""
+"Only your K-Message provider can change the webhook on this plan. The events"
+" to ask them for are on this page."
 msgstr ""
 
 #. module: kmessage_connector
@@ -1816,6 +1959,12 @@ msgstr ""
 #: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_event__remote_message_id
 #: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_message__remote_message_id
 msgid "Remote Message"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_connect__remote_organization
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_connect__remote_organization_id
+msgid "Remote Organization"
 msgstr ""
 
 #. module: kmessage_connector
@@ -2116,6 +2265,11 @@ msgstr ""
 
 #. module: kmessage_connector
 #: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_account_form
+msgid "Switch on delivery news"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_account_form
 msgid "Switches"
 msgstr ""
 
@@ -2181,6 +2335,16 @@ msgid ""
 msgstr ""
 
 #. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_account__remote_organization
+msgid "Tenant"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_account__remote_organization_id
+msgid "Tenant ID"
+msgstr ""
+
+#. module: kmessage_connector
 #: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_account_form
 msgid "Test the connection"
 msgstr ""
@@ -2212,6 +2376,11 @@ msgstr ""
 msgid ""
 "The API key from K-Message. Only K-Message administrators in Odoo can read "
 "it."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_account__remote_organization
+msgid "The K-Message tenant's name, as the platform gives it."
 msgstr ""
 
 #. module: kmessage_connector
@@ -2317,6 +2486,13 @@ msgstr ""
 #. module: kmessage_connector
 #: model:ir.model.fields.selection,name:kmessage_connector.selection__kmessage_automation__language_mode__partner
 msgid "The customer's language"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_account__webhook_events
+msgid ""
+"The events K-Message confirmed it sends to this Odoo, the last time the "
+"subscription was set up from here."
 msgstr ""
 
 #. module: kmessage_connector
@@ -2449,6 +2625,15 @@ msgstr ""
 
 #. module: kmessage_connector
 #. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_account.py:0
+msgid ""
+"The webhook for this address was set up by hand in K-Message, so Odoo cannot"
+" change its events. Ask your provider to add the header x-managed-by: "
+"odoo_connector to that webhook, then press Switch on delivery news again."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
 #: code:addons/kmessage_connector/models/kmessage_document.py:0
 msgid "There is no report called “%s”."
 msgstr ""
@@ -2475,6 +2660,12 @@ msgstr ""
 #. odoo-python
 #: code:addons/kmessage_connector/controllers/main.py:0
 msgid "This Odoo is not answering questions right now."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_account.py:0
+msgid "This Odoo was already subscribed; %s missing event(s) added."
 msgstr ""
 
 #. module: kmessage_connector
@@ -2582,6 +2773,11 @@ msgid "Two tools on one connection cannot share a name."
 msgstr ""
 
 #. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_account__undelivered_count
+msgid "Undelivered messages"
+msgstr ""
+
+#. module: kmessage_connector
 #. odoo-python
 #: code:addons/kmessage_connector/models/kmessage_message.py:0
 msgid "Unexpected error; see the server log."
@@ -2616,6 +2812,12 @@ msgstr ""
 #. module: kmessage_connector
 #: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_message_search
 msgid "Waiting"
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_event.py:0
+msgid "Waiting for the message to be recorded in the outbox."
 msgstr ""
 
 #. module: kmessage_connector
@@ -2752,6 +2954,12 @@ msgid "WhatsApp"
 msgstr ""
 
 #. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_message.py:0
+msgid "WhatsApp gave no reason."
+msgstr ""
+
+#. module: kmessage_connector
 #: model:ir.model.fields,field_description:kmessage_connector.field_res_partner__kmessage_phone_key
 #: model:ir.model.fields,field_description:kmessage_connector.field_res_users__kmessage_phone_key
 msgid "WhatsApp key"
@@ -2770,6 +2978,13 @@ msgid "WhatsApp messages"
 msgstr ""
 
 #. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_message__delivery_error
+msgid ""
+"WhatsApp's own reason for not delivering this message, as K-Message passed "
+"it on."
+msgstr ""
+
+#. module: kmessage_connector
 #: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_template__whatsapp_account
 msgid "Whatsapp Account"
 msgstr ""
@@ -2777,6 +2992,11 @@ msgstr ""
 #. module: kmessage_connector
 #: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_automation_form
 msgid "When"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_message__delivery_date
+msgid "When K-Message last told this Odoo how far this message got."
 msgstr ""
 
 #. module: kmessage_connector
@@ -2812,6 +3032,13 @@ msgid "Where the rows sit in the answer. Our endpoints put them under data."
 msgstr ""
 
 #. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_account__delivery_news
+msgid ""
+"Whether K-Message tells this Odoo when a message it sent is delivered, read "
+"or not delivered."
+msgstr ""
+
+#. module: kmessage_connector
 #: model:ir.model.fields,help:kmessage_connector.field_kmessage_capability__available
 msgid "Whether the Odoo side of this can work at all right now."
 msgstr ""
@@ -2827,6 +3054,14 @@ msgid ""
 "Whether this token may read the tenant's webhook list. Being able to add one"
 " is a separate permission, and most managed plans reserve it for the "
 "provider."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_account__remote_organization_id
+msgid ""
+"Which K-Message tenant this token belongs to. Connecting a second token from"
+" the same tenant updates this connection; a token from another tenant "
+"becomes a connection of its own."
 msgstr ""
 
 #. module: kmessage_connector
@@ -2860,6 +3095,11 @@ msgid "Which {{n}} in the template body this fills."
 msgstr ""
 
 #. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_message__delivery_error
+msgid "Why not delivered"
+msgstr ""
+
+#. module: kmessage_connector
 #: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_connect__create_templates
 msgid "Write the templates for me"
 msgstr ""
@@ -2878,8 +3118,9 @@ msgstr ""
 msgid ""
 "Your K-Message plan is managed by your provider, so only they can add the\n"
 "                            subscription. Send them the address and the secret below and ask for the\n"
-"                            events <b>message.incoming</b>, <b>message.sent</b>, <b>button.reply</b>\n"
-"                            and <b>contact.created</b>."
+"                            events <b>message.incoming</b>, <b>message.sent</b>, <b>button.reply</b>,\n"
+"                            <b>contact.created</b>, <b>message.delivered</b>, <b>message.read</b>\n"
+"                            and <b>message.failed</b>."
 msgstr ""
 
 #. module: kmessage_connector

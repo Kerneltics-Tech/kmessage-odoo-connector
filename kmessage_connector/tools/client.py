@@ -200,6 +200,11 @@ class KMessageClient:
         return self._request('POST', '/api/webhooks', json=body)
 
     def update_webhook(self, webhook_id, **values):
+        """Change a subscription.
+
+        The platform sets ``is_active`` from the body on every update, so a
+        caller that leaves it out switches the webhook off. Pass it.
+        """
         return self._request('PUT', '/api/webhooks/%s' % webhook_id, json=values)
 
     def delete_webhook(self, webhook_id):
@@ -249,20 +254,29 @@ class KMessageClient:
         return self._request('POST', '/api/templates/%s/publish' % template_id, json={})
 
     # -- wiring the whole connection in one call --------------------------
-    def connect_odoo(self, webhook_url, webhook_secret, events, tools):
+    def connect_odoo(self, webhook_url, webhook_secret, events, tools, status_scope=None):
         """Hand K-Message everything it needs to call this Odoo back.
 
         Creating a webhook is otherwise reserved for the provider, which left
         the customer copying an address and a secret into a support ticket.
         This endpoint takes them directly. A platform that does not have it
         yet answers 404, and the caller falls back to the older path.
+
+        ``status_scope`` asks the platform to send delivery news only about
+        messages that carry a reference — this Odoo's own. It is sent only
+        when given; a platform that does not know it ignores it and says so
+        by not echoing it back in ``webhook.status_scope``.
         """
-        return self._request('POST', '/api/integrations/odoo/connect', json={
+        body = {
             'webhook_url': webhook_url,
             'webhook_secret': webhook_secret,
             'events': list(events or []),
             'tools': tools or [],
-        }, timeout=SEND_TIMEOUT)
+        }
+        if status_scope:
+            body['status_scope'] = status_scope
+        return self._request('POST', '/api/integrations/odoo/connect', json=body,
+                             timeout=SEND_TIMEOUT)
 
     # -- the assistant's tools --------------------------------------------
     # A "context" of type lookup_tool or document_tool is how K-Message lets a

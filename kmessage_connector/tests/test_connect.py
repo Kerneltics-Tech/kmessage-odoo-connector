@@ -10,9 +10,10 @@ first of those should ever leave the customer with nothing to do.
 
 from unittest.mock import patch
 
-from odoo.exceptions import UserError
+from odoo.exceptions import AccessError, UserError
 from odoo.tests import tagged
 
+from ..models.kmessage_account import BASE_EVENTS, DELIVERY_EVENTS, STATUS_SCOPE
 from ..tools.client import DEFAULT_BASE_URL, KMessageClient, KMessageError
 from .common import FAKE_API_KEY, KMessageCase, mirrored_template
 
@@ -295,3 +296,185 @@ class TestSeveralTenants(KMessageCase):
         other.inbound_enabled = False
         ping = self.env['kmessage.api']._handle_ping({}, self.env['kmessage.capability'])
         self.assertFalse(ping['inbound_enabled'])
+
+
+@tagged('post_install', '-at_install')
+class TestDeliveryNewsSubscription(KMessageCase):
+    """Delivery news is asked for only where it is limited to this Odoo's messages.
+
+    On the platform, delivered, read and failed fire for every message the
+    company sends. An Odoo subscribed to them without the scope would hear
+    about every campaign message and every bot reply, so the connector asks
+    for them only from a K-Message that echoes the scope back — and an older
+    one is never asked at all, not even for a moment.
+    """
+
+    def setUp(self):
+        super().setUp()
+        self.account.write({'webhook_secret': False, 'webhook_state': 'none',
+                            'webhook_remote_id': False, 'webhook_events': False})
+        self.env['kmessage.ai.tool'].with_context(active_test=False).search(
+            [('account_id', '=', self.account.id)]).unlink()
+        self.env['ir.config_parameter'].sudo().set_param(
+            'web.base.url', 'https://odoo.example.com')
+        self.state = self.fake.module.STATE
+
+    def old_platform(self, old=True):
+        with self.state.lock:
+            self.state.old_platform = old
+
+    def connects(self):
+        with self.state.lock:
+            return list(self.state.connects)
+
+    def hook(self):
+        with self.state.lock:
+            hooks = list(self.state.webhooks.values())
+        self.assertEqual(len(hooks), 1)
+        return hooks[0]
+
+    def hand_made_hook(self, events, is_active=True):
+        """A subscription somebody made in K-Message's own screens."""
+        return KMessageClient(self.fake.url, FAKE_API_KEY).create_webhook(
+            name='Made by hand', url=self.account.webhook_url, events=events,
+            secret='their-own-secret', is_active=is_active)
+
+    # -- a platform that scopes -------------------------------------------
+    def test_a_scoping_platform_gets_all_seven_events(self):
+        done, note = self.account.connect_everything()
+        self.assertTrue(done, note)
+        self.assertTrue(self.connects())
+        for call in self.connects():
+            self.assertEqual(call.get('status_scope'), STATUS_SCOPE)
+        self.assertEqual(sorted(self.hook()['events']), sorted(BASE_EVENTS + DELIVERY_EVENTS))
+        self.assertEqual(self.state.scopes[self.hook()['id']], STATUS_SCOPE)
+        self.assertEqual(sorted(self.account._webhook_event_list()),
+                         sorted(BASE_EVENTS + DELIVERY_EVENTS))
+        self.assertTrue(self.account.delivery_news)
+        self.assertIn('Delivery news is on', note)
+
+    def test_a_full_connect_still_says_what_the_assistant_got(self):
+        """As in 1.1.1, even when no tool was offered: the sentence is the outcome."""
+        done, note = self.account.connect_everything()
+        self.assertTrue(done, note)
+        self.assertIn('The assistant can now answer 0 questions from Odoo.', note)
+        self.assertIn('Delivery news is on', note)
+
+    def test_the_news_is_added_only_after_the_scope_came_back(self):
+        self.account.connect_everything()
+        first, second = self.connects()
+        self.assertFalse(set(DELIVERY_EVENTS) & set(first['events']),
+                         'statuses were asked for before the platform confirmed the scope')
+        self.assertEqual(sorted(second['events']), sorted(BASE_EVENTS + DELIVERY_EVENTS))
+        self.assertEqual(second['tools'], [], 'the tools were already handled by the first call')
+
+    def test_connecting_again_with_the_news_on_is_one_call(self):
+        """No moment in which the news is off, and so none in which it is lost."""
+        self.account.connect_everything()
+        with self.state.lock:
+            self.state.connects.clear()
+        self.account.connect_everything()
+        self.assertEqual(len(self.connects()), 1)
+        self.assertEqual(sorted(self.connects()[0]['events']),
+                         sorted(BASE_EVENTS + DELIVERY_EVENTS))
+        self.assertTrue(self.account.delivery_news)
+
+    # -- a platform from before the scope ---------------------------------
+    def test_an_older_platform_is_never_asked_for_delivery_news(self):
+        self.old_platform()
+        done, note = self.account.connect_everything()
+        self.assertTrue(done, note)
+        for call in self.connects():
+            self.assertFalse(set(DELIVERY_EVENTS) & set(call['events']))
+        self.assertEqual(sorted(self.hook()['events']), sorted(BASE_EVENTS))
+        self.assertEqual(sorted(self.account._webhook_event_list()), sorted(BASE_EVENTS))
+        self.assertFalse(self.account.delivery_news)
+        self.assertIn('newer K-Message', note)
+
+    def test_news_without_the_scope_is_taken_back(self):
+        """Only reachable if a platform stopped scoping; the four go back in."""
+        self.account.connect_everything()
+        self.assertTrue(self.account.delivery_news)
+        self.old_platform()
+        done, note = self.account.connect_everything()
+        self.assertTrue(done, note)
+        self.assertEqual(sorted(self.hook()['events']), sorted(BASE_EVENTS))
+        self.assertFalse(self.account.delivery_news)
+        self.assertIn('newer K-Message', note)
+
+    # -- existing installs ------------------------------------------------
+    def test_switching_on_delivery_news_touches_no_tool(self):
+        self.old_platform()
+        self.account.connect_everything()
+        self.assertFalse(self.account.delivery_news)
+        tool = self.env['kmessage.ai.tool'].create({
+            'name': 'Invoices in Odoo (subscription test)',
+            'tool_name': 'odoo_subscription_probe',
+            'description': "That customer's own invoices.",
+            'account_id': self.account.id,
+            'capability_id': self.env.ref('kmessage_connector.capability_customer_lookup').id,
+            'fields_json': '[{"name": "number", "label": "Invoice"}]',
+        })
+        with self.state.lock:
+            self.state.connects.clear()
+        self.old_platform(False)  # the provider updated K-Message
+
+        action = self.account.action_update_subscription()
+
+        self.assertEqual(action['params']['type'], 'success')
+        self.assertEqual(action['params']['next']['tag'], 'soft_reload',
+                         'the form has to show the banner gone and the events')
+        self.assertNotIn('assistant', action['params']['message'],
+                         'no tool was offered, so there is nothing to say about one')
+        self.assertTrue(self.account.delivery_news)
+        for call in self.connects():
+            self.assertEqual(call['tools'], [])
+        self.assertFalse(self.fake.contexts, 'no tool may be published by this button')
+        self.assertEqual(tool.state, 'draft')
+
+    def test_switching_on_with_an_older_platform_says_so(self):
+        self.old_platform()
+        self.account.connect_everything()
+        action = self.account.action_update_subscription()
+        self.assertEqual(action['params']['type'], 'warning')
+        self.assertIn('newer K-Message', action['params']['message'])
+        self.assertFalse(self.account.delivery_news)
+
+    def test_only_an_administrator_may_switch_it_on(self):
+        clerk = self.env['res.users'].create({
+            'name': 'Clerk', 'login': 'kmessage-clerk',
+            'groups_id': [(6, 0, [self.env.ref('base.group_user').id,
+                                  self.env.ref('kmessage_connector.group_kmessage_user').id])],
+        })
+        with self.assertRaises(AccessError):
+            self.account.with_user(clerk).action_update_subscription()
+        self.assertFalse(self.connects())
+
+    def test_a_webhook_made_by_hand_is_left_alone_and_the_way_out_is_named(self):
+        self.hand_made_hook(BASE_EVENTS)
+        done, note = self.account.connect_everything()
+        self.assertTrue(done, note)
+        self.assertIn('x-managed-by: odoo_connector', note)
+        self.assertEqual(sorted(self.hook()['events']), sorted(BASE_EVENTS))
+        self.assertFalse(self.account.delivery_news)
+
+    # -- the older route --------------------------------------------------
+    def test_the_older_route_adds_missing_events_and_keeps_the_webhook_on(self):
+        self.hand_made_hook(['message.incoming'])
+        self.account.action_setup_webhook()
+        hook = self.hook()
+        self.assertEqual(sorted(hook['events']), sorted(BASE_EVENTS))
+        self.assertTrue(hook['is_active'], 'an update without is_active switches the webhook off')
+        self.assertEqual(self.account.webhook_state, 'registered')
+        self.assertEqual(sorted(self.account._webhook_event_list()), sorted(BASE_EVENTS))
+
+    def test_the_older_route_never_asks_for_delivery_news(self):
+        """The general webhooks API cannot scope them, so it is never used for them."""
+        self.account.action_setup_webhook()
+        self.assertEqual(sorted(self.hook()['events']), sorted(BASE_EVENTS))
+        self.assertFalse(self.account.delivery_news)
+
+    def test_the_hand_over_text_names_all_seven_events(self):
+        form = self.env.ref('kmessage_connector.view_kmessage_account_form')
+        for event in BASE_EVENTS + DELIVERY_EVENTS:
+            self.assertIn(event, form.arch)

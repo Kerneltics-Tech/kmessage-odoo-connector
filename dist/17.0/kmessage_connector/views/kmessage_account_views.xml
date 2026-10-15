@@ -26,6 +26,24 @@
                                 invisible="failed_count == 0">
                             <field name="failed_count" widget="statinfo" string="Failed"/>
                         </button>
+                        <button name="action_view_undelivered" type="object" class="oe_stat_button" icon="fa-times-circle"
+                                invisible="undelivered_count == 0">
+                            <field name="undelivered_count" widget="statinfo" string="Not delivered"/>
+                        </button>
+                    </div>
+                    <!-- Odoo 17 insists that a field driving a modifier is present
+                         in the view, even when nothing renders it. -->
+                    <field name="delivery_news" invisible="1"/>
+                    <div class="alert alert-warning d-flex flex-wrap align-items-center gap-2" role="alert"
+                         invisible="webhook_state != 'registered' or delivery_news">
+                        <span class="flex-grow-1">
+                            <b>Delivery news is off for this connection.</b>
+                            Odoo does not hear whether a message it sent was delivered, read or not
+                            delivered, nor WhatsApp's reason.
+                        </span>
+                        <button name="action_update_subscription" type="object"
+                                string="Switch on delivery news" class="btn btn-primary btn-sm"
+                                groups="kmessage_connector.group_kmessage_manager"/>
                     </div>
                     <div class="oe_title">
                         <h1><field name="name" placeholder="K-Message"/></h1>
@@ -63,12 +81,14 @@
                              invisible="webhook_state != 'manual'">
                             Your K-Message plan is managed by your provider, so only they can add the
                             subscription. Send them the address and the secret below and ask for the
-                            events <b>message.incoming</b>, <b>message.sent</b>, <b>button.reply</b>
-                            and <b>contact.created</b>.
+                            events <b>message.incoming</b>, <b>message.sent</b>, <b>button.reply</b>,
+                            <b>contact.created</b>, <b>message.delivered</b>, <b>message.read</b>
+                            and <b>message.failed</b>.
                         </div>
                         <field name="webhook_url" readonly="1" widget="CopyClipboardChar"/>
                         <field name="webhook_secret" password="True"/>
                         <field name="webhook_state" readonly="1"/>
+                        <field name="webhook_events" readonly="1" invisible="not webhook_events"/>
                     </group>
                     <notebook>
                         <page string="Templates" name="templates">

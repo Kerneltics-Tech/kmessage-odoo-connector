@@ -12,6 +12,8 @@ import json
 
 from odoo import fields
 from odoo.exceptions import UserError
+from odoo.tests import tagged
+from odoo.tests.common import TransactionCase
 
 from odoo.addons.kmessage_connector.models.kmessage_message import (
     BACKOFF_MINUTES, PERMANENT_STATUSES,
@@ -70,6 +72,27 @@ class TestQueueing(KMessageCase):
         self.assertEqual(message.res_model, 'res.partner')
         self.assertEqual(message.res_id, self.partner.id)
         self.assertEqual(message.reference, 'res.partner:%s' % self.partner.id)
+
+    def test_every_message_leaves_with_a_reference(self):
+        """K-Message can be asked for delivery news only about messages with one.
+
+        A message about no record used to go out without any, and would never
+        have been heard of again.
+        """
+        cases = [
+            ({}, lambda message: 'kmessage.message:%s' % message.id),
+            ({'reference': 'given-by-the-caller'}, lambda message: 'given-by-the-caller'),
+            ({'record': self.partner}, lambda message: 'res.partner:%s' % self.partner.id),
+        ]
+        for values, expected in cases:
+            with self.subTest(values=sorted(values)):
+                message = self.enqueue(**values)
+                self.assertEqual(message.reference, expected(message))
+
+    def test_a_row_made_without_enqueue_gets_one_too(self):
+        message = self.env['kmessage.message'].create({
+            'account_id': self.account.id, 'phone': '966512345678', 'template_name': 'x'})
+        self.assertEqual(message.reference, 'kmessage.message:%s' % message.id)
 
 
 class TestSending(KMessageCase):
@@ -252,3 +275,73 @@ class TestTheCron(KMessageCase):
         self.env['kmessage.message']._cron_send_queue()
         self.assertEqual(broken.state, 'failed')
         self.assertEqual(good.state, 'sent')
+
+    def test_a_message_whatsapp_did_not_deliver_is_never_sent_again(self):
+        """Not delivered is news about a sent message, not a failed send.
+
+        Sending it again could reach the customer twice, or fail again for as
+        long as the reason lasts, so it stays sent and out of the queue.
+        """
+        message = self.queue()
+        self.env['kmessage.message']._cron_send_queue()
+        self.assertEqual(message.state, 'sent')
+        message._apply_delivery_news('failed', reason='Meta could not charge the account.')
+        self.assertEqual(message.state, 'sent')
+        self.assertEqual(message.delivery_status, 'failed')
+        self.fake.reset()
+        self.assertEqual(self.env['kmessage.message']._cron_send_queue(), 0)
+        self.assertFalse(self.fake.sent)
+
+    def test_every_cron_of_ours_keeps_running(self):
+        """Odoo 17 stops a cron after ``numbercall`` runs, and that defaults to 1.
+
+        The 17 build writes -1 on each of ours (dev/build.py); Odoo 18 has no
+        such field, and there every cron recurs.
+        """
+        data = self.env['ir.model.data'].search([
+            ('module', '=like', 'kmessage_connector%'), ('model', '=', 'ir.cron'),
+        ])
+        crons = self.env['ir.cron'].browse(data.mapped('res_id'))
+        self.assertIn(self.env.ref('kmessage_connector.cron_retry_delivery_news'), crons)
+        for cron in crons:
+            with self.subTest(cron=cron.name):
+                self.assertTrue(cron.active)
+                if 'numbercall' in cron._fields:
+                    self.assertEqual(cron.numbercall, -1, 'this cron would run once and stop')
+
+
+@tagged('post_install', '-at_install')
+class TestTheRenamedLabel(TransactionCase):
+    """"Failed" on the delivery column became "Not delivered".
+
+    Odoo keeps a renamed label's old translation on update, so an upgraded
+    Arabic database would go on showing the word for a failed send. The model
+    removes exactly that stale word before the translations are loaded.
+    """
+
+    def label(self):
+        self.env.cr.execute("""
+            SELECT s.id, s.name FROM ir_model_fields_selection s
+              JOIN ir_model_fields f ON f.id = s.field_id
+             WHERE f.model = 'kmessage.message' AND f.name = 'delivery_status'
+               AND s.value = 'failed'""")
+        return self.env.cr.fetchone()
+
+    def set_label(self, translations):
+        label_id, _name = self.label()
+        self.env.cr.execute(
+            "UPDATE ir_model_fields_selection SET name = name || %s::jsonb WHERE id = %s",
+            (json.dumps(translations), label_id))
+
+    def test_the_stale_arabic_word_is_dropped_and_nothing_else(self):
+        self.set_label({'ar_001': 'فشلت', 'fr_FR': 'Échoué'})
+        self.env['kmessage.message'].init()
+        _label_id, name = self.label()
+        self.assertNotIn('ar_001', name)
+        self.assertEqual(name['fr_FR'], 'Échoué')
+        self.assertEqual(name['en_US'], 'Not delivered')
+
+    def test_a_wording_somebody_chose_is_left_alone(self):
+        self.set_label({'ar_001': 'ما وصلت'})
+        self.env['kmessage.message'].init()
+        self.assertEqual(self.label()[1]['ar_001'], 'ما وصلت')

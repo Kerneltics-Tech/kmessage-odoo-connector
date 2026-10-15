@@ -5,7 +5,7 @@ import logging
 import secrets
 
 from odoo import _, api, fields, models
-from odoo.exceptions import UserError
+from odoo.exceptions import AccessError, UserError
 
 from ..tools.client import DEFAULT_BASE_URL, KMessageClient, KMessageError
 from ..tools.compat import LIST_FORM
@@ -13,9 +13,24 @@ from ..tools.net import why_not_public
 
 _logger = logging.getLogger(__name__)
 
-#: Events the connector knows how to act on. The platform may offer more; the
-#: ones we do not understand are logged and ignored rather than refused.
-SUBSCRIBED_EVENTS = ['message.incoming', 'message.sent', 'button.reply', 'contact.created']
+#: Events the connector knows how to act on, asked of every K-Message. The
+#: platform may offer more; the ones we do not understand are logged and
+#: ignored rather than refused.
+BASE_EVENTS = ['message.incoming', 'message.sent', 'button.reply', 'contact.created']
+
+#: News about a message this Odoo sent: delivered, read, or not delivered with
+#: WhatsApp's reason. On the platform they fire for every message the company
+#: sends — bot replies and campaigns included — so they are asked for only
+#: from a K-Message that confirms it will limit them to messages carrying a
+#: reference (STATUS_SCOPE), which every message from this Odoo does.
+DELIVERY_EVENTS = ['message.delivered', 'message.read', 'message.failed']
+
+#: What the connector asks K-Message to limit status events to.
+STATUS_SCOPE = 'referenced'
+
+#: The name the events went by before delivery news, kept for code that
+#: imported it.
+SUBSCRIBED_EVENTS = BASE_EVENTS
 
 
 def _organization_of(me):
@@ -118,11 +133,21 @@ class KMessageAccount(models.Model):
     webhook_state = fields.Selection(
         [('none', 'Not set up'), ('registered', 'Registered by Odoo'), ('manual', 'Waiting for your provider')],
         default='none', readonly=True, copy=False)
+    webhook_events = fields.Char(
+        string='Events', readonly=True, copy=False,
+        help="The events K-Message confirmed it sends to this Odoo, the last time "
+             "the subscription was set up from here.")
+    delivery_news = fields.Boolean(
+        string='Delivery news on', compute='_compute_delivery_news',
+        help="Whether K-Message tells this Odoo when a message it sent is "
+             "delivered, read or not delivered.")
 
     template_ids = fields.One2many('kmessage.template', 'account_id')
     template_count = fields.Integer(compute='_compute_counts')
     message_count = fields.Integer(compute='_compute_counts')
     failed_count = fields.Integer(compute='_compute_counts')
+    undelivered_count = fields.Integer(
+        string='Undelivered messages', compute='_compute_undelivered_count')
 
     # -- computes ---------------------------------------------------------
     def _compute_webhook_url(self):
@@ -138,6 +163,22 @@ class KMessageAccount(models.Model):
             account.failed_count = message.search_count([
                 ('account_id', '=', account.id), ('state', '=', 'failed'),
             ])
+
+    def _compute_undelivered_count(self):
+        message = self.env['kmessage.message']
+        for account in self:
+            account.undelivered_count = message.search_count([
+                ('account_id', '=', account.id), ('delivery_status', '=', 'failed'),
+            ])
+
+    @api.depends('webhook_events')
+    def _compute_delivery_news(self):
+        for account in self:
+            account.delivery_news = set(DELIVERY_EVENTS) <= set(account._webhook_event_list())
+
+    def _webhook_event_list(self):
+        self.ensure_one()
+        return [event.strip() for event in (self.webhook_events or '').split(',') if event.strip()]
 
     # -- access -----------------------------------------------------------
     @api.model
@@ -273,6 +314,9 @@ class KMessageAccount(models.Model):
         to their provider. Returns ``(done, note)`` — ``done`` is False when
         the platform is too old to have the endpoint, which is the caller's
         cue to fall back to setting each piece up on its own.
+
+        ``tools`` limits what is offered: an empty recordset touches no tool
+        at all, which is how the subscription alone is brought up to date.
         """
         self.ensure_one()
         record = self.sudo()
@@ -283,6 +327,9 @@ class KMessageAccount(models.Model):
         if not record.webhook_secret:
             record.webhook_secret = secrets.token_hex(32)
 
+        # Asked before ``tools`` is filled in below: a caller that limited the
+        # tools (the subscription-only button) gets no sentence about them.
+        every_tool = tools is None
         tools = tools if tools is not None else self.env['kmessage.ai.tool'].sudo().search([
             ('account_id', '=', record.id), ('capability_id.active', '=', True),
         ])
@@ -297,12 +344,7 @@ class KMessageAccount(models.Model):
             by_name[payload['name']] = tool
 
         try:
-            answer = record._client().connect_odoo(
-                webhook_url=record.webhook_url,
-                webhook_secret=record.webhook_secret,
-                events=SUBSCRIBED_EVENTS,
-                tools=payloads,
-            ) or {}
+            answer, news = record._subscribe(record._client(), payloads)
         except KMessageError as error:
             if error.status == 404:
                 return False, _("This K-Message does not take a connection from Odoo yet.")
@@ -329,7 +371,113 @@ class KMessageAccount(models.Model):
                                    'last_published': fields.Datetime.now()})
             else:
                 tool.sudo().write({'state': 'error', 'last_error': outcome.get('message') or ''})
-        return True, _("The assistant can now answer %s questions from Odoo.", published)
+        notes = []
+        if every_tool or payloads:
+            notes.append(_("The assistant can now answer %s questions from Odoo.", published))
+        if news:
+            notes.append(news)
+        return True, ' '.join(str(note) for note in notes)
+
+    def _subscribe(self, client, payloads):
+        """Register the webhook and the tools; delivery news only where it is scoped.
+
+        Delivery news is asked for only from a K-Message that confirms it will
+        limit it to this Odoo's own messages, by echoing the scope back. So
+        the first call asks for the events this connection already had
+        confirmed — the four, on a first connect — together with the scope,
+        and the answer decides the rest:
+
+        * the scope came back and the news is not on yet: a second call adds
+          it, with no tools, which the first call already handled;
+        * the scope did not come back: the platform is older than the scope,
+          the news stays off, and if it was somehow on, the four are
+          registered again in its place;
+        * the webhook was set up by hand (``unchanged``): nothing here may
+          change it, and the note says who can.
+
+        At no point is an older platform asked for delivery news, not even
+        for a moment. Raises ``KMessageError`` only for the first call.
+        Returns ``(answer to the first call, a sentence about delivery news)``
+        and writes the events the platform confirmed to ``webhook_events``.
+        """
+        self.ensure_one()
+        record = self.sudo()
+        asked = list(BASE_EVENTS) + (list(DELIVERY_EVENTS) if record.delivery_news else [])
+        answer = client.connect_odoo(
+            webhook_url=record.webhook_url,
+            webhook_secret=record.webhook_secret,
+            events=asked,
+            tools=payloads,
+            status_scope=STATUS_SCOPE,
+        ) or {}
+        webhook = answer.get('webhook') or {}
+        if not webhook.get('id'):
+            return answer, ''
+
+        events = webhook.get('events') or asked
+        if webhook.get('status') == 'unchanged':
+            record.webhook_events = ', '.join(sorted(set(events)))
+            if record.delivery_news:
+                return answer, ''
+            return answer, _(
+                "The webhook for this address was set up by hand in K-Message, so Odoo "
+                "cannot change its events. Ask your provider to add the header "
+                "x-managed-by: odoo_connector to that webhook, then press Switch on "
+                "delivery news again.")
+
+        scoped = webhook.get('status_scope') == STATUS_SCOPE
+        has_news = bool(set(DELIVERY_EVENTS) & set(events))
+        trouble = None
+        if scoped != has_news:
+            wanted = list(BASE_EVENTS) + (list(DELIVERY_EVENTS) if scoped else [])
+            try:
+                again = client.connect_odoo(
+                    webhook_url=record.webhook_url,
+                    webhook_secret=record.webhook_secret,
+                    events=wanted,
+                    tools=[],
+                    status_scope=STATUS_SCOPE,
+                ) or {}
+                events = (again.get('webhook') or {}).get('events') or wanted
+            except KMessageError as error:
+                _logger.warning('K-Message: could not settle delivery news (%s)', error)
+                trouble = error
+        record.webhook_events = ', '.join(sorted(set(events)))
+
+        if trouble and scoped:
+            return answer, _("Delivery news could not be switched on: %s", trouble)
+        if trouble:
+            return answer, _(
+                "K-Message is sending delivery news about every message to this Odoo and "
+                "did not take it back: %s. Connect again to retry.", trouble)
+        if record.delivery_news:
+            return answer, _("Delivery news is on: Odoo hears when a message is delivered, "
+                             "read or not delivered.")
+        return answer, _("Delivery news needs a newer K-Message, so it stays off for now. "
+                         "Your provider can update K-Message; then press Switch on delivery news.")
+
+    def action_update_subscription(self):
+        """Switch on delivery news for a connection made before it existed.
+
+        Connects again with no tools, so the subscription is the only thing
+        that changes: no assistant tool is created, updated or touched.
+        """
+        self.ensure_one()
+        if not (self.env.su or self.env.user.has_group('kmessage_connector.group_kmessage_manager')):
+            raise AccessError(_("Only a K-Message administrator can change the subscription."))
+        done, note = self.connect_everything(tools=self.env['kmessage.ai.tool'])
+        action = self._notify(note, warning=not (done and self.delivery_news))
+        # Shown again afterwards, so the banner goes and the events appear.
+        action['params']['next'] = {'type': 'ir.actions.client', 'tag': 'soft_reload'}
+        return action
+
+    def action_view_undelivered(self):
+        action = self.action_view_messages()
+        action.update(
+            name=_("Not delivered"),
+            domain=[('account_id', '=', self.id), ('delivery_status', '=', 'failed')],
+        )
+        return action
 
     def action_setup_webhook(self):
         """Subscribe our webhook URL, or explain what to ask the provider for."""
@@ -364,13 +512,13 @@ class KMessageAccount(models.Model):
         mine = next((hook for hook in existing if hook.get('url') == record.webhook_url), None)
         if mine:
             record.write({'webhook_remote_id': mine.get('id'), 'webhook_state': 'registered'})
-            return record._notify(_("This Odoo is already subscribed."))
+            return record._add_missing_events(client, mine)
 
         try:
             created = client.create_webhook(
                 name='Odoo — %s' % record.company_id.name,
                 url=record.webhook_url,
-                events=SUBSCRIBED_EVENTS,
+                events=BASE_EVENTS,
                 secret=record.webhook_secret,
             ) or {}
         except KMessageError as error:
@@ -388,8 +536,41 @@ class KMessageAccount(models.Model):
             # generated its own, this is the only moment we can learn it.
             'webhook_secret': created.get('secret') or record.webhook_secret,
             'webhook_state': 'registered',
+            'webhook_events': ', '.join(sorted(set(created.get('events') or BASE_EVENTS))),
         })
         return record._notify(_("K-Message will now call this Odoo."))
+
+    def _add_missing_events(self, client, hook):
+        """Bring an existing subscription up to the events this Odoo acts on.
+
+        Only the four this route has always asked for: the general webhooks
+        API cannot limit delivery news to this Odoo's own messages, so it is
+        never used to ask for them — that is Connect's job. ``is_active`` is
+        always sent, because the platform reads it from every update and a
+        body without it would switch the webhook off.
+        """
+        self.ensure_one()
+        record = self.sudo()
+        have = list(hook.get('events') or [])
+        missing = [event for event in BASE_EVENTS if event not in have]
+        if not missing:
+            record.webhook_events = ', '.join(sorted(set(have)))
+            return record._notify(_("This Odoo is already subscribed."))
+        try:
+            updated = client.update_webhook(
+                hook.get('id'), events=sorted(set(have) | set(BASE_EVENTS)), is_active=True) or {}
+        except KMessageError as error:
+            if error.operator_only:
+                record.write({'provider_managed': True, 'webhook_state': 'manual'})
+                return record._notify(
+                    _("Only your K-Message provider can change the webhook on this plan. "
+                      "The events to ask them for are on this page."),
+                    warning=True)
+            raise UserError(_("K-Message refused to update the webhook: %s", error))
+        record.webhook_events = ', '.join(sorted(set(
+            updated.get('events') or (set(have) | set(BASE_EVENTS)))))
+        return record._notify(_("This Odoo was already subscribed; %s missing event(s) added.",
+                                len(missing)))
 
     # -- small helpers ----------------------------------------------------
     def _notify(self, message, warning=False):

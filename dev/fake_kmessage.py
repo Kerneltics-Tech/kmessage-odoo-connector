@@ -25,6 +25,8 @@ what it was sent so a test can assert on it:
     POST /_fail                       make the next N sends fail (test hook)
     POST /_refuse_tools               answer 403 to tool publishing, like a managed plan
     POST /_approve                    Meta gets back to us: {"name": …} → APPROVED
+    POST /_old_platform               {"old": true}: behave like a K-Message from before
+                                      status_scope — take the field, ignore it, echo nothing
 
     GET  /api/chatbot/flows           the flow trees a company has
     POST /api/chatbot/flows           import one
@@ -34,6 +36,15 @@ what it was sent so a test can assert on it:
 Run it with ``python3 dev/fake_kmessage.py --port 8787``; the key it accepts is
 ``test-key`` unless ``--api-key`` says otherwise. Nothing here talks to Meta,
 and nothing leaves the process.
+
+It can also play the platform's side of a webhook, signed exactly the way the
+real dispatcher signs (HMAC-SHA256 over the raw body):
+
+    python3 dev/fake_kmessage.py deliver http://127.0.0.1:8069/kmessage/api/v1/webhook \\
+        message.failed --secret <webhook secret> message_id=<K-Message id> \\
+        "error_message=Meta could not charge this WhatsApp Business account"
+
+Every ``key=value`` after the event becomes a field of ``data``.
 """
 
 from __future__ import annotations
@@ -44,6 +55,7 @@ import hmac
 import json
 import re
 import threading
+import urllib.error
 import urllib.request
 import uuid
 from datetime import datetime, timezone
@@ -98,12 +110,19 @@ TEMPLATES = [
 EVENTS = [
     ("message.incoming", "Message Incoming", "When a new message is received from a contact"),
     ("message.sent", "Message Sent", "When an agent sends a message"),
+    ("message.delivered", "Message Delivered", "When WhatsApp delivers a message to the contact"),
+    ("message.read", "Message Read", "When the contact reads a message"),
+    ("message.failed", "Message Failed", "When WhatsApp does not deliver a message, with the reason"),
     ("contact.created", "Contact Created", "When a new contact is created"),
     ("transfer.created", "Transfer Created", "When a transfer to human agent is requested"),
     ("transfer.assigned", "Transfer Assigned", "When a transfer is assigned to an agent"),
     ("transfer.resumed", "Transfer Resumed", "When chatbot is resumed (transfer closed)"),
     ("button.reply", "Button Reply", "When a contact taps a button"),
 ]
+
+#: The one status scope the platform knows: status events only about messages
+#: that carry a reference.
+STATUS_SCOPES = ("", "referenced")
 
 
 def _parse_multipart(body, content_type):
@@ -151,6 +170,11 @@ class State:
         self.uploads: list[dict] = []
         self.flows: dict[str, dict] = {}
         self.refuse_tools = False
+        self.old_platform = False
+        self.connects: list[dict] = []
+        #: status_scope per webhook id. Kept apart from the webhook rows
+        #: because the platform's webhook list does not show it either.
+        self.scopes: dict[str, str] = {}
 
     def reset(self) -> None:
         with self.lock:
@@ -161,8 +185,11 @@ class State:
             self.drafts.clear()
             self.uploads.clear()
             self.flows.clear()
+            self.connects.clear()
+            self.scopes.clear()
             self.fail_next = 0
             self.refuse_tools = False
+            self.old_platform = False
 
 
 STATE = State()
@@ -288,6 +315,11 @@ class Handler(BaseHTTPRequestHandler):
             with STATE.lock:
                 STATE.refuse_tools = bool(payload.get("refuse", True))
             return self._ok({"refuse_tools": STATE.refuse_tools})
+        if path == "/_old_platform":
+            payload = json.loads(self._body() or b"{}")
+            with STATE.lock:
+                STATE.old_platform = bool(payload.get("old", True))
+            return self._ok({"old_platform": STATE.old_platform})
         if path == "/_fail":
             payload = json.loads(self._body() or b"{}")
             with STATE.lock:
@@ -361,18 +393,33 @@ class Handler(BaseHTTPRequestHandler):
 
         if path == "/api/integrations/odoo/connect":
             payload = json.loads(self._body() or b"{}")
+            with STATE.lock:
+                STATE.connects.append(payload)
+                old_platform = STATE.old_platform
             url = (payload.get("webhook_url") or "").strip()
             if url and re.search(r"://(localhost|127\.|10\.|192\.168\.|169\.254\.)", url):
                 return self._err(400, "callback_url must not be a private or loopback host")
+            # A platform from before status_scope decodes the body leniently and
+            # never sees the field; the current one validates it and echoes it.
+            scope = "" if old_platform else (payload.get("status_scope") or "")
+            if scope not in STATUS_SCOPES:
+                return self._err(400, "status_scope must be empty or 'referenced'")
             answer = {"webhook": {}, "tools": []}
             if url:
                 with STATE.lock:
                     existing = next((w for w in STATE.webhooks.values() if w["url"] == url), None)
                     secret = payload.get("webhook_secret") or uuid.uuid4().hex
                     events = payload.get("events") or ["message.incoming", "button.reply"]
-                    if existing:
-                        existing.update({"events": events, "updated_at": _now()})
+                    if existing and (existing.get("headers") or {}).get("x-managed-by") != "odoo_connector":
+                        # Made by hand: never touched, and said so.
+                        answer["webhook"] = {"id": existing["id"], "status": "unchanged",
+                                             "events": existing["events"]}
+                        if STATE.scopes.get(existing["id"]) and not old_platform:
+                            answer["webhook"]["status_scope"] = STATE.scopes[existing["id"]]
+                    elif existing:
+                        existing.update({"events": events, "updated_at": _now(), "is_active": True})
                         STATE.secrets[existing["id"]] = secret
+                        STATE.scopes[existing["id"]] = scope
                         answer["webhook"] = {"id": existing["id"], "status": "updated",
                                              "secret": secret, "events": events}
                     else:
@@ -383,8 +430,11 @@ class Handler(BaseHTTPRequestHandler):
                                   "created_at": _now(), "updated_at": _now()}
                         STATE.webhooks[hook_id] = record
                         STATE.secrets[hook_id] = secret
+                        STATE.scopes[hook_id] = scope
                         answer["webhook"] = {"id": hook_id, "status": "created",
                                              "secret": secret, "events": events}
+                    if scope and answer["webhook"].get("status") != "unchanged":
+                        answer["webhook"]["status_scope"] = scope
             for tool in payload.get("tools") or []:
                 if STATE.refuse_tools:
                     answer["tools"].append({"name": tool.get("name"), "status": "failed",
@@ -504,7 +554,10 @@ class Handler(BaseHTTPRequestHandler):
             record = STATE.webhooks.get(m.group(1))
             if not record:
                 return self._err(404, "Webhook not found")
-            record.update({k: v for k, v in payload.items() if k != "secret"})
+            record.update({k: v for k, v in payload.items() if k not in ("secret", "is_active")})
+            # The platform's trap, reproduced: is_active is read from every
+            # update, so a body without it switches the webhook off.
+            record["is_active"] = bool(payload.get("is_active", False))
             record["updated_at"] = _now()
             if payload.get("secret"):
                 STATE.secrets[m.group(1)] = payload["secret"]
@@ -570,8 +623,11 @@ class Handler(BaseHTTPRequestHandler):
         return self._ok({"id": message_id, "status": "queued"})
 
 
-def deliver(url: str, event: str, data: dict, secret: str) -> int:
-    """Post a webhook the way the real dispatcher does — signed over raw bytes."""
+def _signed_post(url: str, event: str, data: dict, secret: str) -> tuple[int, str]:
+    """Post a webhook the way the real dispatcher does — signed over raw bytes.
+
+    Returns the status and the answer's body, whatever the status was.
+    """
     body = json.dumps({"event": event, "timestamp": _now(), "data": data}).encode()
     signature = hmac.new(secret.encode(), body, hashlib.sha256).hexdigest()
     request = urllib.request.Request(
@@ -582,15 +638,51 @@ def deliver(url: str, event: str, data: dict, secret: str) -> int:
             "X-Webhook-Signature": f"sha256={signature}",
         },
     )
-    with urllib.request.urlopen(request, timeout=20) as response:
-        return response.status
+    try:
+        with urllib.request.urlopen(request, timeout=20) as response:
+            return response.status, response.read().decode("utf-8", "replace")
+    except urllib.error.HTTPError as refusal:
+        return refusal.code, refusal.read().decode("utf-8", "replace")
+
+
+def deliver(url: str, event: str, data: dict, secret: str) -> int:
+    """Post a webhook the way the real dispatcher does — signed over raw bytes."""
+    return _signed_post(url, event, data, secret)[0]
+
+
+def _data_from(pairs: list[str]) -> dict:
+    """``key=value`` words as a dict; a value that parses as JSON is used as JSON."""
+    data = {}
+    for pair in pairs:
+        key, sep, value = pair.partition("=")
+        if not sep or not key:
+            raise SystemExit(f"expected key=value, got {pair!r}")
+        try:
+            data[key] = json.loads(value)
+        except ValueError:
+            data[key] = value
+    return data
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description=__doc__)
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--port", type=int, default=8787)
     parser.add_argument("--api-key", default="test-key")
+    commands = parser.add_subparsers(dest="command")
+    post = commands.add_parser(
+        "deliver", help="post one signed webhook event to an Odoo, as K-Message would")
+    post.add_argument("url", help="the Odoo's webhook address, …/kmessage/api/v1/webhook")
+    post.add_argument("event", help="e.g. message.failed, message.delivered, message.read")
+    post.add_argument("fields", nargs="*", metavar="key=value", help="the event's data")
+    post.add_argument("--secret", required=True, help="the connection's webhook secret")
     args = parser.parse_args()
+
+    if args.command == "deliver":
+        status, answer = _signed_post(args.url, args.event, _data_from(args.fields), args.secret)
+        print(status, answer, flush=True)
+        raise SystemExit(0 if 200 <= status < 300 else 1)
+
     Handler.api_key = args.api_key
     server = ThreadingHTTPServer(("127.0.0.1", args.port), Handler)
     print(f"fake K-Message on http://127.0.0.1:{args.port} (key: {args.api_key})", flush=True)

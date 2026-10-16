@@ -203,3 +203,58 @@ class TestTheDoor(HttpCase):
             {'event': 'transfer.resumed', 'data': {}},
             secret=self.account.sudo().webhook_secret)
         self.assertEqual(answer.status_code, 200)
+
+    # -- delivery news, through the door ----------------------------------
+    def sent_message(self, remote_id):
+        return self.env['kmessage.message'].create({
+            'account_id': self.account.id,
+            'partner_id': self.partner.id,
+            'phone': '966512345678',
+            'template_name': 'invoice_ready',
+            'state': 'sent',
+            'delivery_status': 'sent',
+            'remote_message_id': remote_id,
+            'res_model': 'res.partner',
+            'res_id': self.partner.id,
+        })
+
+    def test_a_signed_not_delivered_reaches_the_message_with_its_reason(self):
+        message = self.sent_message('k-message-id-door-1')
+        reason = 'Meta could not charge this WhatsApp Business account.'
+        answer = self.webhook({
+            'event': 'message.failed',
+            'timestamp': '2026-10-15T10:00:00Z',
+            'data': {'message_id': 'k-message-id-door-1', 'status': 'failed',
+                     'error_message': reason, 'reference': message.reference,
+                     'contact_phone': '966512345678'},
+        }, secret=self.account.sudo().webhook_secret)
+        self.assertEqual(answer.status_code, 200)
+        body = answer.json()
+        self.assertTrue(body['ok'])
+        self.assertTrue(body['event_id'])
+        self.assertIn(reason, body['outcome'])
+        self.assertEqual(message.delivery_status, 'failed')
+        self.assertEqual(message.delivery_error, reason)
+        self.assertEqual(message.state, 'sent')
+        self.assertIn(reason, ' '.join(self.partner.message_ids.mapped('body')))
+
+    def test_read_news_about_a_stranger_is_answered_and_not_kept(self):
+        before = self.env['kmessage.event'].search_count([])
+        answer = self.webhook({
+            'event': 'message.read',
+            'data': {'message_id': 'k-message-id-of-somebody-else', 'status': 'read'},
+        }, secret=self.account.sudo().webhook_secret)
+        self.assertEqual(answer.status_code, 200)
+        body = answer.json()
+        self.assertTrue(body['ok'])
+        self.assertIsNone(body['event_id'])
+        self.assertEqual(self.env['kmessage.event'].search_count([]), before)
+
+    def test_delivery_news_with_the_wrong_secret_gets_nowhere(self):
+        message = self.sent_message('k-message-id-door-2')
+        answer = self.webhook({
+            'event': 'message.failed',
+            'data': {'message_id': 'k-message-id-door-2', 'error_message': 'forged'},
+        }, secret='not-the-secret')
+        self.assertEqual(answer.status_code, 401)
+        self.assertEqual(message.delivery_status, 'sent')

@@ -77,14 +77,70 @@ guessing.
 
 ## Events on offer (live catalogue)
 
-`message.incoming` · `message.sent` · `contact.created` · `transfer.created` ·
-`transfer.assigned` · `transfer.resumed` · `button.reply`
+`message.incoming` · `message.sent` · `message.delivered` · `message.read` ·
+`message.failed` · `button.reply` · `contact.created` · `contact.updated` ·
+`transfer.created` · `transfer.assigned` · `transfer.resumed` ·
+`campaign.completed` · `template.approved` · `template.rejected`
 
-The inbound webhook handler accepts all seven, verifies
+The inbound webhook handler accepts all of them, verifies
 `X-Webhook-Signature: sha256=<hex HMAC of the raw body>`, stores the event, and
 routes it. Anything it does not act on is recorded and answered `200` — a
 webhook that retries because we returned 500 on an event we simply ignore is a
-self-inflicted outage.
+self-inflicted outage. It acts on seven: the four it has always subscribed to,
+and the three delivery events.
+
+## Delivery news
+
+`message.delivered`, `message.read` and `message.failed` carry the K-Message id
+of the message (`message_id`, stored on the outbox row as
+`remote_message_id`), WhatsApp's reason on a failure (`error_message`), and the
+reference Odoo sent with it.
+
+* **Asked for only where it is scoped.** The platform fires these for every
+  message a company sends. Connect always sends `status_scope: referenced`,
+  and asks for the three only once `webhook.status_scope` has come back: the
+  first call asks for the four events with the scope — the seven only when
+  the news is on and the platform echoed the scope last time
+  (`webhook_status_scope`) — and a second call, with no tools, adds the three
+  once the scope is echoed, or puts the four back if a platform stops
+  echoing it. A platform that never echoed the scope never sees a request for
+  them; one rolled back after echoing it sees one, taken back by the second
+  call a moment later. Events copied from a webhook set up by hand never
+  count as a confirmed scope. Every outbox row carries a
+  reference (`kmessage.message:<id>` when nothing else names it), so the scope
+  never hides one of Odoo's own messages. The general webhooks API cannot
+  scope, so the older route (*Set up the webhook*) only ever adds the four,
+  and always sends `is_active` (the platform reads it from every update). The
+  webhook it creates carries the `x-managed-by: odoo_connector` header that
+  Connect puts on its own, so Connect may later bring it up to date and scope
+  it; a webhook it merely finds is never marked, because Connect would then
+  overwrite whatever headers and secret somebody gave it.
+* **Matched within the connection that signed it**, by `remote_message_id` —
+  the same rule button replies follow — so one tenant's secret cannot settle
+  another company's message.
+* **Ordered like the platform** (`statusPriority`): pending < sent < delivered
+  < read; failed overrides any of them and nothing overrides failed. Late news
+  is recorded and changes nothing.
+* **Not delivered** writes `delivery_error` and one chatter note on the source
+  document, inside a savepoint. `state` stays *Sent* and nothing is queued
+  again.
+* **Volume.** Delivered or read about a message this Odoo never sent is
+  answered `200` and not stored. A failure is kept only when its reference
+  names a row of this connection still waiting for its K-Message id — a
+  refusal at send time can arrive before the send is committed — and the
+  retry cron (every 5 minutes, 200 a run) applies it once the id is there,
+  closing it after 24 hours. A run reads only the news it can settle — its
+  message is now in the outbox, or its day is up — so news still waiting is
+  not read again every five minutes and never keeps newer news from its turn.
+  The daily tidy deletes up to 20,000 old events a run. The count of messages
+  not delivered, on the connection form, has a partial index of its own
+  (`delivery_status = 'failed'`).
+* **Odoo 17 upgrades.** The 1.1.1 build's crons stopped after one run there
+  (`numbercall` defaulted to 1). Before the upgrade's data switches the outbox
+  back on, `kmessage.message.init()` marks every message that waited more than
+  a day failed and permanent, with a reason that says so, and logs how many;
+  *Try again* sends one. Nothing is held back on 18, or on a 17 whose outbox
+  kept running.
 
 ## Modules
 
@@ -117,7 +173,8 @@ the parts that match their Odoo. Core depends only on `base`, `mail` and
   language, whether to attach the PDF, active.
 * **`kmessage.message`** — the outbox. One row per intended message with its
   state machine, attempt count, next attempt, provider message id, delivery
-  status and the record it came from.
+  status (with WhatsApp's reason when it was not delivered, and when the news
+  arrived), a reference that is never empty, and the record it came from.
 * **`kmessage.capability`** — one row per inbound endpoint, each with an active
   flag and a scope. Disabled means `403` with a stable code, never a silent
   empty answer.

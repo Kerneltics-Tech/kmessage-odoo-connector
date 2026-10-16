@@ -10,6 +10,19 @@
         <field name="active" eval="True"/>
     </record>
 
+    <!-- A "not delivered" can reach Odoo a moment before the send that caused
+         it has been committed. It is kept, and applied here once its message
+         is in the outbox; given up on after a day. -->
+    <record id="cron_retry_delivery_news" model="ir.cron">
+        <field name="name">K-Message: apply early delivery news</field>
+        <field name="model_id" ref="model_kmessage_event"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_retry_delivery_news()</field>
+        <field name="interval_number">5</field>
+        <field name="interval_type">minutes</field>
+        <field name="active" eval="True"/>
+    </record>
+
     <record id="cron_clean_events" model="ir.cron">
         <field name="name">K-Message: tidy the event log</field>
         <field name="model_id" ref="model_kmessage_event"/>

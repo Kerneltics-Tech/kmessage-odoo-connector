@@ -10,7 +10,9 @@
                 <field name="contact_name" optional="show"/>
                 <field name="contact_phone"/>
                 <field name="partner_id"/>
-                <field name="outcome"/>
+                <!-- Bounded: an outcome may carry WhatsApp's whole reason, and
+                     the columns beside it have to stay readable. -->
+                <field name="outcome" width="460px"/>
                 <field name="handled"/>
                 <field name="company_id" groups="base.group_multi_company" optional="hide"/>
             </list>

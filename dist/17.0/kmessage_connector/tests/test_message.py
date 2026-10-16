@@ -12,9 +12,12 @@ import json
 
 from odoo import fields
 from odoo.exceptions import UserError
+from odoo.tests import tagged
+from odoo.tests.common import TransactionCase
+from odoo.tools.sql import index_exists
 
 from odoo.addons.kmessage_connector.models.kmessage_message import (
-    BACKOFF_MINUTES, PERMANENT_STATUSES,
+    BACKOFF_MINUTES, PERMANENT_STATUSES, STALE_AFTER_HOURS,
 )
 
 from .common import CUSTOMER_MOBILE, KMessageCase
@@ -70,6 +73,27 @@ class TestQueueing(KMessageCase):
         self.assertEqual(message.res_model, 'res.partner')
         self.assertEqual(message.res_id, self.partner.id)
         self.assertEqual(message.reference, 'res.partner:%s' % self.partner.id)
+
+    def test_every_message_leaves_with_a_reference(self):
+        """K-Message can be asked for delivery news only about messages with one.
+
+        A message about no record used to go out without any, and would never
+        have been heard of again.
+        """
+        cases = [
+            ({}, lambda message: 'kmessage.message:%s' % message.id),
+            ({'reference': 'given-by-the-caller'}, lambda message: 'given-by-the-caller'),
+            ({'record': self.partner}, lambda message: 'res.partner:%s' % self.partner.id),
+        ]
+        for values, expected in cases:
+            with self.subTest(values=sorted(values)):
+                message = self.enqueue(**values)
+                self.assertEqual(message.reference, expected(message))
+
+    def test_a_row_made_without_enqueue_gets_one_too(self):
+        message = self.env['kmessage.message'].create({
+            'account_id': self.account.id, 'phone': '966512345678', 'template_name': 'x'})
+        self.assertEqual(message.reference, 'kmessage.message:%s' % message.id)
 
 
 class TestSending(KMessageCase):
@@ -252,3 +276,190 @@ class TestTheCron(KMessageCase):
         self.env['kmessage.message']._cron_send_queue()
         self.assertEqual(broken.state, 'failed')
         self.assertEqual(good.state, 'sent')
+
+    def test_a_message_whatsapp_did_not_deliver_is_never_sent_again(self):
+        """Not delivered is news about a sent message, not a failed send.
+
+        Sending it again could reach the customer twice, or fail again for as
+        long as the reason lasts, so it stays sent and out of the queue.
+        """
+        message = self.queue()
+        self.env['kmessage.message']._cron_send_queue()
+        self.assertEqual(message.state, 'sent')
+        message._apply_delivery_news('failed', reason='Meta could not charge the account.')
+        self.assertEqual(message.state, 'sent')
+        self.assertEqual(message.delivery_status, 'failed')
+        self.fake.reset()
+        self.assertEqual(self.env['kmessage.message']._cron_send_queue(), 0)
+        self.assertFalse(self.fake.sent)
+
+
+@tagged('post_install', '-at_install')
+class TestEveryCronRecurs(TransactionCase):
+    """Odoo 17 stops a cron after ``numbercall`` runs, and that defaults to 1.
+
+    The 17 build writes -1 on each of ours (dev/build.py); Odoo 18 has no such
+    field, and there every cron recurs. Checked once every module is loaded:
+    when 1.1.1 is upgraded on Odoo 17, a bridge's cron, stopped by then, is
+    switched back on only when that bridge loads, after this module's own
+    at_install tests have run.
+    """
+
+    def test_every_cron_of_ours_keeps_running(self):
+        data = self.env['ir.model.data'].search([
+            ('module', '=like', 'kmessage_connector%'), ('model', '=', 'ir.cron'),
+        ])
+        crons = self.env['ir.cron'].browse(data.mapped('res_id'))
+        self.assertIn(self.env.ref('kmessage_connector.cron_retry_delivery_news'), crons)
+        for cron in crons:
+            with self.subTest(cron=cron.name):
+                self.assertTrue(cron.active)
+                if 'numbercall' in cron._fields:
+                    self.assertEqual(cron.numbercall, -1, 'this cron would run once and stop')
+
+
+@tagged('post_install', '-at_install')
+class TestTheRenamedLabel(TransactionCase):
+    """"Failed" on the delivery column became "Not delivered".
+
+    Odoo keeps a renamed label's old translation on update, so an upgraded
+    Arabic database would go on showing the word for a failed send. The model
+    removes exactly that stale word before the translations are loaded.
+    """
+
+    def label(self):
+        self.env.cr.execute("""
+            SELECT s.id, s.name FROM ir_model_fields_selection s
+              JOIN ir_model_fields f ON f.id = s.field_id
+             WHERE f.model = 'kmessage.message' AND f.name = 'delivery_status'
+               AND s.value = 'failed'""")
+        return self.env.cr.fetchone()
+
+    def set_label(self, translations):
+        label_id, _name = self.label()
+        self.env.cr.execute(
+            "UPDATE ir_model_fields_selection SET name = name || %s::jsonb WHERE id = %s",
+            (json.dumps(translations), label_id))
+
+    def test_the_stale_arabic_word_is_dropped_and_nothing_else(self):
+        self.set_label({'ar_001': 'فشلت', 'fr_FR': 'Échoué'})
+        self.env['kmessage.message'].init()
+        _label_id, name = self.label()
+        self.assertNotIn('ar_001', name)
+        self.assertEqual(name['fr_FR'], 'Échoué')
+        self.assertEqual(name['en_US'], 'Not delivered')
+
+    def test_a_wording_somebody_chose_is_left_alone(self):
+        self.set_label({'ar_001': 'ما وصلت'})
+        self.env['kmessage.message'].init()
+        self.assertEqual(self.label()[1]['ar_001'], 'ما وصلت')
+
+
+@tagged('post_install', '-at_install')
+class TestWhatAnUpgradeDoes(KMessageCase):
+    """What ``init`` does to the outbox before an upgrade loads the data.
+
+    On Odoo 17 the 1.1.1 build let every cron run once and stop, the outbox
+    among them, and the upgrade starts them again. Whatever had waited more
+    than a day in the stopped outbox is held back first, so the upgrade does
+    not send weeks-old messages by itself. Odoo 18 has no ``numbercall``, no
+    cron of ours ever stopped there, and nothing is held back.
+    """
+
+    def setUp(self):
+        super().setUp()
+        # Rows this database already carried would be held back as well.
+        self.env['kmessage.message'].search([('state', 'in', ('queued', 'failed'))]).write(
+            {'state': 'cancelled', 'next_attempt': False})
+        self.cron = self.env.ref('kmessage_connector.cron_send_queue')
+        self.on_17 = 'numbercall' in self.cron._fields
+
+    def waiting(self, hours, **values):
+        """A message that has been in the outbox for ``hours``."""
+        message = self.env['kmessage.message'].enqueue(
+            account=self.account, phone=CUSTOMER_MOBILE, template=self.template,
+            partner=self.partner, record=self.partner)
+        if values:
+            message.write(values)
+        message.flush_recordset()
+        self.env.cr.execute(
+            'UPDATE kmessage_message SET create_date = %s WHERE id = %s',
+            (fields.Datetime.subtract(fields.Datetime.now(), hours=hours), message.id))
+        message.invalidate_recordset()
+        return message
+
+    def stop_the_outbox(self):
+        """The cron as the 1.1.1 build on Odoo 17 left it: run once, switched off."""
+        if not self.on_17:
+            self.skipTest('Odoo 18 has no numbercall: every cron recurs, and none stopped')
+        self.cron.write({'numbercall': 0, 'active': False})
+        self.cron.flush_recordset()
+
+    def run_the_outbox_again(self):
+        """What the upgrade's data load does to the cron afterwards."""
+        if self.on_17:
+            self.cron.write({'numbercall': -1, 'active': True})
+            self.cron.flush_recordset()
+
+    def upgrade(self):
+        self.env['kmessage.message'].init()
+        self.env.invalidate_all()
+
+    def test_an_upgrade_holds_back_what_a_stopped_outbox_kept(self):
+        self.stop_the_outbox()
+        old = self.waiting(hours=72)
+        retrying = self.waiting(hours=STALE_AFTER_HOURS + 6, state='failed', attempts=1,
+                                next_attempt=fields.Datetime.now())
+        recent = self.waiting(hours=2)
+        notes = len(self.partner.message_ids)
+
+        self.upgrade()
+
+        for message in (old, retrying):
+            with self.subTest(message=message.id):
+                self.assertEqual(message.state, 'failed')
+                self.assertTrue(message.permanent_error, 'the outbox would pick it up again')
+                self.assertFalse(message.next_attempt)
+                self.assertIn('Held back when the connector was upgraded', message.error)
+                self.assertIn(fields.Date.to_string(message.create_date.date()), message.error)
+        self.assertEqual(recent.state, 'queued', 'a message from today still goes out')
+        self.assertFalse(recent.error)
+        self.assertEqual(len(self.partner.message_ids), notes, 'no note on any document')
+
+        # The outbox, running again, sends the recent one and nothing older.
+        self.run_the_outbox_again()
+        self.assertEqual(self.env['kmessage.message']._cron_send_queue(), 1)
+        self.assertEqual(recent.state, 'sent')
+        self.assertEqual(len(self.fake.sent), 1)
+        self.assertEqual(old.state, 'failed')
+
+        # Try again is how a person sends one that should still go out.
+        old.action_retry()
+        self.env['kmessage.message']._cron_send_queue()
+        self.assertEqual(old.state, 'sent')
+        self.assertEqual(len(self.fake.sent), 2)
+
+    def test_a_second_upgrade_finds_nothing_to_do(self):
+        self.stop_the_outbox()
+        held = self.waiting(hours=72)
+        self.upgrade()
+        reason = held.error
+        self.run_the_outbox_again()
+        later = self.waiting(hours=48)
+        self.upgrade()
+        self.assertEqual(later.state, 'queued', 'a running outbox is left to do its job')
+        self.assertEqual(held.error, reason)
+
+    def test_an_outbox_that_runs_is_left_alone(self):
+        """Odoo 18, or an Odoo 17 whose outbox never stopped."""
+        self.run_the_outbox_again()
+        old = self.waiting(hours=72)
+        self.upgrade()
+        self.assertEqual(old.state, 'queued')
+        self.assertFalse(old.error)
+        self.assertFalse(old.permanent_error)
+
+    def test_not_delivered_has_an_index_of_its_own(self):
+        """The connection form counts them each time it opens."""
+        self.upgrade()
+        self.assertTrue(index_exists(self.env.cr, 'kmessage_message_not_delivered_idx'))

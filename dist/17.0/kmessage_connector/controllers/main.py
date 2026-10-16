@@ -222,4 +222,9 @@ class KMessageApiController(http.Controller):
             account, envelope)
         # Always 200 once the signature is good: K-Message retries on anything
         # else, and a retry of an event we chose not to act on is pure noise.
+        if not event:
+            # Delivery news about a message this Odoo never sent: answered,
+            # and deliberately not written down.
+            return _json_response({'ok': True, 'event_id': None,
+                                   'outcome': _("Not about a message this Odoo sent.")})
         return _json_response({'ok': True, 'event_id': event.id, 'outcome': event.outcome or ''})

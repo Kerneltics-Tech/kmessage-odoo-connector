@@ -14,7 +14,11 @@
                        decoration-success="state == 'sent'"
                        decoration-danger="state == 'failed'"
                        decoration-muted="state in ('cancelled', 'skipped')"/>
-                <field name="delivery_status" optional="show"/>
+                <field name="delivery_status" optional="show" widget="badge"
+                       decoration-success="delivery_status in ('delivered', 'read')"
+                       decoration-danger="delivery_status == 'failed'"/>
+                <field name="delivery_error" optional="show" width="280px"/>
+                <field name="delivery_date" optional="hide"/>
                 <field name="attempts" optional="hide"/>
                 <field name="error" optional="hide"/>
                 <field name="company_id" groups="base.group_multi_company" optional="hide"/>
@@ -50,7 +54,10 @@
                         <group>
                             <field name="account_id"/>
                             <field name="sent_at" readonly="1"/>
-                            <field name="delivery_status" readonly="1"/>
+                            <field name="delivery_status" readonly="1" widget="badge"
+                                   decoration-success="delivery_status in ('delivered', 'read')"
+                                   decoration-danger="delivery_status == 'failed'"/>
+                            <field name="delivery_date" readonly="1" invisible="not delivery_date"/>
                             <field name="remote_message_id" readonly="1"/>
                             <field name="attempts" readonly="1"/>
                             <field name="next_attempt" readonly="1" invisible="not next_attempt"/>
@@ -58,6 +65,11 @@
                     </group>
                     <div class="alert alert-danger" role="alert" invisible="not error">
                         <field name="error" readonly="1" nolabel="1"/>
+                    </div>
+                    <div class="alert alert-danger" role="alert" invisible="delivery_status != 'failed'">
+                        <strong>WhatsApp did not deliver this message.</strong>
+                        <field name="delivery_error" readonly="1" nolabel="1" class="d-block mt-1"
+                               invisible="not delivery_error"/>
                     </div>
                     <group string="What the customer reads">
                         <field name="body_preview" nolabel="1" colspan="2" readonly="1"/>
@@ -84,10 +96,16 @@
                 <filter name="queued" string="Waiting" domain="[('state', '=', 'queued')]"/>
                 <filter name="sent" string="Sent" domain="[('state', '=', 'sent')]"/>
                 <separator/>
+                <filter name="not_delivered" string="Not delivered"
+                        domain="[('delivery_status', '=', 'failed')]"/>
+                <filter name="delivered" string="Delivered or read"
+                        domain="[('delivery_status', 'in', ('delivered', 'read'))]"/>
+                <separator/>
                 <filter name="today" string="Today"
                         domain="[('create_date', '&gt;=', datetime.datetime.combine(context_today(), datetime.time(0,0,0)))]"/>
                 <group expand="0" string="Group by">
                     <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_delivery" string="Delivery" context="{'group_by': 'delivery_status'}"/>
                     <filter name="group_template" string="Template" context="{'group_by': 'template_name'}"/>
                     <filter name="group_partner" string="Customer" context="{'group_by': 'partner_id'}"/>
                 </group>

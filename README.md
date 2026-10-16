@@ -78,16 +78,61 @@ venv/bin/python odoo-bin -d <database> -i kmessage_connector --stop-after-init \
 Two more details keep the one source tree honest, and they are worth knowing
 before editing anything:
 
-* **The manifest version carries no series prefix.** It is `1.0.0`, not
-  `18.0.1.0.0`. Odoo stamps the running series onto it — the installed module
-  reads `17.0.1.0.0` on a 17 and `18.0.1.0.0` on an 18 — and a version that
-  already names a series raises on the other one. `python3 dev/build.py --check`
-  reports what the conversion would change and fails on a manifest that has
-  grown a prefix, which makes it a reasonable thing to run in CI.
+* **The manifest version names its series.** The Apps store wants the series
+  in front (`18.0.1.2.0`), and Odoo refuses a version that names the other
+  one: `18.0.…` on a 17 raises before the module is even read. So the source
+  carries `18.0.`, and the build rewrites it to `17.0.` in the 17 copy.
+  `python3 dev/build.py --check` reports what the conversion would change and
+  fails on a source manifest without the `18.0.` prefix, which makes it a
+  reasonable thing to run in CI.
 * **Python never hardcodes a view type.** Anything that builds a `view_mode` at
   runtime imports it from `kmessage_connector/tools/compat.py`, which asks the
   running server which name it uses. The build script therefore copies Python
   untouched and rewrites only XML.
+* **On 17 a cron has to say that it recurs.** Odoo 17 runs a cron `numbercall`
+  times and then switches it off, and that number defaults to 1; Odoo 18
+  dropped the field and refuses it. The build writes `numbercall` -1 on every
+  cron. Builds up to 1.1.1 did not, so on Odoo 17 their crons — the outbox
+  among them — stopped after their first run; upgrading the modules switches
+  them back on. So that the outbox does not then send weeks-old messages by
+  itself, the upgrade first holds back every message that had waited in the
+  stopped outbox for more than a day: it is marked *Failed*, with the reason
+  *Held back when the connector was upgraded…*, and *Try again* sends it if it
+  should still go out. Messages from the last day go out as usual. The
+  *invoices that have fallen due* cron comes back too, so a rule on that
+  trigger starts reminding about every invoice still overdue, within the
+  rule's own cooldown.
+
+## Upgrading
+
+Put the new code where the old was, then upgrade the module: restart Odoo
+and press *Upgrade* on **K-Message Connector** in *Apps*, or
+
+```bash
+venv/bin/python odoo-bin -d <database> -u kmessage_connector --stop-after-init \
+    --addons-path=<the same as above>
+```
+
+Upgrading the connector upgrades the bridges with it. How to get the new code
+depends on one question: **has anybody changed the connector's code?**
+
+* **No**: take the release as it is. `git pull` on `main` or `18.0`; on
+  `17.0`, which is rebuilt for every release, `git fetch` and
+  `git reset --hard origin/17.0`; or download the branch and replace the four
+  folders.
+* **Yes**: do not replace the folders, which would throw those changes away
+  without a word. A release that needs it ships a patch per Odoo series and a
+  guide in `docs/upgrade/<version>/`: for 1.2.0,
+  [docs/upgrade/1.2.0](docs/upgrade/1.2.0/README.md)
+  ([بالعربي](docs/upgrade/1.2.0/README.ar.md)). The patch applies to 1.1.1
+  (and to 1.1.0 after a one-line change) and keeps the changes; where they
+  meet the release's, git marks the place and you choose.
+
+After upgrading to 1.2.0, open *K-Message → Configuration → Connection* and
+press *Switch on delivery news*. For the maintainers: once a release is
+committed, with `dist/17.0` rebuilt, `sh dev/make_upgrade_patch.sh <previous
+release commit>` writes its patches into `docs/upgrade/<version>/` and checks
+that each turns an untouched previous release into this one, byte for byte.
 
 ---
 
@@ -128,7 +173,9 @@ precisely because webhooks and custom actions are otherwise operator-only, and
 it is narrow on purpose: it reads the tenant from the API key, it only ever
 creates or updates rows it marked as its own, and a webhook or tool somebody
 set up by hand is left exactly as it was. On a K-Message that does not have it
-yet, the wizard falls back to the older route — see below.
+yet, the wizard falls back to the older route — see below. The webhook that
+route creates carries the same marker, so Connect can bring it up to date
+later.
 
 That issued token is shown **once**. Odoo stores a fingerprint of it and nothing
 else, so it cannot be read back later — copy it into K-Message now, or press
@@ -151,18 +198,24 @@ Only then, send your provider exactly this:
 ```
 Address:   https://<your-odoo>/kmessage/api/v1/webhook
 Method:    POST
-Events:    message.incoming, message.sent, button.reply, contact.created
+Events:    message.incoming, message.sent, button.reply, contact.created,
+           message.delivered, message.read, message.failed
 Secret:    (the webhook secret on the connection form, visible to a
             K-Message Administrator in Odoo)
 Signature: X-Webhook-Signature: sha256=<hex HMAC-SHA256 of the raw body>
 ```
 
 Odoo verifies that signature on every inbound call and refuses anything
-unsigned or wrongly signed. Those four events are the ones it acts on; the
-three the platform also offers — `transfer.created`, `transfer.assigned`,
-`transfer.resumed` — are recorded and answered `200` without being acted on,
-because a webhook that retries after we returned an error on an event we chose
-to ignore is a self-inflicted outage.
+unsigned or wrongly signed. Those seven events are the ones it acts on; the
+others the platform offers — the `transfer.*` events among them — are recorded
+and answered `200` without being acted on, because a webhook that retries after
+we returned an error on an event we chose to ignore is a self-inflicted outage.
+
+The last three are delivery news, and a webhook made by hand hears it about
+every message the company sends, campaigns and bot replies included. The
+connector copes — news about a message this Odoo never sent is answered and not
+stored — but it is traffic for nothing. Connect, where the platform allows it,
+asks for them limited to this Odoo's own messages instead.
 
 Assistant tools are refused the same way when the token's role may not change
 chatbot settings. [docs/AI-TOOLS.md](docs/AI-TOOLS.md) has the exact JSON to
@@ -224,13 +277,32 @@ default, because people tap twice.
 **A send is accepted, not delivered.** `POST /api/messages/template` answers
 `pending`: K-Message has taken the message, not handed it to the customer.
 Odoo's *Sent* therefore means *accepted by K-Message*. A failure that happens
-afterwards never comes back on that call.
+afterwards never comes back on that call — it comes back as delivery news.
 
-**There is no delivered or read event today.** The platform's event catalogue
-offers `message.incoming`, `message.sent`, `button.reply`, `contact.created`
-and the three `transfer.*` events — nothing for delivered or read. The delivery
-column in the outbox therefore stops at *Sent*, and it would be dishonest to
-show more.
+**Delivery news needs a K-Message that limits it to this Odoo.** On the
+platform, `message.delivered`, `message.read` and `message.failed` fire for
+every message a company sends. Connect sends `status_scope: referenced` —
+only messages that carry a reference, which every message from this Odoo does —
+and asks for the three only once the platform has echoed that scope back. A
+K-Message that has never echoed it is never asked for them: the connection
+keeps the four events above, says that delivery news needs a newer K-Message,
+and the *Delivery* column stops at *Sent*. A connection made
+before delivery news existed shows *Delivery news is off* on its form, with a
+*Switch on delivery news* button that changes the subscription and nothing
+else; connecting again does the same.
+
+**What delivery news does.** The outbox shows how far each message got —
+*Delivered*, *Read*, or *Not delivered* with WhatsApp's own reason ("add a
+payment method in Meta Business Suite", "outside the 24-hour window") — and
+the invoice, or whatever the message was about, gets one note saying it did
+not arrive and why. News only moves a message forward, in the platform's own
+order: a late *delivered* never undoes *read*, *not delivered* overrides
+everything, and nothing overrides it. A message WhatsApp did not deliver stays
+*Sent* and is never sent again by itself: a resend can reach the customer
+twice, or fail again for as long as the reason lasts, so it is a person's
+decision. A refusal at send time can reach Odoo a moment before the send that
+caused it is committed; it is kept and applied by a cron within minutes, and
+given up on after a day.
 
 **K-Message's own Odoo tools cannot call this addon.** They talk XML-RPC and
 read a fixed list of models — `res.partner`, `account.move`, `ir.attachment`,
@@ -277,13 +349,16 @@ cannot read a long list, and a long list is how an accident becomes an export.
   to edit in them.
 * [docs/SECURITY.md](docs/SECURITY.md) — what is stored where, and how to revoke
   access in one step.
+* [docs/CHANGELOG.md](docs/CHANGELOG.md) — what each release changed, and
+  [docs/upgrade/](docs/upgrade/) — how to take a release into a copy you
+  changed yourself.
 
 ## Branches
 
 | Branch | What it is |
 | --- | --- |
 | `main`, `18.0` | The source. Odoo 18. |
-| `17.0` | Generated from it by `dev/build.py` — `<list>` becomes `<tree>`, the manifest version changes series. Do not fix anything here; run `sh dev/publish_17.sh` on 18.0 instead. |
+| `17.0` | Generated from it by `dev/build.py` — `<list>` becomes `<tree>`, the manifest version changes series, every cron gets `numbercall` -1. Do not fix anything here; run `sh dev/publish_17.sh` on 18.0 instead. |
 
 Both install the same four modules, under the same names, at the root of the
 branch — which is where the Odoo Apps store and every community repo look.

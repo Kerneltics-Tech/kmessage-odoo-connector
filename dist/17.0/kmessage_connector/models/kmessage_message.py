@@ -10,9 +10,11 @@ roll back an accounting entry, and a retry must never post the invoice twice.
 import base64
 import json
 import logging
+from collections import defaultdict
 
 from odoo import _, api, fields, models, modules
 from odoo.exceptions import UserError
+from odoo.tools.sql import column_exists, create_index
 
 from ..tools.client import KMessageError
 from ..tools.phone import normalize
@@ -22,8 +24,20 @@ _logger = logging.getLogger(__name__)
 #: How long to wait before each further attempt, in minutes.
 BACKOFF_MINUTES = [1, 5, 15, 60, 180]
 
+#: How long a message may have waited in an outbox that had stopped and still
+#: be sent by itself once an upgrade starts the outbox again. Older ones are
+#: held back for a person to look at (``_hold_back_a_stopped_outbox``).
+STALE_AFTER_HOURS = 24
+
 #: Answers that will never succeed no matter how often they are repeated.
 PERMANENT_STATUSES = (400, 401, 403, 404, 422)
+
+#: How far a message has got, in the platform's own order (statusPriority in
+#: K-Message). Webhooks do not arrive in order, so news only ever moves a row
+#: forward: a late "delivered" never undoes "read", and "sent" never undoes
+#: either. "failed" is not on this ladder: it overrides any step of it, and
+#: nothing overrides it.
+DELIVERY_ORDER = {'pending': 0, 'sent': 1, 'delivered': 2, 'read': 3}
 
 
 class KMessageMessage(models.Model):
@@ -67,10 +81,19 @@ class KMessageMessage(models.Model):
 
     remote_message_id = fields.Char(readonly=True, index=True, copy=False)
     sent_at = fields.Datetime(readonly=True, copy=False)
+    # "failed" here is WhatsApp not delivering a message K-Message accepted,
+    # which is not the same thing as the send failing (state). The key stays;
+    # the label says the difference.
     delivery_status = fields.Selection(
         [('pending', 'Pending'), ('sent', 'Sent'), ('delivered', 'Delivered'),
-         ('read', 'Read'), ('failed', 'Failed')],
+         ('read', 'Read'), ('failed', 'Not delivered')],
         default='pending', readonly=True, copy=False)
+    delivery_error = fields.Char(
+        string='Why not delivered', readonly=True, copy=False,
+        help="WhatsApp's own reason for not delivering this message, as K-Message passed it on.")
+    delivery_date = fields.Datetime(
+        string='Delivery updated', readonly=True, copy=False,
+        help="When K-Message last told this Odoo how far this message got.")
 
     display_name = fields.Char(compute='_compute_display_name')
 
@@ -79,6 +102,134 @@ class KMessageMessage(models.Model):
         for message in self:
             who = message.partner_id.display_name or message.phone or ''
             message.display_name = '%s → %s' % (message.template_name or _("Message"), who)
+
+    def init(self):
+        """What an install or upgrade does before the module's data is loaded.
+
+        Three things, each a no-op when there is nothing to do: the renamed
+        delivery label below, an index for the messages that were not
+        delivered, and, on Odoo 17, holding back what a stopped outbox kept
+        (``_hold_back_a_stopped_outbox``).
+
+        The delivery value ``failed`` was labelled "Failed" until delivery news
+        existed; it is "Not delivered" now, to tell it apart from a send that
+        failed. On an update Odoo keeps whatever translation a renamed label
+        already had, so every upgraded Arabic database would go on saying
+        فشلت. Removing exactly that stale word, before the labels are
+        reflected and the translations loaded, lets the shipped one load in its
+        place. Any other wording — one somebody chose included — is left
+        alone, and a second run finds nothing to do.
+        """
+        stale = 'فشلت'
+        self.env.cr.execute("""
+            UPDATE ir_model_fields_selection s
+               SET name = s.name - ARRAY(
+                       SELECT key FROM jsonb_each_text(s.name)
+                        WHERE key LIKE 'ar%%' AND value = %s)
+              FROM ir_model_fields f
+             WHERE f.id = s.field_id
+               AND f.model = 'kmessage.message'
+               AND f.name = 'delivery_status'
+               AND s.value = 'failed'
+               AND EXISTS (SELECT 1 FROM jsonb_each_text(s.name)
+                            WHERE key LIKE 'ar%%' AND value = %s)
+        """, (stale, stale))
+        self._index_not_delivered()
+        self._hold_back_a_stopped_outbox()
+
+    def _index_not_delivered(self):
+        """An index for the one delivery value anybody looks for.
+
+        The connection form counts the messages WhatsApp did not deliver each
+        time it opens, and the outbox filters on them. They are a sliver of an
+        outbox that grows by a row for every invoice sent, so the index holds
+        only them: small, and exactly what both questions need.
+        """
+        create_index(self.env.cr, 'kmessage_message_not_delivered_idx', self._table,
+                     ['account_id'], where="delivery_status = 'failed'")
+
+    def _hold_back_a_stopped_outbox(self):
+        """On Odoo 17, keep the upgrade from sending what a stopped outbox kept.
+
+        The Odoo 17 build of 1.1.1 and earlier did not say that its crons
+        recur, and Odoo 17 runs a cron ``numbercall`` times — 1, unless it is
+        told otherwise — and then switches it off. So the outbox ran once and
+        has kept every message queued since. This version's data switches it
+        back on, and its next run would send all of them: an invoice from weeks
+        ago announced as if it were new, and a WhatsApp message cannot be
+        taken back.
+
+        So, before the data is loaded, every message that has waited more than
+        ``STALE_AFTER_HOURS`` is marked failed with a reason that says why,
+        and *Try again* sends it if it should still go out. Newer ones are sent
+        as usual, and no note goes on any document. Only an outbox that really
+        stopped is touched: Odoo 18 has no ``numbercall``, a 17 whose outbox
+        runs does not have 0 there, and the data load writes -1, so the next
+        upgrade finds nothing to do.
+        """
+        cr = self.env.cr
+        if not column_exists(cr, 'ir_cron', 'numbercall'):
+            return
+        cr.execute("""
+            SELECT c.numbercall
+              FROM ir_cron c
+              JOIN ir_model_data d ON d.res_id = c.id AND d.model = 'ir.cron'
+             WHERE d.module = 'kmessage_connector' AND d.name = 'cron_send_queue'
+        """)
+        row = cr.fetchone()
+        if not row or row[0] != 0:
+            return
+        cutoff = fields.Datetime.subtract(fields.Datetime.now(), hours=STALE_AFTER_HOURS)
+        # The rows the outbox would pick up: _cron_send_queue's own domain,
+        # less the time of the next attempt, which a stopped outbox let pass.
+        cr.execute("""
+            SELECT id, create_date FROM kmessage_message
+             WHERE state IN ('queued', 'failed')
+               AND permanent_error IS NOT TRUE
+               AND create_date < %s
+        """, (cutoff,))
+        stale = cr.fetchall()
+        if not stale:
+            return
+        by_day = defaultdict(list)
+        for message_id, created in stale:
+            by_day[created.date()].append(message_id)
+        # Written with nobody signed in, so in the language the administrator
+        # reads Odoo in.
+        admin = self.env.ref('base.user_admin', raise_if_not_found=False)
+        writer = self.with_context(lang=(admin and admin.sudo().lang) or 'en_US')
+        for day, ids in by_day.items():
+            cr.execute("""
+                UPDATE kmessage_message
+                   SET state = 'failed', permanent_error = TRUE, next_attempt = NULL,
+                       error = %s, write_date = (now() at time zone 'UTC')
+                 WHERE id IN %s
+            """, (writer._held_back_reason(day), tuple(ids)))
+        _logger.warning(
+            'K-Message: the outbox had stopped (Odoo 17 cron with numbercall 0). %s message(s) '
+            'that had waited more than %s hours were held back instead of being sent now; '
+            'they are marked failed, and Try again sends one.', len(stale), STALE_AFTER_HOURS)
+
+    def _held_back_reason(self, day):
+        return _("Held back when the connector was upgraded: it had waited since %s, "
+                 "while the outbox was stopped on Odoo 17. Press Try again (or Queue again "
+                 "on the message) if it should still go out.",
+                 fields.Date.to_string(day))
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        """Every message leaves with a reference, even one about no record.
+
+        K-Message can be asked to send delivery news only about messages that
+        carry a reference, which is how this Odoo hears about its own messages
+        and not about everything the company sends. A message without one
+        would never be heard of again. The fallback names the row itself.
+        """
+        messages = super().create(vals_list)
+        for message in messages:
+            if not message.reference:
+                message.reference = '%s:%s' % (self._name, message.id)
+        return messages
 
     # -- queueing ---------------------------------------------------------
     @api.model
@@ -280,6 +431,74 @@ class KMessageMessage(models.Model):
         except Exception:  # noqa: BLE001 - a missing note is not a failed send
             _logger.exception(
                 'K-Message: could not note message %s on %s %s',
+                self.id, self.res_model, self.res_id)
+
+    # -- news from K-Message about a message already sent ------------------
+    def _apply_delivery_news(self, status, reason=None, when=None):
+        """Move this row forward with what K-Message says; return what was done.
+
+        Only ever the delivery columns. ``state`` stays where it is — a message
+        WhatsApp would not deliver was still sent — and nothing is queued
+        again: sending it a second time could reach the customer twice, or
+        fail again for as long as the reason lasts. Sending again is a
+        person's decision.
+        """
+        self.ensure_one()
+        current = self.delivery_status or 'pending'
+        when = when or fields.Datetime.now()
+        reason = (reason or '').strip()[:500]
+
+        if current == 'failed':
+            # Nothing overrides "not delivered". A second refusal may still
+            # bring the reason the first one lacked; it never brings a second
+            # note on the document.
+            if status == 'failed' and reason and not self.delivery_error:
+                self.write({'delivery_error': reason, 'delivery_date': when})
+            return _("Already marked not delivered.")
+
+        if status == 'failed':
+            self.write({
+                'delivery_status': 'failed',
+                'delivery_error': reason or False,
+                'delivery_date': when,
+            })
+            self._log_not_delivered()
+            return _("Not delivered: %s", reason or _("WhatsApp gave no reason."))
+
+        rank, known = DELIVERY_ORDER.get(status, -1), DELIVERY_ORDER.get(current, 0)
+        if rank == known:
+            # The everyday case for "sent": the send itself already said so.
+            return _("Already known; nothing changed.")
+        if rank < known:
+            return _("Older news than what is already known; nothing changed.")
+        self.write({'delivery_status': status, 'delivery_date': when})
+        return _("Delivery status updated.")
+
+    def _log_not_delivered(self):
+        """Say on the invoice — or whatever it was — that WhatsApp did not deliver it.
+
+        Written once, when the row first becomes "not delivered", and with the
+        same care as ``_log_on_source``: inside a savepoint, so a chatter that
+        refuses the note can never undo the row that records the news.
+        """
+        self.ensure_one()
+        if not (self.res_model and self.res_id):
+            return
+        try:
+            with self.env.cr.savepoint():
+                record = self.env[self.res_model].browse(self.res_id).exists()
+                if not record or not hasattr(record, 'message_post'):
+                    return
+                # The news comes from K-Message, through a webhook that runs as
+                # Odoo's public user; the note is signed by OdooBot instead.
+                record.sudo().message_post(
+                    body=_("Not delivered on WhatsApp to %(who)s: %(reason)s",
+                           who=self.partner_id.display_name or self.phone,
+                           reason=self.delivery_error or _("WhatsApp gave no reason.")),
+                    author_id=self.env.ref('base.partner_root').id)
+        except Exception:  # noqa: BLE001 - a missing note is not lost news
+            _logger.exception(
+                'K-Message: could not note that message %s was not delivered on %s %s',
                 self.id, self.res_model, self.res_id)
 
     # -- the cron ---------------------------------------------------------

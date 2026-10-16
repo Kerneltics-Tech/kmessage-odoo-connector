@@ -11,6 +11,12 @@ It rewrites only what is unambiguous: the view tags, the ``view_mode`` of an
 action, a ``mode=`` on a field, and the ``*_view_ref`` context keys. Python is
 copied untouched, because Python asks ``tools/compat.py`` which server it is on.
 
+One rewrite adds rather than renames: every ``ir.cron`` record gets
+``numbercall`` -1. Odoo 17 runs a cron ``numbercall`` times and then switches it
+off, and the field defaults to 1 there, so a cron that does not say -1 runs
+once and stops. Odoo 18 dropped the field — every cron recurs — and refuses it
+in data, so the 18 source cannot carry it.
+
     python3 dev/build.py                 # every module, into dist/17.0/
     python3 dev/build.py --check         # verify dist/17.0 matches the source
 
@@ -48,10 +54,25 @@ def is_module(path: Path) -> bool:
     return (path / '__manifest__.py').is_file()
 
 
+#: One ``ir.cron`` record, up to the indentation of its closing tag.
+CRON_RECORD = re.compile(
+    r'(<record\b[^>]*\bmodel="ir\.cron"[^>]*>)(.*?)(\n([ \t]*)</record>)', re.S)
+
+
+def recurring_crons(text: str) -> str:
+    """Give every cron ``numbercall`` -1 unless it already says how many runs."""
+    def add(match):
+        head, body, tail, indent = match.groups()
+        if 'name="numbercall"' in body:
+            return match.group(0)
+        return '%s%s\n%s    <field name="numbercall">-1</field>%s' % (head, body, indent, tail)
+    return CRON_RECORD.sub(add, text)
+
+
 def convert_xml(text: str) -> str:
     for pattern, replacement in RULES:
         text = pattern.sub(replacement, text)
-    return text
+    return recurring_crons(text)
 
 
 #: The series this tree is written for, and the one it is built into.

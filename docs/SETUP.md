@@ -154,10 +154,16 @@ runs your tenant:
 ```
 Address:   https://<your-odoo>/kmessage/api/v1/webhook
 Method:    POST
-Events:    message.incoming, message.sent, button.reply, contact.created
+Events:    message.incoming, message.sent, button.reply, contact.created,
+           message.delivered, message.read, message.failed
 Secret:    the webhook secret on the connection form
 Signature: X-Webhook-Signature: sha256=<hex HMAC-SHA256 of the raw body>
 ```
+
+The last three are delivery news. Added by hand, they bring the status of every
+message the company sends, not only Odoo's; the connector answers news about
+other messages without storing it, but it is traffic for nothing. Where the
+platform allows Connect, it asks for them limited to this Odoo's messages.
 
 Assistant tools take the same route in that case: they wait in
 *Configuration → Assistant tools* until somebody with the permission presses
@@ -199,13 +205,26 @@ recorded before anything was done about it).
 
 ## Things worth knowing
 
-* **"Sent" means accepted.** K-Message answers immediately and reports a later
-  failure on its own row. The platform has no delivered/read event today.
+* **"Sent" means accepted; the Delivery column says the rest.** K-Message
+  answers immediately, and then tells Odoo whether the message was
+  *Delivered*, *Read* or *Not delivered* — with WhatsApp's reason on the row
+  and, once, on the invoice it was about. A message that was not delivered is
+  never sent again by itself; that is a person's decision. Filter the
+  *Messages* list by *Not delivered* to see them all.
+* **Delivery news on a connection made before it existed.** The connection
+  form says *Delivery news is off*; press *Switch on delivery news*. It changes
+  the subscription and nothing else. If K-Message is too old to limit the news
+  to this Odoo's messages, the button says so and leaves it off. If the webhook
+  was set up outside *Connect to K-Message* — by hand, or by an older version
+  of this connector — the button says that too: whoever manages K-Message for
+  your company adds the header `x-managed-by: odoo_connector` to that webhook,
+  and then the button works.
 * **A template is a starting point.** Reword anything the connector wrote, in
   K-Message. It never touches a template twice.
 * **Meta locks a deleted template name** for weeks. If you delete one the
   connector wrote, it cannot recreate it under the same name for a while.
-* **Three crons do the work**: send the queue (every 2 minutes), chase invoices
-  that fell due (daily), tidy the event log (daily).
+* **Four crons do the work**: send the queue (every 2 minutes), apply delivery
+  news that arrived before its message was recorded (every 5 minutes), chase
+  invoices that fell due (daily), tidy the event log (daily).
 * **A customer can be opted out** on their contact form — the outbox refuses
   them whatever the automations say.

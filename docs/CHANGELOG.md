@@ -1,5 +1,60 @@
 # Changelog
 
+## 1.2.0 — 2026-10-16
+
+* **Delivery news.** Odoo now hears what became of each message it sent. The
+  *Delivery* column of the outbox moves on from *Sent* to *Delivered*, *Read*
+  or *Not delivered*, the last with WhatsApp's own reason ("add a payment
+  method in Meta Business Suite", "outside the 24-hour window"), and the
+  invoice, or whatever the message was about, gets one note saying it did not
+  arrive and why. News only moves a message forward, and a message WhatsApp
+  did not deliver is never sent again by itself: that stays a person's
+  decision. This replaces the 1.0.0 limit "there is no delivered/read event on
+  the platform today".
+* **What an existing installation has to do.** Upgrade the module, then open
+  *K-Message → Configuration → Connection*: the form says *Delivery news is
+  off for this connection*, and *Switch on delivery news* turns it on. The
+  button changes the webhook's events and nothing else (no template, rule or
+  assistant tool), only a K-Message administrator sees it, and connecting
+  again does the same.
+* **What it needs from K-Message.** The platform sends delivery news about
+  every message a company sends, campaigns and bot replies included. The
+  connector asks for it only from a K-Message that limits it to messages
+  carrying a reference, which every message from this Odoo now does, and
+  that confirms so by echoing `status_scope: referenced` back. An older
+  K-Message is never asked: the connection keeps its four events, the button
+  says delivery news needs a newer K-Message, and the *Delivery* column stops
+  at *Sent* as before. A webhook set up outside *Connect* (by hand, or by an
+  older version of this connector) is not changed from Odoo: whoever manages
+  K-Message for the company adds the header `x-managed-by: odoo_connector` to
+  it, and then the button works.
+* **Odoo 17: the crons run again.** Builds up to 1.1.1 left `numbercall` at
+  Odoo 17's default of 1, so every cron, the outbox among them, stopped after
+  its first run. The 17 build now gives every cron `numbercall` -1, and
+  upgrading switches them back on, the invoicing bridge's *invoices that have
+  fallen due* included. Messages that had waited in the stopped outbox for
+  more than a day are held back instead of going out weeks late: they are
+  marked *Failed* with the reason *Held back when the connector was
+  upgraded…*, and *Try again* sends one that should still go out. On Odoo 17,
+  look at *Messages*, filter *Waiting*, before upgrading.
+* **Upgrading a copy you changed yourself.** Replacing the folder would throw
+  your changes away. [docs/upgrade/1.2.0/](upgrade/1.2.0/) has one patch per
+  Odoo series, made from 1.1.1 (it serves 1.1.0 too), and a guide in English
+  and Arabic: how to list your own changes, apply the patch with them kept,
+  and what to do where your changes and the release meet.
+  `dev/make_upgrade_patch.sh` writes the patches and proves them: applied to
+  an untouched 1.1.1 tree, each must give the release exactly.
+* Smaller things: a new cron applies, within minutes, a refusal that reached
+  Odoo a moment before its send was recorded, and gives up after a day; news
+  about a message this Odoo never sent is answered and not stored; the daily
+  tidy deletes at most 20,000 old events a run; *Not delivered* has a filter
+  and a button on the connection; the hand-over text for a provider lists
+  seven events.
+
+`kmessage_connector` is 18.0.1.2.0 (17.0.1.2.0 in the 17 build). The
+invoicing, sales and inventory bridges keep 1.0.1; upgrading the connector
+upgrades them with it.
+
 ## 1.1.1 — 2026-10-10
 
 * The app icons and the Apps-store covers carry the official K-Message logo

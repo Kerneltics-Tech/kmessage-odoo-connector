@@ -8,6 +8,7 @@
         <field name="interval_number">2</field>
         <field name="interval_type">minutes</field>
         <field name="active" eval="True"/>
+        <field name="numbercall">-1</field>
     </record>
 
     <!-- A "not delivered" can reach Odoo a moment before the send that caused
@@ -21,6 +22,7 @@
         <field name="interval_number">5</field>
         <field name="interval_type">minutes</field>
         <field name="active" eval="True"/>
+        <field name="numbercall">-1</field>
     </record>
 
     <record id="cron_clean_events" model="ir.cron">
@@ -31,5 +33,6 @@
         <field name="interval_number">1</field>
         <field name="interval_type">days</field>
         <field name="active" eval="True"/>
+        <field name="numbercall">-1</field>
     </record>
 </odoo>

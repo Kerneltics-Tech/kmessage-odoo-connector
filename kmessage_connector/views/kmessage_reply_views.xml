@@ -4,7 +4,7 @@
         <field name="name">kmessage.reply.rule.list</field>
         <field name="model">kmessage.reply.rule</field>
         <field name="arch" type="xml">
-            <list string="Reply rules">
+            <tree string="Reply rules">
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="button_id"/>
@@ -17,7 +17,7 @@
                 <field name="last_run" optional="hide"/>
                 <field name="company_id" groups="base.group_multi_company" optional="hide"/>
                 <field name="active" widget="boolean_toggle"/>
-            </list>
+            </tree>
         </field>
     </record>
 
@@ -64,7 +64,7 @@
     <record id="action_kmessage_reply_rule" model="ir.actions.act_window">
         <field name="name">Reply rules</field>
         <field name="res_model">kmessage.reply.rule</field>
-        <field name="view_mode">list,form</field>
+        <field name="view_mode">tree,form</field>
         <field name="context">{'active_test': False}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">Make a tap do something</p>

@@ -24,6 +24,9 @@
                 <field name="company_id" groups="base.group_multi_company" optional="hide"/>
                 <button name="action_retry" type="object" string="Try again" icon="fa-refresh"
                         invisible="state != 'failed'"/>
+                <button name="action_resend" type="object" string="Send again" icon="fa-repeat"
+                        invisible="delivery_status != 'failed' or state != 'sent'"
+                        confirm="The customer will get this message again. Send it?"/>
             </tree>
         </field>
     </record>
@@ -38,6 +41,11 @@
                             invisible="state not in ('draft', 'queued', 'failed')"/>
                     <button name="action_retry" type="object" string="Queue again"
                             invisible="state != 'failed'"/>
+                    <button name="action_resend" type="object" string="Send again"
+                            class="btn-primary" invisible="state != 'sent'"
+                            confirm="The customer will get this message again. Send it?"/>
+                    <button name="action_resend" type="object" string="Send again"
+                            invisible="state != 'cancelled'"/>
                     <button name="action_cancel" type="object" string="Cancel"
                             invisible="state not in ('draft', 'queued', 'failed')"/>
                     <field name="state" widget="statusbar" statusbar_visible="queued,sent"/>
@@ -61,6 +69,7 @@
                             <field name="remote_message_id" readonly="1"/>
                             <field name="attempts" readonly="1"/>
                             <field name="next_attempt" readonly="1" invisible="not next_attempt"/>
+                            <field name="resent_from_id" invisible="not resent_from_id"/>
                         </group>
                     </group>
                     <div class="alert alert-danger" role="alert" invisible="not error">
@@ -71,6 +80,20 @@
                         <field name="delivery_error" readonly="1" nolabel="1" class="d-block mt-1"
                                invisible="not delivery_error"/>
                     </div>
+                    <group string="Sent again" invisible="not resend_ids">
+                        <field name="resend_ids" nolabel="1" colspan="2">
+                            <tree create="false" delete="false">
+                                <field name="create_date" string="Queued"/>
+                                <field name="state" widget="badge"
+                                       decoration-success="state == 'sent'"
+                                       decoration-danger="state == 'failed'"/>
+                                <field name="delivery_status" widget="badge"
+                                       decoration-success="delivery_status in ('delivered', 'read')"
+                                       decoration-danger="delivery_status == 'failed'"/>
+                                <field name="delivery_error"/>
+                            </tree>
+                        </field>
+                    </group>
                     <group string="What the customer reads">
                         <field name="body_preview" nolabel="1" colspan="2" readonly="1"/>
                     </group>
@@ -111,6 +134,17 @@
                 </group>
             </search>
         </field>
+    </record>
+
+    <!-- Send again on a selection: Action menu of the list (and of one message). -->
+    <record id="action_kmessage_message_resend" model="ir.actions.server">
+        <field name="name">Send again</field>
+        <field name="model_id" ref="model_kmessage_message"/>
+        <field name="binding_model_id" ref="model_kmessage_message"/>
+        <field name="binding_view_types">list,form</field>
+        <field name="groups_id" eval="[(4, ref('group_kmessage_user'))]"/>
+        <field name="state">code</field>
+        <field name="code">action = records.action_resend()</field>
     </record>
 
     <record id="action_kmessage_message" model="ir.actions.act_window">

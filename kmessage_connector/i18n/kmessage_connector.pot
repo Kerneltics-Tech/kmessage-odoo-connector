@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-15 17:15+0000\n"
-"PO-Revision-Date: 2026-10-15 17:15+0000\n"
+"POT-Creation-Date: 2026-10-20 08:56+0000\n"
+"PO-Revision-Date: 2026-10-20 08:56+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -57,6 +57,26 @@ msgstr ""
 #. odoo-python
 #: code:addons/kmessage_connector/wizard/kmessage_send.py:0
 msgid "%s has asked not to be messaged on WhatsApp."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_message.py:0
+msgid ""
+"%s message(s) left as they are: already waiting to go out, or the customer "
+"opted out, sending is switched off, or the document was deleted."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_message.py:0
+msgid "%s message(s) only prepared: the connection is in practice mode."
+msgstr ""
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_message.py:0
+msgid "%s message(s) will go out again within two minutes."
 msgstr ""
 
 #. module: kmessage_connector
@@ -1915,6 +1935,7 @@ msgstr ""
 
 #. module: kmessage_connector
 #: model:ir.model.fields.selection,name:kmessage_connector.selection__kmessage_message__state__queued
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_message_form
 #: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_message_tree
 msgid "Queued"
 msgstr ""
@@ -2116,6 +2137,15 @@ msgid "Send From"
 msgstr ""
 
 #. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_message.py:0
+#: model:ir.actions.server,name:kmessage_connector.action_kmessage_message_resend
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_message_form
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_message_tree
+msgid "Send again"
+msgstr ""
+
+#. module: kmessage_connector
 #: model:ir.module.category,description:kmessage_connector.module_category_kmessage
 msgid "Send documents on WhatsApp, and answer customers from Odoo."
 msgstr ""
@@ -2185,6 +2215,21 @@ msgstr ""
 #. module: kmessage_connector
 #: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_automation__sent_count
 msgid "Sent Count"
+msgstr ""
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_message_form
+msgid "Sent again"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_message__resend_ids
+msgid "Sent again as"
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_message__resent_from_id
+msgid "Sent again from"
 msgstr ""
 
 #. module: kmessage_connector
@@ -2507,6 +2552,12 @@ msgid "The customer answered on WhatsApp: %s"
 msgstr ""
 
 #. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_message_form
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_message_tree
+msgid "The customer will get this message again. Send it?"
+msgstr ""
+
+#. module: kmessage_connector
 #: model:ir.model.fields.selection,name:kmessage_connector.selection__kmessage_automation__language_mode__partner
 msgid "The customer's language"
 msgstr ""
@@ -2556,6 +2607,11 @@ msgstr ""
 #. odoo-python
 #: code:addons/kmessage_connector/wizard/kmessage_send.py:0
 msgid "The message is on its way to %s."
+msgstr ""
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_message__resent_from_id
+msgid "The message this one repeats, when somebody pressed Send again."
 msgstr ""
 
 #. module: kmessage_connector

@@ -95,6 +95,15 @@ class KMessageMessage(models.Model):
         string='Delivery updated', readonly=True, copy=False,
         help="When K-Message last told this Odoo how far this message got.")
 
+    # Send again: a message that went out is repeated by a new row, so each row
+    # keeps the delivery news of its own send.
+    resent_from_id = fields.Many2one(
+        'kmessage.message', string='Sent again from', readonly=True, copy=False,
+        index='btree_not_null', ondelete='set null',
+        help="The message this one repeats, when somebody pressed Send again.")
+    resend_ids = fields.One2many(
+        'kmessage.message', 'resent_from_id', string='Sent again as', readonly=True)
+
     display_name = fields.Char(compute='_compute_display_name')
 
     @api.depends('template_name', 'partner_id', 'phone')
@@ -577,6 +586,96 @@ class KMessageMessage(models.Model):
             'next_attempt': fields.Datetime.now(),
         })
         return True
+
+    def action_resend(self):
+        """Send these messages to the customer again: one message, or a selection.
+
+        A message that never went out — its send failed, or somebody cancelled
+        it — goes back in the queue as it is. One that did go out is never sent
+        from its own row again: a new row is queued with the same template,
+        values and document, so the old row keeps saying what became of the
+        first send and the new one gets delivery news of its own.
+
+        Nothing is doubled and nothing is forced. A row already waiting, a row
+        whose copy is already waiting, a practice run, a customer who opted
+        out, a connection that is switched off, and a message whose document
+        has since been deleted are left as they are, and counted in the answer.
+        """
+        waiting_copy = self.search([
+            ('resent_from_id', 'in', self.ids),
+            ('state', 'in', ('draft', 'queued')),
+        ]).resent_from_id
+        requeue = self.browse()
+        copies = []
+        for message in self:
+            if (message.state in ('draft', 'queued', 'skipped')
+                    or message in waiting_copy
+                    or not message.account_id.outbound_enabled
+                    or message.partner_id.kmessage_opt_out
+                    or (message.attachment_name and not message.attachment_id)):
+                continue
+            if message.state == 'sent':
+                copies.append(message._resend_values())
+            else:
+                requeue |= message
+        if requeue:
+            requeue.action_retry()
+        created = self.create(copies)
+        practice = created.filtered(lambda m: m.account_id.dry_run)
+        if practice:
+            practice.write({'state': 'skipped', 'next_attempt': False,
+                            'error': _("Practice mode: not sent.")})
+
+        queued = len(requeue) + len(created - practice)
+        left = len(self) - len(requeue) - len(created)
+        lines = []
+        if queued:
+            lines.append(_("%s message(s) will go out again within two minutes.", queued))
+        if practice:
+            lines.append(_("%s message(s) only prepared: the connection is in practice mode.",
+                           len(practice)))
+        if left:
+            lines.append(_("%s message(s) left as they are: already waiting to go out, or the "
+                           "customer opted out, sending is switched off, or the document was "
+                           "deleted.", left))
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': _("Send again"),
+                'message': ' '.join(lines),
+                'type': 'success' if queued else 'warning',
+                'sticky': False,
+                'next': {'type': 'ir.actions.client', 'tag': 'soft_reload'},
+            },
+        }
+
+    def _resend_values(self):
+        """A new outbox row repeating this one, ready for the queue."""
+        self.ensure_one()
+        own_reference = '%s:%s' % (self._name, self.id)
+        return {
+            'account_id': self.account_id.id,
+            'partner_id': self.partner_id.id,
+            'phone': self.phone,
+            'template_id': self.template_id.id,
+            'template_name': self.template_name,
+            'language': self.language,
+            'params_json': self.params_json,
+            'buttons_json': self.buttons_json,
+            'body_preview': self.body_preview,
+            'attachment_id': self.attachment_id.id,
+            'attachment_name': self.attachment_name,
+            'res_model': self.res_model,
+            'res_id': self.res_id,
+            # A button tapped on the copy must find the same document. A
+            # message about no record named itself, so the copy names itself
+            # instead (create fills that in).
+            'reference': False if self.reference == own_reference else self.reference,
+            'resent_from_id': self.id,
+            'state': 'queued',
+            'next_attempt': fields.Datetime.now(),
+        }
 
     def action_cancel(self):
         stuck = self.filtered(lambda m: m.state == 'sent')

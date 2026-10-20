@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.3.0 — 2026-10-20
+
+* **Send again.** A message can be sent to the customer again by hand: the
+  *Send again* button on a message, the same button on a row of the outbox
+  that WhatsApp did not deliver, or *Action → Send again* on a selection. A
+  message that never went out (its send failed, or somebody cancelled it) goes
+  back in the queue as it is. One that did go out is repeated by a new row
+  with the same template, values and document, linked both ways (*Sent again
+  from* / *Sent again*), so the first row keeps its own delivery news. A row
+  already waiting, a copy already waiting, a customer who opted out, a
+  connection that is switched off, a practice run and a message whose document
+  was deleted are left alone, and the answer says how many. Nothing is ever
+  sent again by itself: that stays a person's decision.
+* **Upgrade.** `-u kmessage_connector` (one new field on the outbox).
+
 ## 1.2.0 — 2026-10-16
 
 * **Delivery news.** Odoo now hears what became of each message it sent. The

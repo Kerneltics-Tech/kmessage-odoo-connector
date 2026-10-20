@@ -3417,3 +3417,58 @@ msgstr "تحتاج «%s» إلى تطبيق أودو غير مثبّت."
 #: code:addons/kmessage_connector/models/kmessage_reply.py:0
 msgid "“%s” needs the record the message was about, and it is gone."
 msgstr "تحتاج «%s» إلى السجل الذي تخصّه الرسالة، وهو غير موجود."
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_message.py:0
+msgid ""
+"%s message(s) left as they are: already waiting to go out, or the customer "
+"opted out, sending is switched off, or the document was deleted."
+msgstr "تُركت %s رسالة كما هي: إما أنها تنتظر الإرسال أصلًا، أو أن العميل ألغى استقبال الرسائل، أو أن الإرسال موقوف، أو أن المستند حُذف."
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_message.py:0
+msgid "%s message(s) only prepared: the connection is in practice mode."
+msgstr "جُهّزت %s رسالة دون إرسال: الاتصال في وضع التجربة."
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_message.py:0
+msgid "%s message(s) will go out again within two minutes."
+msgstr "سيُعاد إرسال %s رسالة خلال دقيقتين."
+
+#. module: kmessage_connector
+#. odoo-python
+#: code:addons/kmessage_connector/models/kmessage_message.py:0
+#: model:ir.actions.server,name:kmessage_connector.action_kmessage_message_resend
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_message_form
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_message_tree
+msgid "Send again"
+msgstr "إعادة الإرسال"
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_message_form
+msgid "Sent again"
+msgstr "أُعيد إرسالها"
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_message__resend_ids
+msgid "Sent again as"
+msgstr "أُعيد إرسالها في"
+
+#. module: kmessage_connector
+#: model:ir.model.fields,field_description:kmessage_connector.field_kmessage_message__resent_from_id
+msgid "Sent again from"
+msgstr "نسخة معادة من"
+
+#. module: kmessage_connector
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_message_form
+#: model_terms:ir.ui.view,arch_db:kmessage_connector.view_kmessage_message_tree
+msgid "The customer will get this message again. Send it?"
+msgstr "ستصل هذه الرسالة إلى العميل مرة أخرى. هل تريد إرسالها؟"
+
+#. module: kmessage_connector
+#: model:ir.model.fields,help:kmessage_connector.field_kmessage_message__resent_from_id
+msgid "The message this one repeats, when somebody pressed Send again."
+msgstr "الرسالة التي تكررها هذه، حين ضغط أحدهم «إعادة الإرسال»."

@@ -233,6 +233,118 @@ class TestSending(KMessageCase):
         self.assertFalse(self.message.permanent_error)
 
 
+
+class TestSendAgain(KMessageCase):
+    """Send again, on one message or a selection: a person's decision, never doubled."""
+
+    def setUp(self):
+        super().setUp()
+        self.attachment = self.env['ir.attachment'].create({
+            'name': 'INV_2026_0001.pdf',
+            'datas': base64.b64encode(PDF),
+            'mimetype': 'application/pdf',
+        })
+        self.message = self.env['kmessage.message'].enqueue(
+            account=self.account, phone=CUSTOMER_MOBILE, template=self.doc_template,
+            partner=self.partner, record=self.partner, params={'1': 'S00021'},
+            attachment=self.attachment)
+
+    def sent_and_not_delivered(self):
+        self.message.send_now()
+        self.message._apply_delivery_news('failed', reason='Meta could not charge the account.')
+        self.fake.reset()
+        return self.message
+
+    def test_a_message_that_went_out_is_repeated_by_a_new_row(self):
+        original = self.sent_and_not_delivered()
+        answer = original.action_resend()
+        copy = original.resend_ids
+        self.assertEqual(len(copy), 1)
+        self.assertEqual(copy.resent_from_id, original)
+        self.assertEqual((copy.state, copy.delivery_status), ('queued', 'pending'))
+        for name in ('phone', 'template_name', 'params_json', 'buttons_json', 'body_preview',
+                     'attachment_id', 'res_model', 'res_id', 'reference', 'partner_id'):
+            self.assertEqual(copy[name], original[name], name)
+        # The first send keeps its own story.
+        self.assertEqual((original.state, original.delivery_status), ('sent', 'failed'))
+        self.assertEqual(answer['params']['type'], 'success')
+
+        self.env['kmessage.message']._cron_send_queue()
+        self.assertEqual(copy.state, 'sent')
+        self.assertNotEqual(copy.remote_message_id, original.remote_message_id)
+        self.assertEqual(len(self.fake.sent), 1)
+        self.assertEqual(self.fake.last_sent()['header_file']['filename'], 'INV_2026_0001.pdf')
+
+    def test_pressing_twice_queues_one_copy(self):
+        original = self.sent_and_not_delivered()
+        original.action_resend()
+        answer = original.action_resend()
+        self.assertEqual(len(original.resend_ids), 1)
+        self.assertEqual(answer['params']['type'], 'warning')
+
+    def test_a_failed_or_cancelled_send_goes_back_in_the_queue_as_it_is(self):
+        self.message.write({'state': 'failed', 'permanent_error': True, 'next_attempt': False,
+                            'error': 'Refused'})
+        other = self.message.copy({'state': 'cancelled', 'next_attempt': False})
+        (self.message | other).action_resend()
+        for row in (self.message, other):
+            self.assertEqual(row.state, 'queued')
+            self.assertFalse(row.permanent_error)
+            self.assertFalse(row.resend_ids)
+        self.assertEqual(self.env['kmessage.message']._cron_send_queue(), 2)
+
+    def test_a_selection_counts_what_it_left_alone(self):
+        sent = self.sent_and_not_delivered()
+        waiting = self.env['kmessage.message'].enqueue(
+            account=self.account, phone=CUSTOMER_MOBILE, template=self.template,
+            partner=self.partner)
+        answer = (sent | waiting).action_resend()
+        self.assertEqual(len(sent.resend_ids), 1)
+        self.assertFalse(waiting.resend_ids)
+        self.assertEqual(waiting.state, 'queued')
+        self.assertIn('1', answer['params']['message'])
+
+    def test_nothing_goes_to_a_customer_who_opted_out(self):
+        original = self.sent_and_not_delivered()
+        self.partner.kmessage_opt_out = True
+        original.action_resend()
+        self.assertFalse(original.resend_ids)
+
+    def test_nothing_goes_out_while_sending_is_switched_off(self):
+        original = self.sent_and_not_delivered()
+        self.account.outbound_enabled = False
+        original.action_resend()
+        self.assertFalse(original.resend_ids)
+
+    def test_a_message_whose_document_was_deleted_is_not_sent_without_it(self):
+        original = self.sent_and_not_delivered()
+        self.attachment.unlink()
+        original.action_resend()
+        self.assertFalse(original.resend_ids)
+
+    def test_practice_mode_only_prepares_the_copy(self):
+        original = self.sent_and_not_delivered()
+        self.account.dry_run = True
+        original.action_resend()
+        self.assertEqual(original.resend_ids.state, 'skipped')
+        self.env['kmessage.message']._cron_send_queue()
+        self.assertFalse(self.fake.sent)
+
+    def test_a_message_about_no_record_gives_its_copy_its_own_reference(self):
+        message = self.env['kmessage.message'].enqueue(
+            account=self.account, phone=CUSTOMER_MOBILE, template=self.template,
+            partner=self.partner)
+        message.send_now()
+        message.action_resend()
+        self.assertEqual(message.resend_ids.reference,
+                         'kmessage.message:%s' % message.resend_ids.id)
+
+    def test_the_list_action_is_there_for_users(self):
+        action = self.env.ref('kmessage_connector.action_kmessage_message_resend')
+        self.assertEqual(action.binding_model_id.model, 'kmessage.message')
+        self.assertIn(self.env.ref('kmessage_connector.group_kmessage_user'), action.groups_id)
+
+
 class TestTheCron(KMessageCase):
 
     def setUp(self):
